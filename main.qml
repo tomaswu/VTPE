@@ -10,18 +10,25 @@ Window {
     ToolBar{
         id:toolbar
         width:parent.width
+        height: 60
         anchors.top: parent.top
-        Button{
-            id:openDrawer
-            text: "open"
-            onClicked: console.log(drawer.x)
-        }
+        Row{
+            spacing: 8
+            padding: 5
+            anchors.verticalCenter: parent.verticalCenter
+            Button{
+                id:openDrawer
+                text: "open"
+                onClicked: console.log(drawer.x)
+            }
+        }// end row
 
         Drawer{
             id:drawer
             width: 300
             height: parent.height-toolbar.height
             y:toolbar.height
+            x:-300
             edge:Qt.LeftEdge
 //            anchors.top : toolbar.bottom
             background: Rectangle{
@@ -34,9 +41,11 @@ Window {
 
         Rectangle{
             id : center_widget
-            height: drawer.height/2
-            width: parent.width
             y:toolbar.height
+            x:drawer.x+300
+            width: parent.width-x
+            height: drawer.height
+            border.width: 1
             anchors.left:drawer.Right
             color:"skyblue"
         }

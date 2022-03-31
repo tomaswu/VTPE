@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/imgs">
+        <file>ico/book.png</file>
+        <file>ico/camera.png</file>
+        <file>ico/help.png</file>
+        <file>ico/left.png</file>
+        <file>ico/media-playback-pause.png</file>
+        <file>ico/media-playback-start.png</file>
+        <file>ico/media-seek-forward-7.png</file>
+        <file>ico/save.png</file>
+        <file>ico/text-field.png</file>
+        <file>ico/thumbnail.png</file>
+        <file>ico/ZKY.ico</file>
+        <file>ico/camera2.png</file>
+        <file>ico/curve.png</file>
+        <file>ico/curve1.png</file>
+        <file>ico/cut.png</file>
+        <file>ico/save2.png</file>
+        <file>ico/select.png</file>
+        <file>ico/setting.png</file>
+        <file>ico/setting_rotation.png</file>
+        <file>ico/setting1.png</file>
+        <file>ico/setting2.png</file>
+        <file>ico/setting3.png</file>
+        <file>ico/setting4.png</file>
+    </qresource>
+</RCC>

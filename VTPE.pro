@@ -5,10 +5,11 @@ QT += quick \
 SOURCES += \
         main.cpp
 
-resources.files = main.qml 
+resources.files = main.qml SToolButton.qml
 resources.prefix = /$${TARGET}
 
-RESOURCES += resources qtquickcontrols2.conf
+RESOURCES += resources qtquickcontrols2.conf \
+    res.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -23,6 +24,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     README.md \
+    SToolButton.qml \
     qtquickcontrols2.conf
 
 
@@ -42,6 +44,7 @@ win32{
 
         LIBS += -lopencv_world455
     }
+
 }
 macx{
     INCLUDEPATH += /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4

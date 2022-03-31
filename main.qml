@@ -26,7 +26,7 @@ Window {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             padding:2
-            spacing: 5
+            spacing: 16
             GridLayout{
                 height: parent.height
                 columns: 4
@@ -107,7 +107,7 @@ Window {
                 Text{
                     id: label_camera
                     text: "相机功能"
-                    Layout.row: 4
+                    Layout.row: 3
                     Layout.column: 0
                     Layout.columnSpan: 4
                     Layout.alignment: Qt.AlignHCenter
@@ -122,18 +122,22 @@ Window {
 
             GridLayout{
                 height: parent.height
-                columns: 4
+                columns: 8
                 rows: 4
 
                 CheckBox{
                     id: measurement_mark
+                    implicitWidth: 64
+                    Layout.alignment: Qt.AlignLeft
                     text: "标尺"
-                    Layout.columnSpan: 2
+                    Layout.columnSpan:2
                 }
 
                 ComboBox{
                     id:measuerment_scale_type
+                    implicitWidth: 64
                     Layout.columnSpan: 2
+//                    Layout.alignment: Qt.AlignLeft
                     valueRole:"name"
                     model: ListModel{
                         ListElement{name:"十字"}
@@ -153,10 +157,91 @@ Window {
                     onClicked: console.log("camera open")
                 }
 
+                SToolButton{
+                    id:measurement_select
+                    Layout.row: 1
+                    Layout.column: 0
+                    Layout.alignment: Qt.AlignCenter
+                    imgSrc: "qrc:/imgs/ico/select.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("select a select for \nmeasurement\n选择范围进行测量",measurement_select)
+                    onClicked: console.log("camera open")
+                }
+
+                SToolButton{
+                    id:measurement_cut
+                    Layout.row: 1
+                    Layout.column: 1
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/cut.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("cut image\n裁剪",measurement_cut)
+                    onClicked: console.log("camera open")
+                }
+
+                SToolButton{
+                    id:measurement_gray_curve
+                    Layout.row: 1
+                    Layout.column: 2
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/curve.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("gray curve\n灰度曲线测量",measurement_gray_curve)
+                    onClicked: console.log("camera open")
+                }
+
+                SToolButton{
+                    id:measurement_putText
+                    Layout.row: 1
+                    Layout.column: 3
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/text-field.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("put text\n添加文字",measurement_putText)
+                    onClicked: console.log("camera open")
+                }
+
+
+                Text{
+                    id:label_rotation
+                    text: "旋转:"
+                    Layout.row: 2
+                }
+
+                Slider{
+                    id:rotation_deg
+                    implicitWidth: 96
+                    Layout.row: 2
+                    Layout.column: 1
+                    Layout.columnSpan: 3
+                    Layout.alignment: Qt.AlignCenter
+                    from: 0
+                    to: 360
+                    value:rotation_deg_spinbox.value
+                    onValueChanged: {rotation_deg_spinbox.value=rotation_deg.value;console.log("changed")}
+                }// end slider
+
+                SpinBox{
+                    id:rotation_deg_spinbox
+                    implicitWidth: 45
+                    Layout.row: 2
+                    Layout.column: 4
+                    from: 0
+                    to:360
+                } // end SpinBox
+
                 Text{
                     id: label_camera_measurement
                     text: "测量工具"
-                    Layout.row: 4
+                    Layout.row: 3
                     Layout.column: 0
                     Layout.columnSpan: 4
                     Layout.alignment: Qt.AlignHCenter
@@ -190,6 +275,9 @@ Window {
         if (item.hovered){
             stoolbutton_tooltip.x=item.x+item.parent.x
             stoolbutton_tooltip.show(s,5000)
+        }
+        else{
+            stoolbutton_tooltip.hide()
         }
     }//end function
 

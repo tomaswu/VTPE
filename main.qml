@@ -243,7 +243,7 @@ Window {
                     text: "测量工具"
                     Layout.row: 3
                     Layout.column: 0
-                    Layout.columnSpan: 4
+                    Layout.columnSpan: 8
                     Layout.alignment: Qt.AlignHCenter
                 }
 

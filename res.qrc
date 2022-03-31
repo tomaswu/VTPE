@@ -27,5 +27,6 @@
         <file>ico/file.png</file>
         <file>ico/matrix.png</file>
         <file>ico/matrix2.png</file>
+        <file>ico/ruler.png</file>
     </qresource>
 </RCC>

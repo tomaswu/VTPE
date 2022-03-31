@@ -109,11 +109,61 @@ Window {
                     text: "相机功能"
                     Layout.row: 4
                     Layout.column: 0
-                    Layout.columnSpan: 3
+                    Layout.columnSpan: 4
                     Layout.alignment: Qt.AlignHCenter
                 }
 
-            }// end gird
+            }// end gird  for camera functions
+            Rectangle{
+                color:Qt.rgba(0,0,0,0.2)
+                width: 1
+                height: parent.height-parent.padding*2
+            }
+
+            GridLayout{
+                height: parent.height
+                columns: 4
+                rows: 4
+
+                CheckBox{
+                    id: measurement_mark
+                    text: "标尺"
+                    Layout.columnSpan: 2
+                }
+
+                ComboBox{
+                    id:measuerment_scale_type
+                    Layout.columnSpan: 2
+                    valueRole:"name"
+                    model: ListModel{
+                        ListElement{name:"十字"}
+                        ListElement{name:"同心圆"}
+                        ListElement{name:"网格"}
+                    }
+
+                }
+
+                SToolButton{
+                    id:measurement_cali
+                    imgSrc: "qrc:/imgs/ico/ruler.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("calibrate the scale\n定标比例尺",measurement_cali)
+                    onClicked: console.log("camera open")
+                }
+
+                Text{
+                    id: label_camera_measurement
+                    text: "测量工具"
+                    Layout.row: 4
+                    Layout.column: 0
+                    Layout.columnSpan: 4
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+
+            }// end gird for measurement functions
             Rectangle{
                 color:Qt.rgba(0,0,0,0.2)
                 width: 1
@@ -132,14 +182,13 @@ Window {
                 }
             }
 
-         } //end column
-
+         } //end row
 
     }// end toolbar
 
     function tbntip(s,item){
         if (item.hovered){
-            stoolbutton_tooltip.x=item.x
+            stoolbutton_tooltip.x=item.x+item.parent.x
             stoolbutton_tooltip.show(s,5000)
         }
     }//end function

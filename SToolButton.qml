@@ -7,6 +7,7 @@ Rectangle{
     property string imgSrc: ""
     property string btnName: "button"
     property string textColor: "black"
+    property bool hovered: false
     signal clicked;
     id:background
     width: 48
@@ -40,10 +41,15 @@ Rectangle{
         onEntered: {
             background.color = Qt.rgba(0.75,0.75,0.75,0.4)
             background.border.width=1
+            if(!pressedButtons){
+                parent.hovered = true
+            }
         }
         onExited: {
             background.color = Qt.rgba(1,1,1,0)
             background.border.width=0
+            parent.hovered = false
+
         }
         onPressed: {
             background.color = Qt.rgba(0.5,0.5,0.5,0.6)

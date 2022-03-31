@@ -23,5 +23,9 @@
         <file>ico/setting2.png</file>
         <file>ico/setting3.png</file>
         <file>ico/setting4.png</file>
+        <file>ico/video.png</file>
+        <file>ico/file.png</file>
+        <file>ico/matrix.png</file>
+        <file>ico/matrix2.png</file>
     </qresource>
 </RCC>

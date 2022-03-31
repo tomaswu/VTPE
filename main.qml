@@ -255,6 +255,107 @@ Window {
                 height: parent.height-parent.padding*2
             }
 
+            GridLayout{
+                height: parent.height
+                columns: 5
+                rows: 4
+
+                SToolButton{
+                    id:video_player
+                    Layout.row: 0
+                    Layout.column: 0
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/media-seek-forward-7.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("show/hide player\n tools\n显示/关闭播放工具",video_player)
+                    onClicked: console.log("camera open")
+                }
+
+                ComboBox{
+                    id:rec_method
+                    implicitWidth: 96
+                    Layout.columnSpan: 4
+                    valueRole:"name"
+                    model: ListModel{
+                        ListElement{name:"PMB0100"}
+                        ListElement{name:"单色识别"}
+                        ListElement{name:"帧差法"}
+                    }
+                }
+
+                SToolButton{
+                    id:video_analysis_para
+                    Layout.row: 1
+                    Layout.column: 0
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/setting2"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("set analysis paras\n设置分析参数",video_analysis_para)
+                    onClicked: console.log("para settings")
+                }
+
+                SToolButton{
+                    id:video_export
+                    Layout.row: 2
+                    Layout.column: 0
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/save.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("export data\n导出数据",video_export)
+                    onClicked: console.log("data export")
+                }
+
+                SToolButton{
+                    id:video_table
+                    Layout.row: 2
+                    Layout.column: 1
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/curve1.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("open tables\n打开表格窗口",video_table)
+                    onClicked: console.log("data tables")
+                }
+
+                SToolButton{
+                    id:video_fig
+                    Layout.row: 2
+                    Layout.column: 2
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/curve1.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("open figures\n打开绘图窗口",video_fig)
+                    onClicked: console.log("data figures")
+                }
+
+
+                Text{
+                    id: label_video_analysis
+                    text: "视频识别"
+                    Layout.row: 3
+                    Layout.column: 0
+                    Layout.columnSpan: 5
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+
+            }// end for recognize
+
+            Rectangle{
+                color:Qt.rgba(0,0,0,0.2)
+                width: 1
+                height: parent.height-parent.padding*2
+            }
+
             ToolTip{
                 id: stoolbutton_tooltip
                 y:toolbar.height

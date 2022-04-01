@@ -18,7 +18,6 @@
         <file>ico/save2.png</file>
         <file>ico/select.png</file>
         <file>ico/setting.png</file>
-        <file>ico/setting_rotation.png</file>
         <file>ico/setting1.png</file>
         <file>ico/setting2.png</file>
         <file>ico/setting3.png</file>
@@ -28,5 +27,26 @@
         <file>ico/matrix.png</file>
         <file>ico/matrix2.png</file>
         <file>ico/ruler.png</file>
+        <file>ico/curve3.png</file>
+        <file>ico/down.png</file>
+        <file>ico/dowright.png</file>
+        <file>ico/export.png</file>
+        <file>ico/film.png</file>
+        <file>ico/left1.png</file>
+        <file>ico/list.png</file>
+        <file>ico/loading.png</file>
+        <file>ico/picture.png</file>
+        <file>ico/redo.png</file>
+        <file>ico/right1.png</file>
+        <file>ico/rotate.png</file>
+        <file>ico/rotate2.png</file>
+        <file>ico/text.png</file>
+        <file>ico/undo.png</file>
+        <file>ico/up.png</file>
+        <file>ico/curve4.png</file>
+        <file>ico/para.png</file>
+        <file>ico/table.png</file>
+        <file>ico/info.png</file>
+        <file>ico/device.png</file>
     </qresource>
 </RCC>

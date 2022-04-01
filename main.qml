@@ -3,8 +3,9 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Window {
-    width: 1024
-    height: 720
+    id:root
+    minimumWidth: 1024
+    minimumHeight: 720
     visible: true
     title: qsTr("Hello World")
     color:"lightgray"
@@ -13,7 +14,8 @@ Window {
         id:toolbar
         width:parent.width-16
         height: 120
-        anchors.top: parent.top
+        y:0
+        z:5
         anchors.horizontalCenter: parent.horizontalCenter
         background: Rectangle{
             anchors.fill: parent;
@@ -27,6 +29,40 @@ Window {
             anchors.verticalCenter: parent.verticalCenter
             padding:2
             spacing: 16
+
+            Column{
+                height: parent.height
+                topPadding: 18
+                leftPadding: 14
+                rightPadding: 0
+                bottomPadding: 0
+                spacing: 18
+                SToolButton{
+                    id:undo
+                    imgSrc: "qrc:/imgs/ico/undo.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("undo\n撤销",undo)
+                    onClicked: console.log("undo")
+                }
+                SToolButton{
+                    id:redo
+                    imgSrc: "qrc:/imgs/ico/redo.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("redo\n重做",redo)
+                    onClicked: console.log("redo")
+                }
+                Text{
+                    id: label_undo
+                    text: "撤消"
+                }
+            }
+
+            ToolbarVSplit{}
+
             GridLayout{
                 height: parent.height
                 columns: 4
@@ -114,11 +150,8 @@ Window {
                 }
 
             }// end gird  for camera functions
-            Rectangle{
-                color:Qt.rgba(0,0,0,0.2)
-                width: 1
-                height: parent.height-parent.padding*2
-            }
+
+            ToolbarVSplit{}
 
             GridLayout{
                 height: parent.height
@@ -137,7 +170,6 @@ Window {
                     id:measuerment_scale_type
                     implicitWidth: 64
                     Layout.columnSpan: 2
-//                    Layout.alignment: Qt.AlignLeft
                     valueRole:"name"
                     model: ListModel{
                         ListElement{name:"十字"}
@@ -201,7 +233,7 @@ Window {
                     Layout.row: 1
                     Layout.column: 3
                     Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/text-field.png"
+                    imgSrc: "qrc:/imgs/ico/text.png"
                     btnName: ""
                     width: 24
                     height: 24
@@ -249,15 +281,11 @@ Window {
 
 
             }// end gird for measurement functions
-            Rectangle{
-                color:Qt.rgba(0,0,0,0.2)
-                width: 1
-                height: parent.height-parent.padding*2
-            }
+            ToolbarVSplit{}
 
             GridLayout{
                 height: parent.height
-                columns: 5
+                columns: 8
                 rows: 4
 
                 SToolButton{
@@ -265,12 +293,19 @@ Window {
                     Layout.row: 0
                     Layout.column: 0
                     Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/media-seek-forward-7.png"
+                    imgSrc: "qrc:/imgs/ico/film.png"
                     btnName: ""
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("show/hide player\n tools\n显示/关闭播放工具",video_player)
                     onClicked: console.log("camera open")
+                }
+
+                Text{
+                    text: "分析方法:"
+                    Layout.row: 0
+                    Layout.column: 1
+                    Layout.columnSpan: 2
                 }
 
                 ComboBox{
@@ -290,7 +325,7 @@ Window {
                     Layout.row: 1
                     Layout.column: 0
                     Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/setting2"
+                    imgSrc: "qrc:/imgs/ico/para.png"
                     btnName: ""
                     width: 24
                     height: 24
@@ -298,25 +333,13 @@ Window {
                     onClicked: console.log("para settings")
                 }
 
-                SToolButton{
-                    id:video_export
-                    Layout.row: 2
-                    Layout.column: 0
-                    Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/save.png"
-                    btnName: ""
-                    width: 24
-                    height: 24
-                    onHoveredChanged: tbntip("export data\n导出数据",video_export)
-                    onClicked: console.log("data export")
-                }
 
                 SToolButton{
                     id:video_table
-                    Layout.row: 2
+                    Layout.row: 1
                     Layout.column: 1
                     Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/curve1.png"
+                    imgSrc: "qrc:/imgs/ico/table.png"
                     btnName: ""
                     width: 24
                     height: 24
@@ -326,10 +349,10 @@ Window {
 
                 SToolButton{
                     id:video_fig
-                    Layout.row: 2
+                    Layout.row: 1
                     Layout.column: 2
                     Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/curve1.png"
+                    imgSrc: "qrc:/imgs/ico/curve3.png"
                     btnName: ""
                     width: 24
                     height: 24
@@ -337,49 +360,190 @@ Window {
                     onClicked: console.log("data figures")
                 }
 
+                SToolButton{
+                    id:video_export
+                    Layout.row: 2
+                    Layout.column: 7
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/export.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("export data\n导出数据",video_export)
+                    onClicked: console.log("data export")
+                }
 
                 Text{
                     id: label_video_analysis
                     text: "视频识别"
                     Layout.row: 3
                     Layout.column: 0
-                    Layout.columnSpan: 5
+                    Layout.columnSpan: 8
                     Layout.alignment: Qt.AlignHCenter
                 }
 
 
             }// end for recognize
 
-            Rectangle{
-                color:Qt.rgba(0,0,0,0.2)
-                width: 1
-                height: parent.height-parent.padding*2
+            ToolbarVSplit{}
+
+            GridLayout{
+                height: parent.height
+                columns: 1
+                rows: 4
+
+                SToolButton{
+                    id:opendevice
+                    Layout.row: 0
+                    Layout.column: 0
+                    Layout.rowSpan: 2
+                    Layout.alignment: Qt.AlignCenter
+                    imgSrc: "qrc:/imgs/ico/device.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("open device\n打开设备",opendevice)
+                    onClicked: console.log("camera open")
+                }
+                Text{
+                    id: label_device
+                    text: "其他设备"
+                    Layout.row: 3
+                    Layout.column: 0
+                    Layout.columnSpan: 1
+                    Layout.alignment: Qt.AlignHCenter|Qt.AlignBottom
+                }
             }
+
+            ToolbarVSplit{}
+
+            GridLayout{
+                height: parent.height
+                columns: 1
+                rows: 3
+                SToolButton{
+                    id:help
+                    imgSrc: "qrc:/imgs/ico/help.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("help\n帮助",help)
+                    onClicked: console.log("help")
+                }
+                SToolButton{
+                    id:info
+                    imgSrc: "qrc:/imgs/ico/info.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("about\n关于",info)
+                    onClicked: console.log("about")
+                }
+                Text{
+                    id: label_help
+                    text: "帮助"
+                    Layout.row: 2
+                    Layout.column: 0
+                    Layout.columnSpan: 1
+                    Layout.alignment: Qt.AlignHCenter|Qt.AlignBottom
+                }
+            }// end help
 
             ToolTip{
                 id: stoolbutton_tooltip
-                y:toolbar.height
+                y:toolbar.visible? toolbar.height:30
                 z:101
                 delay: 400
                 text:"hello name"
                 background: Rectangle{
                     width: 120
                     height: 60
+                    border.width: 1
+                    border.color: Qt.rgba(0,0,0.8,0.25)
                 }
             }
 
-         } //end row
+        } //end row
+    ParallelAnimation{
+        id: animation_showToolbar
+        NumberAnimation{
+            target: toolbar
+            properties: "y"
+            from:-toolbar.height
+            to: 0
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        NumberAnimation{
+            target: toolbar
+            properties: "opacity"
+            from: 0.2
+            to: 1
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        onStarted: toolbar_show.visible=false
+
+    }
+    ParallelAnimation{
+        id: animation_closeToolbar
+        NumberAnimation{
+            target: toolbar
+            properties: "y"
+            from:0
+            to: -toolbar.height
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        NumberAnimation{
+            target: toolbar
+            properties: "opacity"
+            from: 1
+            to: 0.2
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        onFinished: toolbar_show.visible=true
+    }
+
+        SToolButton{
+            id:toolbar_hide
+            imgSrc: "qrc:/imgs/ico/up.png"
+            btnName: ""
+            width: 16
+            height: 16
+            x:toolbar.x+toolbar.width-width-20
+            y:toolbar.y+toolbar.height-width-2
+            onHoveredChanged: tbntip("hide/show toolbar\n隐藏/显示工具栏",toolbar_hide)
+            onClicked: animation_closeToolbar.start()
+        }
 
     }// end toolbar
+
+    SToolButton{
+        id:toolbar_show
+        imgSrc: "qrc:/imgs/ico/down.png"
+        btnName: ""
+        width: 24
+        height: 24
+        radius: 4
+        x:toolbar_hide.x+4
+        y:height/2
+        onClicked: animation_showToolbar.start()
+    }
 
     function tbntip(s,item){
         if (item.hovered){
             stoolbutton_tooltip.x=item.x+item.parent.x
+            if (stoolbutton_tooltip.x+stoolbutton_tooltip.width>root.width){
+                stoolbutton_tooltip.x=stoolbutton_tooltip.x-stoolbutton_tooltip.width
+            }
             stoolbutton_tooltip.show(s,5000)
         }
         else{
             stoolbutton_tooltip.hide()
         }
+
     }//end function
 
 }// end window

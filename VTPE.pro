@@ -5,7 +5,7 @@ QT += quick \
 SOURCES += \
         main.cpp
 
-resources.files = main.qml SToolButton.qml
+resources.files = main.qml SToolButton.qml ToolbarVSplit.qml
 resources.prefix = /$${TARGET}
 
 RESOURCES += resources qtquickcontrols2.conf \
@@ -25,6 +25,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     README.md \
     SToolButton.qml \
+    ToolbarVSplit.qml \
     qtquickcontrols2.conf
 
 

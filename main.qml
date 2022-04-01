@@ -8,7 +8,7 @@ Window {
     minimumHeight: 720
     visible: true
     title: qsTr("Hello World")
-    color:"lightgray"
+    color:"#e1e1e1"
 
     ToolBar{
         id:toolbar
@@ -298,7 +298,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("show/hide player\n tools\n显示/关闭播放工具",video_player)
-                    onClicked: console.log("camera open")
+                    onClicked: playerbar.visible=!playerbar.visible
                 }
 
                 Text{
@@ -531,6 +531,65 @@ Window {
         y:height/2
         onClicked: animation_showToolbar.start()
     }
+
+    Rectangle {
+        id : playerbar
+        width: toolbar.width
+        height: 120
+        color:Qt.rgba(1,1,1,0.25)
+        anchors.left: toolbar.left
+        radius:8
+        y:parent.height-height-35
+
+            Column{
+                anchors.fill: parent
+                padding:16
+                spacing:8
+
+                Text {
+                    id: fileName
+                    text: qsTr("C:/Users/tomas wu/videos/test.avi")
+                }
+
+                TriSlider{
+                    id: slider
+                    width:parent.width-2*parent.padding
+                    height: 30
+                }
+
+                Row{
+                    //播放按钮组
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing:80
+                    SToolButton{
+                        id:backward
+                        imgSrc: "qrc:/imgs/ico/backward.png"
+                        btnName: ""
+                        width: 24
+                        height: 24
+                        onClicked: console.log(slider.children[0].width)
+                    }
+                    SToolButton{
+                        id:play
+                        imgSrc: "qrc:/imgs/ico/play.png"
+                        btnName: ""
+                        width: 24
+                        height: 24
+                        onClicked: console.log(slider.children[0].width)
+                    }
+                    SToolButton{
+                        id:forward
+                        imgSrc: "qrc:/imgs/ico/forward.png"
+                        btnName: ""
+                        width: 24
+                        height: 24
+                        onClicked: console.log(slider.children[0].width)
+                    }
+                }// end buttons row
+
+            } //end column
+
+    } // end player bar
 
     function tbntip(s,item){
         if (item.hovered){

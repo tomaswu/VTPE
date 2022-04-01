@@ -48,5 +48,9 @@
         <file>ico/table.png</file>
         <file>ico/info.png</file>
         <file>ico/device.png</file>
+        <file>ico/backward.png</file>
+        <file>ico/forward.png</file>
+        <file>ico/pause.png</file>
+        <file>ico/play.png</file>
     </qresource>
 </RCC>

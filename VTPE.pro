@@ -5,7 +5,7 @@ QT += quick \
 SOURCES += \
         main.cpp
 
-resources.files = main.qml SToolButton.qml ToolbarVSplit.qml
+resources.files = main.qml SToolButton.qml ToolbarVSplit.qml TriSlider.qml
 resources.prefix = /$${TARGET}
 
 RESOURCES += resources qtquickcontrols2.conf \
@@ -26,6 +26,7 @@ DISTFILES += \
     README.md \
     SToolButton.qml \
     ToolbarVSplit.qml \
+    TriSlider.qml \
     qtquickcontrols2.conf
 
 

@@ -1,4 +1,7 @@
+//另一个
+
 import QtQuick
+
 
 Rectangle{
     property string imgSrc: ""
@@ -60,12 +63,12 @@ Rectangle{
             background.color = Qt.rgba(0.5,0.5,0.5,0.6)
         }
         onReleased: {
-
             if (mouseX>0 && mouseX<parent.width && mouseY>0 && mouseY<parent.height){
                 if(!parent.checkable || parent.checked){
                     background.color = Qt.rgba(0.75,0.75,0.75,0.6)
                 }
             }
+            timer.stop()
         }
         onClicked: {
             if (mouseX>0 && mouseX<parent.width && mouseY>0 && mouseY<parent.height)
@@ -78,9 +81,16 @@ Rectangle{
                     parent.checked=!parent.checked
                 }
             } // end if mouse
-
+        onPressAndHold: timer.start()
     }//end mousearea
 
+    Timer{
+        id:timer
+        interval: 125
+        onTriggered: parent.clicked()
+        triggeredOnStart: true
+        repeat: true
+    }
 }
 
 

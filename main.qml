@@ -294,6 +294,7 @@ Window {
                     Layout.column: 0
                     Layout.alignment: Qt.AlignLeft
                     imgSrc: "qrc:/imgs/ico/film.png"
+                    checkable: true
                     btnName: ""
                     width: 24
                     height: 24
@@ -540,6 +541,7 @@ Window {
         anchors.left: toolbar.left
         radius:8
         y:parent.height-height-35
+        visible: video_player.checked
 
             Column{
                 anchors.fill: parent
@@ -547,7 +549,8 @@ Window {
                 spacing:8
 
                 Text {
-                    id: fileName
+                    id: video_fileName
+                    width: 20
                     text: qsTr("C:/Users/tomas wu/videos/test.avi")
                 }
 
@@ -560,14 +563,16 @@ Window {
                 Row{
                     //播放按钮组
                     anchors.horizontalCenter: parent.horizontalCenter
-                    spacing:80
-                    SToolButton{
+                    spacing:20
+
+                    SToolButton2{
                         id:backward
                         imgSrc: "qrc:/imgs/ico/backward.png"
                         btnName: ""
                         width: 24
                         height: 24
-                        onClicked: console.log(slider.children[0].width)
+                        onClicked: if (slider.value1>slider.value0)slider.value1-=1
+
                     }
                     SToolButton{
                         id:play
@@ -575,15 +580,14 @@ Window {
                         btnName: ""
                         width: 24
                         height: 24
-                        onClicked: console.log(slider.children[0].width)
                     }
-                    SToolButton{
+                    SToolButton2{
                         id:forward
                         imgSrc: "qrc:/imgs/ico/forward.png"
                         btnName: ""
                         width: 24
                         height: 24
-                        onClicked: console.log(slider.children[0].width)
+                        onClicked: if (slider.value1<slider.value2)slider.value1+=1
                     }
                 }// end buttons row
 

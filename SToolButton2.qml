@@ -19,14 +19,13 @@ Rectangle{
     color:Qt.rgba(1,1,1,0)
     border.color:Qt.rgba(0,0,0,0.2)
     border.width: 0
-    Image{
+    MaskImage{
         width:parent.btnName ? parent.width*0.67:parent.width
         height: width
         source: parent.imgSrc
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         fillMode: Image.PreserveAspectFit
-        mipmap:true
     }
     Text {
         id: text

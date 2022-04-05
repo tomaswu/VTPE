@@ -8,6 +8,7 @@ Rectangle{
     property bool checked: false
     property bool checkable: false
     property bool longPressedRepeat: false
+    property string icoColor: global_color.primary
     signal clicked
     id:background
     width: 48
@@ -16,14 +17,27 @@ Rectangle{
     color:Qt.rgba(1,1,1,0)
     border.color:Qt.rgba(0,0,0,0.2)
     border.width: 0
-    Image{
+    onCheckedChanged: {
+        if(background.checkable){
+            if (!checked){
+                background.color=Qt.rgba(1,1,1,0)
+                background.border.width=0
+            }
+            else
+            {
+                background.color=Qt.rgba(0.75,0.75,0.75,0.6)
+                background.border.width=1
+            }
+        }
+    }
+    MaskImage{
         width:parent.btnName ? parent.width*0.67:parent.width
         height: width
         source: parent.imgSrc
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         fillMode: Image.PreserveAspectFit
-        mipmap:true
+        color:parent.icoColor
     }
     Text {
         id: text
@@ -60,7 +74,6 @@ Rectangle{
             background.color = Qt.rgba(0.5,0.5,0.5,0.6)
         }
         onReleased: {
-
             if (mouseX>0 && mouseX<parent.width && mouseY>0 && mouseY<parent.height){
                 if(!parent.checkable || parent.checked){
                     background.color = Qt.rgba(0.75,0.75,0.75,0.6)

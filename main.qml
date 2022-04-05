@@ -1,13 +1,15 @@
 import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects
+import Qt.labs.settings 1.1
 
 Window {
     id:root
     minimumWidth: 1024
     minimumHeight: 720
     visible: true
-    title: qsTr("Hello World")
+    title: qsTr("摄影物理实验工具")
     color:"#e1e1e1"
 
     ToolBar{
@@ -44,7 +46,9 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("undo\n撤销",undo)
-                    onClicked: console.log("undo")
+                    onClicked: {
+                        console.log("undo")
+                    }
                 }
                 SToolButton{
                     id:redo
@@ -76,7 +80,7 @@ Window {
 
                 SToolButton{
                     id:camera_open
-                    imgSrc: "qrc:/imgs/ico/camera.png"
+                    imgSrc: "qrc:/imgs/ico/camera2.png"
                     btnName: ""
                     width: 24
                     height: 24
@@ -124,7 +128,7 @@ Window {
                     onClicked: console.log("camera setting")
                 }
 
-                CheckBox{
+                TCheckBox{
                     id:camera_cali
                     text: "畸变校正"
                     Layout.columnSpan: 3
@@ -158,7 +162,7 @@ Window {
                 columns: 8
                 rows: 4
 
-                CheckBox{
+                TCheckBox{
                     id: measurement_mark
                     implicitWidth: 64
                     Layout.alignment: Qt.AlignLeft
@@ -186,7 +190,8 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("calibrate the scale\n定标比例尺",measurement_cali)
-                    onClicked: console.log("camera open")
+                    checkable: true
+                    onCheckedChanged: mscale.caliFlag = measurement_cali.checked
                 }
 
                 SToolButton{
@@ -245,6 +250,7 @@ Window {
                 Text{
                     id:label_rotation
                     text: "旋转:"
+                    color:global_color.primary
                     Layout.row: 2
                 }
 
@@ -304,6 +310,7 @@ Window {
 
                 Text{
                     text: "分析方法:"
+                    color:global_color.primary
                     Layout.row: 0
                     Layout.column: 1
                     Layout.columnSpan: 2
@@ -438,7 +445,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("about\n关于",info)
-                    onClicked: console.log("about")
+                    onClicked: dia.showInfo("名称:摄影物理实验工具\n版本:1.0\n\联系方式:tomasiwt@gmail.com")
                 }
                 Text{
                     id: label_help
@@ -522,6 +529,7 @@ Window {
     }// end toolbar
 
     SToolButton{
+        //隐藏工具栏后的呼出热键
         id:toolbar_show
         imgSrc: "qrc:/imgs/ico/down.png"
         btnName: ""
@@ -530,6 +538,8 @@ Window {
         radius: 4
         x:toolbar_hide.x+4
         y:height/2
+        z:101
+        visible: false
         onClicked: animation_showToolbar.start()
     }
 
@@ -542,6 +552,7 @@ Window {
         radius:8
         y:parent.height-height-35
         visible: video_player.checked
+        z:1
 
             Column{
                 anchors.fill: parent
@@ -608,5 +619,117 @@ Window {
         }
 
     }//end function
+
+    Dialog{
+        // 用来显示一些信息,比如版本信息等
+        id: dia
+        anchors.centerIn: parent
+        width: 300
+        height: 120
+        background: Rectangle{
+            anchors.fill: parent
+            radius:8
+            color:"#ffffff"
+        }
+        RowLayout{
+            anchors.centerIn: parent
+            spacing: 16
+            width:parent.width-10
+            height: parent.height-10
+            MaskImage {
+                id: dia_img
+                width: 50
+                height: 50
+                source: "qrc:/imgs/ico/info.png"
+                Layout.alignment: Qt.AlignCenter
+                Layout.maximumWidth: width
+                Layout.maximumHeight: height
+            }
+
+
+            Text{
+                id:dia_text
+                wrapMode: Text.WordWrap
+                Layout.alignment: Qt.AlignVCenter
+            }
+        }
+        function showInfo(s){
+            dia_text.text=s
+            dia.height = dia_text.contentHeight<=120 ? 130 : dia_text.contentHeight+10
+            dia.open()
+            console.log(dia_img.Primary)
+        }
+
+    }// end dialog
+
+    SwipeView{
+        id:centerWidget
+        implicitWidth: parent.width
+        height: parent.height-toolbar.height-toolbar.y
+        anchors.top: toolbar.bottom
+        z:0
+
+        Page{
+            id:camera_widget
+            title: "camera"
+            Rectangle{
+                id:camera_widget_bg
+                anchors.fill:parent
+                color: Qt.rgba(0,0.6,0.6,0.2)
+            }
+
+        }// page camera widget
+
+        Page{
+            id:video_widget
+            title: "video"
+
+            Rectangle{
+                id:video_widget_bg
+                anchors.fill:parent
+                color: Qt.rgba(0.6,0.6,0,0.2)
+            }
+
+            Image{
+
+            }
+
+        }// page video widget
+
+
+
+    }// end swipe
+
+    // Measurement item
+    MeasureScale{
+        id : mscale
+        x:toolbar.x
+        y:centerWidget.y
+        z:100
+        width: centerWidget.width
+        height: centerWidget.height
+        visible: measurement_mark.checked
+        markerType: measuerment_scale_type.currentIndex
+        caliFlag: false
+        onCaliFlagChanged: measurement_cali.checked=caliFlag
+    }//end MeasureScale
+
+    // -------------------- setting ------------------------
+    Settings{
+        id:global_color
+        fileName: "colorSetting.ini"
+        category: "global_color"
+        property string primary: "#33a3dc"
+        property string ancent: "lightgray"
+    }
+
+    function backDefaultGlobalSettings(){
+        global_color.primary = "#505050"
+        global_color.ancent = "lightgray"
+    }
+
+    // ----------------------end setting ---------------------
+
+
 
 }// end window

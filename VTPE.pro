@@ -1,11 +1,21 @@
 QT += quick \
       quickcontrols2 \
-      multimedia
+      multimedia\
+
 
 SOURCES += \
         main.cpp
 
-resources.files = main.qml SToolButton.qml ToolbarVSplit.qml TriSlider.qml SToolButton2.qml
+resources.files = main.qml \
+                  SToolButton.qml \
+                  ToolbarVSplit.qml \
+                  TriSlider.qml \
+                  SToolButton2.qml \
+                  MaskImage.qml \
+                  TCheckBox.qml \
+                  MeasureScale.qml
+
+
 resources.prefix = /$${TARGET}
 
 RESOURCES += resources qtquickcontrols2.conf \
@@ -23,11 +33,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    MeasureScale.qml \
     README.md \
     SToolButton.qml \
     SToolButton2.qml \
+    TCheckBox.qml \
     ToolbarVSplit.qml \
     TriSlider.qml \
+    maskImage.qml \
     qtquickcontrols2.conf
 
 
@@ -50,6 +63,7 @@ win32{
 
 }
 macx{
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 12.0
     INCLUDEPATH += /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4
     LIBS += -L/opt/homebrew/Cellar/opencv/4.5.5/lib -lopencv_core -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio
 

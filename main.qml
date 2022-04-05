@@ -421,13 +421,14 @@ Window {
                     Layout.columnSpan: 1
                     Layout.alignment: Qt.AlignHCenter|Qt.AlignBottom
                 }
-            }
+            }// end devices
 
             ToolbarVSplit{}
 
             GridLayout{
                 height: parent.height
-                columns: 1
+                columns: 2
+                columnSpacing: 12
                 rows: 3
                 SToolButton{
                     id:help
@@ -447,12 +448,33 @@ Window {
                     onHoveredChanged: tbntip("about\n关于",info)
                     onClicked: dia.showInfo("名称:摄影物理实验工具\n版本:1.0\n\联系方式:tomasiwt@gmail.com")
                 }
+
+                SToolButton{
+                    id:experiments_mannul
+                    imgSrc: "qrc:/imgs/ico/book.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("experiment mannul\n实验手册",experiments_mannul)
+                }
+
+                SToolButton{
+                    id:feedback
+                    imgSrc: "qrc:/imgs/ico/feedback.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("feedback\n反馈",feedback)
+                    onClicked: feedback_dialog.visible=true
+                }
+
+
                 Text{
                     id: label_help
                     text: "帮助"
                     Layout.row: 2
                     Layout.column: 0
-                    Layout.columnSpan: 1
+                    Layout.columnSpan: 2
                     Layout.alignment: Qt.AlignHCenter|Qt.AlignBottom
                 }
             }// end help
@@ -464,7 +486,7 @@ Window {
                 delay: 400
                 text:"hello name"
                 background: Rectangle{
-                    width: 120
+                    width: 124
                     height: 60
                     border.width: 1
                     border.color: Qt.rgba(0,0,0.8,0.25)
@@ -472,6 +494,7 @@ Window {
             }
 
         } //end row
+
     ParallelAnimation{
         id: animation_showToolbar
         NumberAnimation{
@@ -493,6 +516,7 @@ Window {
         onStarted: toolbar_show.visible=false
 
     }
+
     ParallelAnimation{
         id: animation_closeToolbar
         NumberAnimation{
@@ -543,6 +567,7 @@ Window {
         onClicked: animation_showToolbar.start()
     }
 
+    // player bar
     Rectangle {
         id : playerbar
         width: toolbar.width
@@ -552,7 +577,7 @@ Window {
         radius:8
         y:parent.height-height-35
         visible: video_player.checked
-        z:1
+        z:3
 
             Column{
                 anchors.fill: parent
@@ -657,7 +682,6 @@ Window {
             dia_text.text=s
             dia.height = dia_text.contentHeight<=120 ? 130 : dia_text.contentHeight+10
             dia.open()
-            console.log(dia_img.Primary)
         }
 
     }// end dialog
@@ -705,7 +729,7 @@ Window {
         id : mscale
         x:toolbar.x
         y:centerWidget.y
-        z:100
+        z:2
         width: centerWidget.width
         height: centerWidget.height
         visible: measurement_mark.checked
@@ -713,6 +737,15 @@ Window {
         caliFlag: false
         onCaliFlagChanged: measurement_cali.checked=caliFlag
     }//end MeasureScale
+
+    //email feedback Dialog
+    EmailFeedback{
+        id:feedback_dialog
+        anchors.centerIn: parent
+        z:101
+        color:"white"
+        visible: false
+    }
 
     // -------------------- setting ------------------------
     Settings{

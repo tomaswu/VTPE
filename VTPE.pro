@@ -13,7 +13,8 @@ resources.files = main.qml \
                   SToolButton2.qml \
                   MaskImage.qml \
                   TCheckBox.qml \
-                  MeasureScale.qml
+                  MeasureScale.qml \
+                  EmailFeedback.qml
 
 
 resources.prefix = /$${TARGET}
@@ -33,6 +34,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    EmailFeedback.qml \
     MeasureScale.qml \
     README.md \
     SToolButton.qml \

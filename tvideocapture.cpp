@@ -30,7 +30,7 @@ bool TVideoCapture::init(int index){
 }
 
 void TVideoCapture::uninit(){
-    cap->release();
+    running_flag=false;
 }
 
 void TVideoCapture::capture(){
@@ -40,11 +40,12 @@ void TVideoCapture::capture(){
            bool ret = cap->read(mat);
            if (ret){
               auto tmp=Mat2QImage(mat);
-
               emit imgReady(tmp);
            }
        }
-       qDebug()<<"jit frame stoped";
+       cap->release();
+       running_flag=true;
+       emit stopped();
     }
 
 }
@@ -59,6 +60,10 @@ void TVideoCapture::startRecord(QString path){
 
 void TVideoCapture::stopRecord(){
 
+}
+
+bool TVideoCapture::isOpened(){
+    return cap->isOpened();
 }
 
 

@@ -44,14 +44,17 @@ public:
     void getCameraList();
     Q_INVOKABLE bool open(int index);
     Q_INVOKABLE void startCapture(){emit cap->startCapture();};
-    int release();
+    Q_INVOKABLE bool isOpened();
+    Q_INVOKABLE void release();
     void printCameralist();
     void refreshImage(QImage img);
+    void alreadyStopped(){emit stopped();}
 
 signals:
     void cameraListRefreshed();
     void cameraListChanged();
     void imageRefreshed();
+    void stopped();
 
 };
 

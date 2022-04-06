@@ -50,6 +50,7 @@ Window {
                         console.log("undo")
                     }
                 }
+
                 SToolButton{
                     id:redo
                     imgSrc: "qrc:/imgs/ico/redo.png"
@@ -75,6 +76,7 @@ Window {
                 ComboBox{
                     id:camera_list
                     Layout.columnSpan: 3
+                    model:mcap.cameraList
                     Connections{
                         target: mcap
                         function onCameraListChanged(){
@@ -93,14 +95,26 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("open/close camera\n打开/关闭相机",camera_open)
                     onClicked: {
-                        var ret = mcap.open(camera_list.currentIndex)
-                        if (!ret){
-                            dia.showInfo("未能打开该相机！")
+                        if(!mcap.isOpened()){
+                            var ret = mcap.open(camera_list.currentIndex)
+                            if (!ret){
+                                dia.showInfo("未能打开该相机！")
+                            }
+                            else{
+                                mcap.startCapture()
+                            }
                         }
                         else{
-                            mcap.startCapture()
+                            mcap.release()
                         }
-                    }
+
+                    }//end onclick
+                    Connections{
+                        target:mcap
+                        function onStopped(){
+                            camera_img.source=""
+                        }
+                    }// end Connections
                 }
 
                 SToolButton{
@@ -180,6 +194,7 @@ Window {
                 TCheckBox{
                     id: measurement_mark
                     implicitWidth: 64
+                    checked:false
                     Layout.alignment: Qt.AlignLeft
                     text: "标尺"
                     Layout.columnSpan:2

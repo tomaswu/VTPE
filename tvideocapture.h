@@ -18,6 +18,7 @@ public:
     cv::VideoCapture *cap;
     cv::Mat mat;
     bool init(int index);
+    bool isOpened();
     void capture();
     void uninit();
     void stopCapture();
@@ -28,7 +29,7 @@ public:
     cv::Mat QImage2Mat(QImage const &image);
 
 signals:
-    void stoped();
+    void stopped();
     void imgReady(QImage img);
     void startCapture();
 };

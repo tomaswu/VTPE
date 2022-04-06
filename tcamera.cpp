@@ -35,6 +35,8 @@ TCamera::TCamera(QObject *parent)
     timer->setInterval(3000);
     connect(timer,&QTimer::timeout,this,&TCamera::getCameraList);
     connect(this->cap,&TVideoCapture::imgReady,this,&TCamera::refreshImage);
+    connect(this->cap,&TVideoCapture::stopped,this,&TCamera::alreadyStopped);
+    getCameraList();
     timer->start();
 
 }
@@ -65,6 +67,13 @@ void TCamera::getCameraList(){
     }
 }
 
+bool TCamera::isOpened(){
+    return cap->isOpened();
+}
+
+void TCamera::release(){
+    cap->uninit();
+}
 
 void TCamera::printCameralist(){
     for (auto &i : camera_list){

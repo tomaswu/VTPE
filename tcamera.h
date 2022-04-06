@@ -21,6 +21,7 @@ public:
     QImage requestImage(const QString &id,QSize *size,const QSize &requestexSize);
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
     void setImage(QImage img){this->img=img;};
+
 };
 
 class TCamera : public QObject
@@ -42,12 +43,15 @@ public:
     // method
     void getCameraList();
     Q_INVOKABLE bool open(int index);
+    Q_INVOKABLE void startCapture(){emit cap->startCapture();};
     int release();
     void printCameralist();
+    void refreshImage(QImage img);
 
 signals:
     void cameraListRefreshed();
     void cameraListChanged();
+    void imageRefreshed();
 
 };
 

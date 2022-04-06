@@ -34,7 +34,7 @@ TCamera::TCamera(QObject *parent)
     timer = new QTimer;
     timer->setInterval(3000);
     connect(timer,&QTimer::timeout,this,&TCamera::getCameraList);
-    connect(this->cap,&TVideoCapture::imgReady,ipdr,&imgProvider::setImage);
+    connect(this->cap,&TVideoCapture::imgReady,this,&TCamera::refreshImage);
     timer->start();
 
 }
@@ -45,6 +45,10 @@ TCamera::~TCamera(){
     thread.terminate();
 }
 
+void TCamera::refreshImage(QImage img){
+    this->ipdr->setImage(img);
+    this->imageRefreshed();
+}
 
 void TCamera::getCameraList(){
     QMediaDevices mds;

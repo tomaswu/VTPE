@@ -30,6 +30,7 @@ public:
 signals:
     void stoped();
     void imgReady(QImage img);
+    void startCapture();
 };
 
 #endif // TVIDEOCAPTURE_H

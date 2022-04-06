@@ -5,11 +5,13 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
+#include <QSysInfo>
 
 TVideoCapture::TVideoCapture(QObject *parent)
     : QObject{parent}
 {
     cap = new cv::VideoCapture;
+    connect(this,&TVideoCapture::startCapture,this,&TVideoCapture::capture);
 }
 
 TVideoCapture::~TVideoCapture(){
@@ -17,7 +19,13 @@ TVideoCapture::~TVideoCapture(){
 }
 
 bool TVideoCapture::init(int index){
-    bool ret = cap->open(index,cv::CAP_DSHOW);
+    bool ret=false;
+    if ((QSysInfo::productType()=="windows")){
+        ret = cap->open(index,cv::CAP_DSHOW);
+    }
+    else{
+        ret = cap->open(index);
+    }
     return ret;
 }
 
@@ -26,13 +34,13 @@ void TVideoCapture::uninit(){
 }
 
 void TVideoCapture::capture(){
-
     if (cap->isOpened()){
        while (running_flag)
        {
            bool ret = cap->read(mat);
            if (ret){
               auto tmp=Mat2QImage(mat);
+
               emit imgReady(tmp);
            }
        }

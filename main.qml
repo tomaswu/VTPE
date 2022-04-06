@@ -93,9 +93,12 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("open/close camera\n打开/关闭相机",camera_open)
                     onClicked: {
-                        var ret = tcamera.open(0)
+                        var ret = mcap.open(camera_list.currentIndex)
                         if (!ret){
                             dia.showInfo("未能打开该相机！")
+                        }
+                        else{
+                            mcap.startCapture()
                         }
                     }
                 }
@@ -712,6 +715,20 @@ Window {
                 id:camera_widget_bg
                 anchors.fill:parent
                 color: Qt.rgba(0,0.6,0.6,0.2)
+                Image {
+                    id:camera_img
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    source:""
+                    cache: false
+                    Connections{
+                        target: mcap
+                        function onImageRefreshed(){
+                            camera_img.source=""
+                            camera_img.source="image://cameraImage"
+                        }
+                    }//end Connections
+                } // end image
             }
 
         }// page camera widget

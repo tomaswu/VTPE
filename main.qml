@@ -75,6 +75,13 @@ Window {
                 ComboBox{
                     id:camera_list
                     Layout.columnSpan: 3
+                    Connections{
+                        target: mcap
+                        function onCameraListChanged(){
+                            camera_list.model=mcap.cameraList
+                        }
+                    }
+
 
                 }
 
@@ -85,7 +92,12 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("open/close camera\n打开/关闭相机",camera_open)
-                    onClicked: console.log("camera open")
+                    onClicked: {
+                        var ret = tcamera.open(0)
+                        if (!ret){
+                            dia.showInfo("未能打开该相机！")
+                        }
+                    }
                 }
 
                 SToolButton{
@@ -752,7 +764,7 @@ Window {
         id:global_color
         fileName: "colorSetting.ini"
         category: "global_color"
-        property string primary: "#33a3dc"
+        property string primary: "black"//"#33a3dc"
         property string ancent: "lightgray"
     }
 
@@ -762,7 +774,6 @@ Window {
     }
 
     // ----------------------end setting ---------------------
-
 
 
 }// end window

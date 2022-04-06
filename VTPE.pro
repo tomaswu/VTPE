@@ -4,7 +4,9 @@ QT += quick \
 
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        tcamera.cpp \
+        tvideocapture.cpp
 
 resources.files = main.qml \
                   SToolButton.qml \
@@ -70,3 +72,7 @@ macx{
     LIBS += -L/opt/homebrew/Cellar/opencv/4.5.5/lib -lopencv_core -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio
 
 }
+
+HEADERS += \
+    tcamera.h \
+    tvideocapture.h

@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 import Qt5Compat.GraphicalEffects
 
 Item {
@@ -11,6 +11,7 @@ Item {
         anchors.fill: parent
         source: parent.source
         fillMode: parent.fillMode
+
     }
 
     ColorOverlay {

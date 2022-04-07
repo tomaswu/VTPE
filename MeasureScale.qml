@@ -124,11 +124,22 @@ Item {
             //下面是定标
             if (caliFlag && x0 >=0 && y0 >= 0){
                 ctx.beginPath()
-                ctx.strokeStyle="#ff1010"
+                ctx.strokeStyle=parent.color
+                var k;
+                if(canvasMouseArea.mouseY-y0==0){
+                    k=0
+                }
+                else{
+                    k=-(canvasMouseArea.mouseX-x0)/(canvasMouseArea.mouseY-y0)
+                }
+                var m = Math.sqrt(100/(1+k*k))
+                ctx.moveTo(x0-m,y0-k*m)
+                ctx.lineTo(x0+m,y0+k*m)
                 ctx.moveTo(x0,y0)
                 ctx.lineTo(canvasMouseArea.mouseX,canvasMouseArea.mouseY)
+                ctx.moveTo(canvasMouseArea.mouseX-m,canvasMouseArea.mouseY-m*k)
+                ctx.lineTo(canvasMouseArea.mouseX+m,canvasMouseArea.mouseY+m*k)
                 ctx.stroke()
-
             }
 
         }// end paint

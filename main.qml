@@ -84,7 +84,6 @@ Window {
                         }
                     }
 
-
                 }
 
                 SToolButton{
@@ -124,7 +123,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("camera settings\n打开相机设置",camera_setting)
-                    onClicked: console.log("camera setting")
+                    onClicked: mcap.openSettings()
                 }
 
                 SToolButton{
@@ -796,7 +795,7 @@ Window {
         id:global_color
         fileName: "colorSetting.ini"
         category: "global_color"
-        property string primary: "black"//"#33a3dc"
+        property string primary: "#555555"//"#33a3dc"
         property string ancent: "lightgray"
     }
 

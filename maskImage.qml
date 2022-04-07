@@ -11,6 +11,7 @@ Item {
         anchors.fill: parent
         source: parent.source
         fillMode: parent.fillMode
+        mipmap:true
 
     }
 

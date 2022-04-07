@@ -21,7 +21,9 @@ TVideoCapture::~TVideoCapture(){
 bool TVideoCapture::init(int index){
     bool ret=false;
     if ((QSysInfo::productType()=="windows")){
-        ret = cap->open(index,cv::CAP_DSHOW);
+        ret = cap->open(index);
+//        cap->set(cv::CAP_PROP_FRAME_WIDTH,1920);
+//        cap->set(cv::CAP_PROP_FRAME_HEIGHT,1080);
     }
     else{
         ret = cap->open(index);
@@ -35,13 +37,24 @@ void TVideoCapture::uninit(){
 
 void TVideoCapture::capture(){
     if (cap->isOpened()){
+       fps_count=0;
+       clock_t t0=clock();
+       clock_t t1;
        while (running_flag)
        {
            bool ret = cap->read(mat);
            if (ret){
               auto tmp=Mat2QImage(mat);
+              fps_count+=1;
               emit imgReady(tmp);
            }
+           if (fps_count==100){
+               t1=clock();
+               qDebug()<<100000/(t1-t0);
+               t0=t1;
+               fps_count=0;
+           }
+
        }
        cap->release();
        running_flag=true;
@@ -64,6 +77,10 @@ void TVideoCapture::stopRecord(){
 
 bool TVideoCapture::isOpened(){
     return cap->isOpened();
+}
+
+void TVideoCapture::openSettings(){
+    cap->set(cv::CAP_PROP_SETTINGS,0);
 }
 
 

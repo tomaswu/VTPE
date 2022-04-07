@@ -4,6 +4,7 @@
 #include <QObject>
 #include <opencv2/highgui.hpp>
 #include <QImage>
+#include <QTimer>
 
 class TVideoCapture : public QObject
 {
@@ -13,6 +14,8 @@ public:
     ~TVideoCapture();
 
     bool running_flag = true;
+    double fps = 0;
+    int fps_count=0;
 
     // method
     cv::VideoCapture *cap;
@@ -25,6 +28,7 @@ public:
     bool photo(QString path);
     void startRecord(QString path);
     void stopRecord();
+    void openSettings();
     QImage Mat2QImage(cv::Mat const &mat);
     cv::Mat QImage2Mat(QImage const &image);
 

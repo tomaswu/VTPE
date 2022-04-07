@@ -36,9 +36,12 @@ public:
     TVideoCapture *cap;
     QMediaDevices *uvc_cap;
     QTimer *timer;
+    QTimer *timer_refresh;
     QStringList camera_list;
     QStringList history_list;
-    Q_PROPERTY(QStringList cameraList MEMBER camera_list);
+    Q_PROPERTY(QStringList cameraList MEMBER camera_list NOTIFY cameraListChanged);
+
+    bool time_to_refresh = true;
 
     // method
     void getCameraList();
@@ -46,16 +49,17 @@ public:
     Q_INVOKABLE void startCapture(){emit cap->startCapture();};
     Q_INVOKABLE bool isOpened();
     Q_INVOKABLE void release();
+    Q_INVOKABLE void openSettings(){cap->openSettings();};
     void printCameralist();
     void refreshImage(QImage img);
     void alreadyStopped(){emit stopped();}
+    void setTimerFresh(){time_to_refresh=true;};
 
 signals:
     void cameraListRefreshed();
     void cameraListChanged();
     void imageRefreshed();
     void stopped();
-
 };
 
 #endif // TCAMERA_H

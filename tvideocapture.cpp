@@ -6,61 +6,66 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include <QSysInfo>
+#include <QCamera>
+#include <QCameraDevice>
+#include <QMediaDevices>
+#include <QMediaCaptureSession>
+#include <QImageCapture>
+#include <QVideoWidget>
+#include <QVideoSink>
+#include <QMediaRecorder>
+#include <QUrl>
+
 
 TVideoCapture::TVideoCapture(QObject *parent)
     : QObject{parent}
 {
-    cap = new cv::VideoCapture;
+    vsk = new QVideoSink;
+    recorder = new QMediaRecorder;
+    timer = new QTimer;
+    timer->setInterval(1);
+    connect(timer,&QTimer::timeout,this,&TVideoCapture::capture);
     connect(this,&TVideoCapture::startCapture,this,&TVideoCapture::capture);
 }
 
 TVideoCapture::~TVideoCapture(){
-    delete cap;
+
 }
 
-bool TVideoCapture::init(int index){
-    bool ret=false;
-    if ((QSysInfo::productType()=="windows")){
-        ret = cap->open(index);
-//        cap->set(cv::CAP_PROP_FRAME_WIDTH,1920);
-//        cap->set(cv::CAP_PROP_FRAME_HEIGHT,1080);
-    }
-    else{
-        ret = cap->open(index);
-    }
-    return ret;
+
+bool TVideoCapture::init(const QCameraDevice &index){
+    camera = new QCamera(index);
+    auto dev = camera->cameraDevice();
+    QMediaCaptureSession *pcs = new QMediaCaptureSession;
+    imgCap = new QImageCapture();
+    imgCap->setParent(camera);
+    pcs->setCamera(camera);
+    pcs->setImageCapture(imgCap);
+    pcs->setVideoSink(vsk);
+    pcs->setRecorder(recorder);
+    camera->start();
+    timer->start();
+    t0 = clock();
+//    recorder->setOutputLocation(QUrl::fromLocalFile("c:/mytets.avi"));
+    qDebug()<<recorder->outputLocation();
+    return camera->isActive();
 }
 
 void TVideoCapture::uninit(){
-    running_flag=false;
+    delete imgCap;
+    delete camera;
 }
 
 void TVideoCapture::capture(){
-    if (cap->isOpened()){
-       fps_count=0;
-       clock_t t0=clock();
-       clock_t t1;
-       while (running_flag)
-       {
-           bool ret = cap->read(mat);
-           if (ret){
-              auto tmp=Mat2QImage(mat);
-              fps_count+=1;
-              emit imgReady(tmp);
-           }
-           if (fps_count==100){
-               t1=clock();
-               qDebug()<<100000/(t1-t0);
-               t0=t1;
-               fps_count=0;
-           }
-
-       }
-       cap->release();
-       running_flag=true;
-       emit stopped();
+    auto vf = vsk->videoFrame();
+    emit this->imgReady(vf.toImage());
+    frame_count+=1;
+    if (frame_count==100){
+        t1=clock();
+//        qDebug()<<10000/(t1-t0),vf.size();
+        t0=t1;
+        frame_count=0;
     }
-
 }
 
 void TVideoCapture::stopCapture(){
@@ -68,19 +73,22 @@ void TVideoCapture::stopCapture(){
 }
 
 void TVideoCapture::startRecord(QString path){
-
+    qDebug()<<"start record";
+    recorder->record();
+    qDebug()<<recorder->recorderState();
 }
 
 void TVideoCapture::stopRecord(){
-
+    qDebug()<<"stop record";
+    recorder->stop();
 }
 
 bool TVideoCapture::isOpened(){
-    return cap->isOpened();
+    return false;
 }
 
 void TVideoCapture::openSettings(){
-    cap->set(cv::CAP_PROP_SETTINGS,0);
+
 }
 
 

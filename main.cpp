@@ -1,11 +1,12 @@
 #include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <tcamera.h>
 #include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 //    qmlRegisterType<TCamera>("TCamera",1,0,"TCamera");
     QQmlApplicationEngine engine;
     TCamera *mcap = new TCamera;

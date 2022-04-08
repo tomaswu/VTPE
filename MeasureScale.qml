@@ -127,7 +127,7 @@ Item {
                 ctx.strokeStyle=parent.color
                 var k;
                 if(canvasMouseArea.mouseY-y0==0){
-                    k=0
+                    k=20000 // 模拟无穷大
                 }
                 else{
                     k=-(canvasMouseArea.mouseX-x0)/(canvasMouseArea.mouseY-y0)
@@ -154,7 +154,7 @@ Item {
             onPositionChanged: cvs.requestPaint()
             onReleased: {
                 if(caliFlag){
-                    cvs.pixLength=Math.sqrt(Math.pow(cvs.x0,2)+Math.pow(cvs.y0,2))
+                    cvs.pixLength=Math.sqrt(Math.pow(cvs.x0-mouseX,2)+Math.pow(cvs.y0-mouseY,2))
                     tinput.text=""
                     apop.open()
                 }//end if

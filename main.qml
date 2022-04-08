@@ -143,7 +143,8 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("strat/stop capture\n开始/停止录像",camera_capture)
-                    onClicked: console.log("camera setting")
+                    onClicked:mcap.record();
+
                 }
 
                 SToolButton{
@@ -153,7 +154,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("set video path\n设置录像保存位置",camera_setVideoName)
-                    onClicked: console.log("camera setting")
+                    onClicked: mcap.stopRecord();
                 }
 
                 TCheckBox{

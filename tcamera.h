@@ -31,6 +31,7 @@ public:
     explicit TCamera(QObject *parent = nullptr);
     ~TCamera();
     // member
+    QList<QCameraDevice> uvc_list;
     imgProvider *ipdr;
     QThread thread;
     TVideoCapture *cap;
@@ -40,7 +41,6 @@ public:
     QStringList camera_list;
     QStringList history_list;
     Q_PROPERTY(QStringList cameraList MEMBER camera_list NOTIFY cameraListChanged);
-
     bool time_to_refresh = true;
 
     // method
@@ -50,6 +50,8 @@ public:
     Q_INVOKABLE bool isOpened();
     Q_INVOKABLE void release();
     Q_INVOKABLE void openSettings(){cap->openSettings();};
+    Q_INVOKABLE void record(){cap->startRecord("test");qDebug()<<"test record";};
+    Q_INVOKABLE void stopRecord(){cap->stopRecord();};
     void printCameralist();
     void refreshImage(QImage img);
     void alreadyStopped(){emit stopped();}

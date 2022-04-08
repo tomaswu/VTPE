@@ -5,6 +5,13 @@
 #include <opencv2/highgui.hpp>
 #include <QImage>
 #include <QTimer>
+#include <QCamera>
+#include <QMediaDevices>
+#include <QImageCapture>
+#include <QVideoWidget>
+#include <QVideoSink>
+#include <QVideoFrame>
+#include <QMediaRecorder>
 
 class TVideoCapture : public QObject
 {
@@ -13,14 +20,20 @@ public:
     explicit TVideoCapture(QObject *parent = nullptr);
     ~TVideoCapture();
 
-    bool running_flag = true;
-    double fps = 0;
-    int fps_count=0;
+    //member
+    QCamera *camera;
+    QImageCapture *imgCap;
+    QVideoSink *vsk;
+    QTimer *timer;
+    QMediaRecorder *recorder;
+    int frame_count=0;
+    clock_t t0;
+    clock_t t1;
+
 
     // method
-    cv::VideoCapture *cap;
-    cv::Mat mat;
-    bool init(int index);
+
+    bool init(const QCameraDevice &index);
     bool isOpened();
     void capture();
     void uninit();

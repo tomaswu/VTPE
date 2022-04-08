@@ -29,8 +29,8 @@ TCamera::TCamera(QObject *parent)
 {
     cap = new TVideoCapture;
     ipdr = new imgProvider;
-    cap->moveToThread(&thread);
-    thread.start();
+//    cap->moveToThread(&thread);
+//    thread.start();
     timer = new QTimer;
     timer->setInterval(3000);
     connect(timer,&QTimer::timeout,this,&TCamera::getCameraList);
@@ -61,9 +61,9 @@ void TCamera::refreshImage(QImage img){
 void TCamera::getCameraList(){
     QMediaDevices mds;
     history_list = camera_list;
-    QList<QCameraDevice> rlist = mds.videoInputs();
+    uvc_list = mds.videoInputs();
     camera_list.clear();
-    for (auto &c: rlist){
+    for (auto &c: uvc_list){
         camera_list.append(c.description());
     };
     emit cameraListRefreshed();
@@ -90,7 +90,7 @@ void TCamera::printCameralist(){
 }
 
 bool TCamera::open(int index){
-    bool ret = cap->init(index);
+    bool ret = cap->init(uvc_list[index]);
     return ret;
 }
 

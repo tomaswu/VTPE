@@ -1,6 +1,7 @@
 QT += quick \
       quickcontrols2 \
-      multimedia\
+      multimedia \
+      multimediawidgets
 
 
 SOURCES += \

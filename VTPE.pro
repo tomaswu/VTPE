@@ -44,6 +44,7 @@ DISTFILES += \
     TCheckBox.qml \
     ToolbarVSplit.qml \
     TriSlider.qml \
+    deviceList.qml \
     maskImage.qml \
     qtquickcontrols2.conf
 

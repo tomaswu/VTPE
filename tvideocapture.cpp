@@ -21,9 +21,9 @@ TVideoCapture::~TVideoCapture(){
 bool TVideoCapture::init(int index){
     bool ret=false;
     if ((QSysInfo::productType()=="windows")){
-        ret = cap->open(index);
-//        cap->set(cv::CAP_PROP_FRAME_WIDTH,1920);
-//        cap->set(cv::CAP_PROP_FRAME_HEIGHT,1080);
+        ret = cap->open(index,cv::CAP_DSHOW);
+        cap->set(cv::CAP_PROP_FRAME_WIDTH,1920);
+        cap->set(cv::CAP_PROP_FRAME_HEIGHT,1080);
     }
     else{
         ret = cap->open(index);

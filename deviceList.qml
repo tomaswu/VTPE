@@ -60,7 +60,7 @@ Rectangle {
             anchors.bottom: parent.bottom
             Button{
                 id:confirm
-                text:"发送"
+                text:"打开"
                 onClicked: {
                     devs.visible=false
                     var s = devlist.model.get(devlist.currentIndex).description

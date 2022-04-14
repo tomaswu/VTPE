@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import Qt5Compat.GraphicalEffects
 import Qt.labs.settings 1.1
 
 Window {
@@ -440,7 +439,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("open device\n打开设备",opendevice)
-                    onClicked: console.log("camera open")
+                    onClicked: devList.visible=true
                 }
                 Text{
                     id: label_device
@@ -681,6 +680,7 @@ Window {
         width: 300
         height: 120
         background: Rectangle{
+            id:dia_bg
             anchors.fill: parent
             radius:8
             color:"#ffffff"
@@ -707,6 +707,7 @@ Window {
                 Layout.alignment: Qt.AlignVCenter
             }
         }
+
         function showInfo(s){
             dia_text.text=s
             dia.height = dia_text.contentHeight<=120 ? 130 : dia_text.contentHeight+10
@@ -789,6 +790,18 @@ Window {
         color:"white"
         visible: false
     }
+
+
+    // Device list pannel
+    DeviceList{
+        id:devList
+        anchors.centerIn: parent
+        radius: 8
+        visible: false
+        width:260
+        height: 360
+    }
+
 
     // -------------------- setting ------------------------
     Settings{

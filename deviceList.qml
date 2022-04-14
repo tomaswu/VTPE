@@ -1,15 +1,17 @@
 import QtQuick
+import QtQuick.Controls
 
 Rectangle {
     id:devs
-    width:360
+    width:320
     height: 480
     color: Qt.rgba(1,1,1,0.8)
+    property int padding: 20
 
     Component {
          id: contactDelegate
          Item {
-             width:devs.width-10
+             width:devs.width-devs.padding*2
              height: 40
              Column {
                  padding:5
@@ -21,11 +23,13 @@ Rectangle {
 
         ListView{
             id:devlist
-            width:devs.width-10
-            height: devs.height
-            x:5
+            width:devs.width-devs.padding*2
+            height: devs.height-devs.padding*2
+            x:devs.padding
+            y:devs.padding
             delegate:contactDelegate
             model: ListModel{
+                id:md
                 ListElement{
                     name:"dev1_name"
                     description:"液体表面张力实验仪"
@@ -48,5 +52,26 @@ Rectangle {
             }
 
         }// end list view
+
+        Row{
+            spacing: 12
+            padding: 8
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            Button{
+                id:confirm
+                text:"发送"
+                onClicked: {
+                    devs.visible=false
+                    var s = devlist.model.get(devlist.currentIndex).description
+                    dia.showInfo(`${s}打开成功!`)
+                }
+            }
+            Button{
+                id:cancel
+                text:"取消"
+                onClicked: devs.visible=false
+            }
+        }
 
 }

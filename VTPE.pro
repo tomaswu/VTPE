@@ -16,7 +16,8 @@ resources.files = main.qml \
                   MaskImage.qml \
                   TCheckBox.qml \
                   MeasureScale.qml \
-                  EmailFeedback.qml
+                  EmailFeedback.qml \
+                  DeviceList.qml
 
 
 resources.prefix = /$${TARGET}

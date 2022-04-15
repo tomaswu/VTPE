@@ -100,12 +100,12 @@ Window {
                             }
                             else{
                                 mcap.startCapture()
+                                mcap.setResolution("1280X720")
                             }
                         }
                         else{
                             mcap.release()
                         }
-
                     }//end onclick
                     Connections{
                         target:mcap

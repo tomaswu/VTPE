@@ -5,6 +5,7 @@
 #include <opencv2/highgui.hpp>
 #include <QImage>
 #include <QTimer>
+#include <QStringList>
 
 class TVideoCapture : public QObject
 {
@@ -16,6 +17,7 @@ public:
     bool running_flag = true;
     double fps = 0;
     int fps_count=0;
+    QStringList supportedResolution;
 
     // method
     cv::VideoCapture *cap;
@@ -31,6 +33,8 @@ public:
     void openSettings();
     QImage Mat2QImage(cv::Mat const &mat);
     cv::Mat QImage2Mat(QImage const &image);
+    void getSupportedResolutions(int index);
+    void setResolution(QString s);
 
 signals:
     void stopped();

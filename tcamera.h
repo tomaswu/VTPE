@@ -50,6 +50,7 @@ public:
     Q_INVOKABLE bool isOpened();
     Q_INVOKABLE void release();
     Q_INVOKABLE void openSettings(){cap->openSettings();};
+    Q_INVOKABLE void setResolution(QString s){cap->setResolution(s);};
     void printCameralist();
     void refreshImage(QImage img);
     void alreadyStopped(){emit stopped();}

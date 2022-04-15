@@ -6,6 +6,11 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include <QSysInfo>
+#include <QMediaDevices>
+#include <QCameraDevice>
+#include <QString>
+#include "qdebug.h"
+#include <QSize>
 
 TVideoCapture::TVideoCapture(QObject *parent)
     : QObject{parent}
@@ -20,10 +25,10 @@ TVideoCapture::~TVideoCapture(){
 
 bool TVideoCapture::init(int index){
     bool ret=false;
+    getSupportedResolutions(index);
+    qDebug()<<this->supportedResolution;
     if ((QSysInfo::productType()=="windows")){
         ret = cap->open(index,cv::CAP_DSHOW);
-        cap->set(cv::CAP_PROP_FRAME_WIDTH,1920);
-        cap->set(cv::CAP_PROP_FRAME_HEIGHT,1080);
     }
     else{
         ret = cap->open(index);
@@ -61,6 +66,31 @@ void TVideoCapture::capture(){
        emit stopped();
     }
 
+}
+
+void TVideoCapture::getSupportedResolutions(int index){
+    QMediaDevices mds;
+    QString s;
+    QList<QCameraDevice> rlist = mds.videoInputs();
+    supportedResolution.clear();
+    auto c = rlist[index];
+    auto resolutions = c.photoResolutions();
+    for (auto &c : resolutions){
+        s="%1X%2";
+        s=s.arg(c.width()).arg(c.height());
+        if (!supportedResolution.contains(s)){
+            qDebug()<<s;
+            supportedResolution.append(s);
+        }
+    }
+}
+
+void TVideoCapture::setResolution(QString s){
+    auto r = s.split("X");
+    int width = r[0].toInt();
+    int height = r[1].toInt();
+    cap->set(cv::CAP_PROP_FRAME_WIDTH,width);
+    cap->set(cv::CAP_PROP_FRAME_HEIGHT,height);
 }
 
 void TVideoCapture::stopCapture(){

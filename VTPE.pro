@@ -37,6 +37,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    ColorSelector.qml \
     EmailFeedback.qml \
     MeasureScale.qml \
     README.md \

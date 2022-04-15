@@ -7,6 +7,17 @@ Rectangle {
     height: 480
     color: Qt.rgba(1,1,1,0.8)
     property int padding: 20
+    Row{
+        id:port_row
+        spacing: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        x:devs.padding
+        y:devs.padding/2
+        Text{text:"端口:";font.pixelSize: 12;anchors.verticalCenter: parent.verticalCenter}
+        ComboBox{
+            id:port_index
+        }
+    }// end port row
 
     Component {
          id: contactDelegate
@@ -15,8 +26,8 @@ Rectangle {
              height: 40
              Column {
                  padding:5
-                 Text { text: '<b>设备:</b> ' + description;color:"#101010" }
-                 Text { text: '<b>型号:</b> ' + systemType;color:"#202020" }
+                 Text { text: description ;color:"#101010";font.pixelSize: 14 }
+                 Text { text: systemType ;color:"#202020";font.pixelSize: 10 }
              }
          }
      }//end Component
@@ -26,7 +37,7 @@ Rectangle {
             width:devs.width-devs.padding*2
             height: devs.height-devs.padding*2
             x:devs.padding
-            y:devs.padding
+            y:devs.padding+port_row.height
             delegate:contactDelegate
             model: ListModel{
                 id:md

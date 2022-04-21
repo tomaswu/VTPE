@@ -751,6 +751,7 @@ Window {
                 id:pmc0100_chart
                 width:centerWidget.width
                 height: 300
+                backgroundColor: Qt.rgba(1,1,1,0.8)
                 anchors.bottom: parent.bottom
                 antialiasing: false
                 SplineSeries {
@@ -761,12 +762,12 @@ Window {
                     axisX: ValuesAxis{
                         id:pmc0100_chart_x
                         min:0
-                        max:200
+                        max:5000
                     }
                     axisY: ValuesAxis{
                         id:pmc0100_chart_y
                         min:0
-                        max:200
+                        max:1000
                     }
                     XYPoint { x: 0; y: 0.0 }
                 } // end data
@@ -776,12 +777,15 @@ Window {
                     function onNewValueReady(value){
 //                        console.log(value)
                         pmc0100_data.mycount+=1
-                        if (pmc0100_data.count>200){
-                            pmc0100_data.removePoints(0,1)
-                            pmc0100_chart_x.min+=1
-                            pmc0100_chart_x.max+=1
+                        var dc = 20
+                        if(pmc0100_data.mycount%dc==0){
+                            if (pmc0100_data.count>(pmc0100_chart_x.max-pmc0100_chart_x.min)/dc){
+                                pmc0100_data.removePoints(0,1)
+                                pmc0100_chart_x.min+=dc
+                                pmc0100_chart_x.max+=dc
+                            }
+                            pmc0100_data.append(pmc0100_data.mycount,value)
                         }
-                        pmc0100_data.append(pmc0100_data.mycount,value)
                     }
                 }
 

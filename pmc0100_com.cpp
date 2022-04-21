@@ -10,6 +10,7 @@
 PMC0100_COM::PMC0100_COM(QObject *parent)
     : QObject{parent}
 {
+    th = new QThread;
     com = new QSerialPort;
     com->setBaudRate(QSerialPort::Baud115200);
     th = new QThread;

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
+import QtCharts 2.15
 
 Window {
     id:root
@@ -744,6 +745,46 @@ Window {
                         }
                     }//end Connections
                 } // end image
+            } // end rect
+
+            ChartView {
+                id:pmc0100_chart
+                width:centerWidget.width
+                height: 300
+                anchors.bottom: parent.bottom
+                antialiasing: false
+                SplineSeries {
+                    id : pmc0100_data
+                    property int mycount: 0
+                    useOpenGL: true
+                    name: "拉力大小（mV）"
+                    axisX: ValuesAxis{
+                        id:pmc0100_chart_x
+                        min:0
+                        max:200
+                    }
+                    axisY: ValuesAxis{
+                        id:pmc0100_chart_y
+                        min:0
+                        max:200
+                    }
+                    XYPoint { x: 0; y: 0.0 }
+                } // end data
+
+                Connections {
+                    target: pmc0100_com
+                    function onNewValueReady(value){
+//                        console.log(value)
+                        pmc0100_data.mycount+=1
+                        if (pmc0100_data.count>200){
+                            pmc0100_data.removePoints(0,1)
+                            pmc0100_chart_x.min+=1
+                            pmc0100_chart_x.max+=1
+                        }
+                        pmc0100_data.append(pmc0100_data.mycount,value)
+                    }
+                }
+
             }
 
         }// page camera widget

@@ -93,21 +93,12 @@ Rectangle {
                     devs.visible=false
                     var s = devlist.model.get(devlist.currentIndex).description
                     pmc0100_com.start(0);
-                    dia.showInfo(`${s}打开成功!`)
                 }
             }
             Button{
                 id:cancel
                 text:"取消"
                 onClicked: devs.visible=false
-            }
-        }
-
-        //这里只是一个测试
-        Connections {
-            target: pmc0100_com
-            function onNewValueReady(value){
-                console.log(value)
             }
         }
 

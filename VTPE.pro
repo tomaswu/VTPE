@@ -1,12 +1,15 @@
 QT += quick \
       quickcontrols2 \
       multimedia\
+      serialport
 
 
 SOURCES += \
         main.cpp \
+        pmc0100_com.cpp \
         tcamera.cpp \
-        tvideocapture.cpp
+        tvideocapture.cpp \
+        pmc0100_com.cpp
 
 resources.files = main.qml \
                   SToolButton.qml \
@@ -77,5 +80,6 @@ macx{
 }
 
 HEADERS += \
+    pmc0100_com.h \
     tcamera.h \
     tvideocapture.h

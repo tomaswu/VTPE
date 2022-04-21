@@ -59,7 +59,24 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                onClicked: devlist.currentIndex=devlist.indexAt(mouseX,mouseY)
+                onClicked: {
+                    devlist.currentIndex=devlist.indexAt(mouseX,mouseY)
+                }
+            }
+            onCurrentIndexChanged: {
+                var m;
+                switch (devlist.currentIndex){
+                    case 0:
+                        m = pmc0100_com.enumDevice()
+                        port_index.model=m
+                        break
+                    case 1:
+                        port_index.model = "" //暂时为空
+                        break
+                    default:
+                        port_index.model = ""
+                        break
+                }
             }
 
         }// end list view
@@ -75,6 +92,7 @@ Rectangle {
                 onClicked: {
                     devs.visible=false
                     var s = devlist.model.get(devlist.currentIndex).description
+                    pmc0100_com.start(0);
                     dia.showInfo(`${s}打开成功!`)
                 }
             }
@@ -82,6 +100,14 @@ Rectangle {
                 id:cancel
                 text:"取消"
                 onClicked: devs.visible=false
+            }
+        }
+
+        //这里只是一个测试
+        Connections {
+            target: pmc0100_com
+            function onNewValueReady(value){
+                console.log(value)
             }
         }
 

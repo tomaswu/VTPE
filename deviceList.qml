@@ -91,8 +91,19 @@ Rectangle {
                 text:"打开"
                 onClicked: {
                     devs.visible=false
-                    var s = devlist.model.get(devlist.currentIndex).description
-                    pmc0100_com.start(0);
+//                    var s = devlist.model.get(devlist.currentIndex).description
+                    var m;
+                    switch (devlist.currentIndex){
+                        case 0:
+                            pmc0100_com.start(0)
+                            pmc0100_chart.visible=true
+                            break
+                        case 1:
+                            dia.showInfo("暂不支持该设备！")
+                            break
+                        default:
+                            break
+                    }// end switch
                 }
             }
             Button{

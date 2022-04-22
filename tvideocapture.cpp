@@ -55,7 +55,7 @@ void TVideoCapture::capture(){
            }
            if (fps_count==100){
                t1=clock();
-               qDebug()<<100000/(t1-t0);
+               qDebug()<<"camera fps:"<<100000/(t1-t0);
                t0=t1;
                fps_count=0;
            }

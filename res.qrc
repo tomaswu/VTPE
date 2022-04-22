@@ -54,5 +54,6 @@
         <file>ico/play.png</file>
         <file>ico/feedback.png</file>
         <file>ico/test.png</file>
+        <file>ico/close.png</file>
     </qresource>
 </RCC>

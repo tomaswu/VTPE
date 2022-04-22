@@ -10,7 +10,6 @@ SOURCES += \
         pmc0100_com.cpp \
         tcamera.cpp \
         tvideocapture.cpp \
-        pmc0100_com.cpp
 
 resources.files = main.qml \
                   SToolButton.qml \

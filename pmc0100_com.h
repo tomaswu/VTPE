@@ -21,6 +21,8 @@ public:
     Q_INVOKABLE bool start(int index);
     Q_INVOKABLE bool stop();
     Q_INVOKABLE QStringList enumDevice();
+    Q_INVOKABLE void pause(){timer->stop();};
+    Q_INVOKABLE void restartFromPause(){timer->start();};
 
 signals:
     void newValueReady(int value);

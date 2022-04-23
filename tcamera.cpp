@@ -50,6 +50,10 @@ TCamera::~TCamera(){
     thread.terminate();
 }
 
+QStringList TCamera::getSupportedResolutions(){
+    return cap->supportedResolution;
+}
+
 void TCamera::refreshImage(QImage img){
     if (time_to_refresh){
         this->ipdr->setImage(img);

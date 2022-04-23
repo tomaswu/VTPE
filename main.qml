@@ -101,7 +101,8 @@ Window {
                             }
                             else{
                                 mcap.startCapture()
-                                mcap.setResolution("1280X720")
+                                var rlist = mcap.getSupportedResolutions()
+                                camera_settings_dialog.refreshResolutions(rlist)
                             }
                         }
                         else{
@@ -123,7 +124,14 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("camera settings\n打开相机设置",camera_setting)
-                    onClicked: mcap.openSettings()
+                    onClicked: {
+                        if(Qt.platform.os==="windows"){
+                            mcap.openSettings()
+                        }
+                        else{
+                            camera_settings_dialog.open()
+                        }
+                    }
                 }
 
                 SToolButton{
@@ -897,6 +905,13 @@ Window {
         width:260
         height: 360
     }
+
+    // camera settings dialog
+    CameraSettingsDialog{
+        id:camera_settings_dialog
+        anchors.centerIn: parent
+    }
+
 
 
     // -------------------- setting ------------------------

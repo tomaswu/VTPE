@@ -26,7 +26,6 @@ TVideoCapture::~TVideoCapture(){
 bool TVideoCapture::init(int index){
     bool ret=false;
     getSupportedResolutions(index);
-    qDebug()<<this->supportedResolution;
     if ((QSysInfo::productType()=="windows")){
         ret = cap->open(index,cv::CAP_DSHOW);
     }
@@ -79,7 +78,6 @@ void TVideoCapture::getSupportedResolutions(int index){
         s="%1X%2";
         s=s.arg(c.width()).arg(c.height());
         if (!supportedResolution.contains(s)){
-            qDebug()<<s;
             supportedResolution.append(s);
         }
     }

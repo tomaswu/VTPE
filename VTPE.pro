@@ -20,7 +20,8 @@ resources.files = main.qml \
                   TCheckBox.qml \
                   MeasureScale.qml \
                   EmailFeedback.qml \
-                  DeviceList.qml
+                  DeviceList.qml\
+                  CameraSettingsDialog.qml
 
 
 resources.prefix = /$${TARGET}
@@ -40,6 +41,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    CameraSettingsDialog.qml \
     ColorSelector.qml \
     EmailFeedback.qml \
     MeasureScale.qml \

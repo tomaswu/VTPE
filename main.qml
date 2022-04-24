@@ -125,10 +125,7 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("camera settings\n打开相机设置",camera_setting)
                     onClicked: {
-                        if(Qt.platform.os==="windows"){
-                            mcap.openSettings()
-                        }
-                        else{
+                        if(mcap.isOpened()){
                             camera_settings_dialog.open()
                         }
                     }
@@ -838,7 +835,7 @@ Window {
             y:20
             imgSrc: "qrc:/imgs/ico/close.png"
             btnName: ""
-            icoColor: "red"
+            icoColor: hovered ? "red": global_color.primary
             visible: parent.visible
             onClicked: {
                 pmc0100_com.stop()
@@ -855,7 +852,6 @@ Window {
             property bool flag: true
             imgSrc: flag ?"qrc:/imgs/ico/pause.png" : "qrc:/imgs/ico/play.png"
             btnName: ""
-            icoColor: "red"
             visible: parent.visible
             onClicked: {
                 if (flag){
@@ -899,6 +895,7 @@ Window {
     // Device list pannel
     DeviceList{
         id:devList
+        z:101
         anchors.centerIn: parent
         radius: 8
         visible: false

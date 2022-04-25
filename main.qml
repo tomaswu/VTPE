@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
-import QtCharts 2.15
+import QtCharts
 
 Window {
     id:root
@@ -725,7 +725,7 @@ Window {
     SwipeView{
         id:centerWidget
         implicitWidth: parent.width
-        height: pmc0100_chart.visible ?  parent.height-toolbar.height-toolbar.y-pmc0100_chart.height : parent.height-toolbar.height-toolbar.y
+        height:parent.height-toolbar.height-toolbar.y
         anchors.top: toolbar.bottom
         z:0
 
@@ -752,6 +752,116 @@ Window {
                 } // end image
             } // end rect
 
+            // pmc0100 chart view for the serial port data
+            ChartView {
+                id:pmc0100_chart
+                width:camera_img.paintedWidth
+                height: 400
+                backgroundColor: Qt.rgba(1,1,1,0)
+                x:(camera_img.width-camera_img.paintedWidth)/2
+                y:(camera_img.height-camera_img.paintedHeight)/2
+                antialiasing: true
+                visible: false
+
+                Text{
+                    id:pmc0100_chart_value_text
+                    x:parent.width-width-80
+                    y:110
+                    text: "当前值:0"
+                    color: "red"
+                }
+
+                SplineSeries {
+                    id : pmc0100_data
+                    color: Qt.rgba(0,1,0,1)
+                    width: 2
+                    property int mycount: 0
+                    useOpenGL: true
+                    name: "拉力大小（mV）"
+                    axisXTop: ValuesAxis{
+                        id:pmc0100_chart_x
+                        gridVisible:false
+                        min:0
+                        max:10000
+                        color:"red"
+                    }
+                    axisY: ValuesAxis{
+                        id:pmc0100_chart_y
+                        gridVisible:false
+                        min:-100
+                        max:1100
+                        minorTickCount: 5
+                        minorGridVisible: false
+                        tickCount:7
+                        color:"red"
+                    }
+                    XYPoint { x: 0; y: 0.0 }
+                } // end data
+
+                Connections {
+                    target: pmc0100_com
+                    function onNewValueReady(value){
+                        pmc0100_data.mycount+=1
+                        var dc = 20
+                        if(pmc0100_data.mycount%dc==0){
+                            if (pmc0100_data.count>(pmc0100_chart_x.max-pmc0100_chart_x.min)/dc/2){
+                                pmc0100_data.removePoints(0,1)
+                                pmc0100_chart_x.min+=dc
+                                pmc0100_chart_x.max+=dc
+                            }
+                            pmc0100_data.append(pmc0100_data.mycount,value)
+                            pmc0100_chart_value_text.text = "当前值:"+value.toString()
+                        }
+                    }
+                }
+
+                SToolButton{
+                    id: btn_close_pmc0100
+                    width:22
+                    height: 22
+                    x:parent.width-width-20
+                    y:20
+                    imgSrc: "qrc:/imgs/ico/close.png"
+                    btnName: ""
+                    icoColor: hovered ? "red": "lightgreen"
+                    visible: parent.visible
+                    onClicked: {
+                        pmc0100_com.stop()
+                        parent.visible=false
+                    }
+                }// end close button
+
+                SToolButton{
+                    id: btn_pause_pmc0100
+                    width:22
+                    height: 22
+                    x: btn_close_pmc0100.x-width-20
+                    y:20
+                    property bool flag: true
+                    imgSrc: flag ?"qrc:/imgs/ico/pause.png" : "qrc:/imgs/ico/play.png"
+                    btnName: ""
+                    icoColor: "lightgreen"
+                    visible: parent.visible
+                    onClicked: {
+                        if (flag){
+                            pmc0100_com.pause()
+                            flag = !flag
+                        }
+                        else{
+                            pmc0100_com.restartFromPause()
+                            flag = !flag
+                        }
+                    }
+                }// end close button
+
+                function clear(){
+                    pmc0100_data.clear()
+                    pmc0100_chart_x.min = 0
+                    pmc0100_chart_x.max = 10000
+                    pmc0100_data.mycount = 0
+                }
+            }// end chart view
+
 
         }// page camera widget
 
@@ -768,105 +878,9 @@ Window {
             Image{
 
             }
-
         }// page video widget
 
-
-
     }// end swipe
-
-    ChartView {
-        id:pmc0100_chart
-        width:centerWidget.width
-        height: 300
-        backgroundColor: Qt.rgba(1,1,1,0.8)
-        anchors.bottom: parent.bottom
-        antialiasing: false
-        visible: false
-
-        Text{
-            id:pmc0100_chart_value_text
-            x:parent.x+parent.width-width-60
-            y:60
-            text: "当前值:0"
-        }
-
-        SplineSeries {
-            id : pmc0100_data
-            property int mycount: 0
-            useOpenGL: true
-            name: "拉力大小（mV）"
-            axisX: ValuesAxis{
-                id:pmc0100_chart_x
-                min:0
-                max:5000
-            }
-            axisY: ValuesAxis{
-                id:pmc0100_chart_y
-                min:0
-                max:3000
-            }
-            XYPoint { x: 0; y: 0.0 }
-        } // end data
-
-        Connections {
-            target: pmc0100_com
-            function onNewValueReady(value){
-//                        console.log(value)
-                pmc0100_data.mycount+=1
-                var dc = 20
-                if(pmc0100_data.mycount%dc==0){
-                    if (pmc0100_data.count>(pmc0100_chart_x.max-pmc0100_chart_x.min)/dc){
-                        pmc0100_data.removePoints(0,1)
-                        pmc0100_chart_x.min+=dc
-                        pmc0100_chart_x.max+=dc
-                    }
-                    pmc0100_data.append(pmc0100_data.mycount,value)
-                    pmc0100_chart_value_text.text = "当前值:"+value.toString()
-                }
-            }
-        }
-
-        SToolButton{
-            id: btn_close_pmc0100
-            width:22
-            height: 22
-            x:parent.x+parent.width-width-20
-            y:20
-            imgSrc: "qrc:/imgs/ico/close.png"
-            btnName: ""
-            icoColor: hovered ? "red": global_color.primary
-            visible: parent.visible
-            onClicked: {
-                pmc0100_com.stop()
-                parent.visible=false
-            }
-        }// end close button
-
-        SToolButton{
-            id: btn_pause_pmc0100
-            width:22
-            height: 22
-            x: btn_close_pmc0100.x-width-20
-            y:20
-            property bool flag: true
-            imgSrc: flag ?"qrc:/imgs/ico/pause.png" : "qrc:/imgs/ico/play.png"
-            btnName: ""
-            visible: parent.visible
-            onClicked: {
-                if (flag){
-                    pmc0100_com.pause()
-                    flag = !flag
-                }
-                else{
-                    pmc0100_com.restartFromPause()
-                    flag = !flag
-                }
-            }
-        }// end close button
-
-
-    }
 
     // Measurement item
     MeasureScale{
@@ -908,7 +922,6 @@ Window {
         id:camera_settings_dialog
         anchors.centerIn: parent
     }
-
 
 
     // -------------------- setting ------------------------

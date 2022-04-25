@@ -22,7 +22,7 @@ public:
     Q_INVOKABLE bool stop();
     Q_INVOKABLE QStringList enumDevice();
     Q_INVOKABLE void pause(){timer->stop();};
-    Q_INVOKABLE void restartFromPause(){timer->start();};
+    Q_INVOKABLE void restartFromPause(){timer->start();com->clear();};
 
 signals:
     void newValueReady(int value);

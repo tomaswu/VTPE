@@ -95,8 +95,15 @@ Rectangle {
                     var m;
                     switch (devlist.currentIndex){
                         case 0:
-                            pmc0100_com.start(0)
-                            pmc0100_chart.visible=true
+                            if (mcap.isOpened()){
+                                pmc0100_chart.clear()
+                                pmc0100_com.start(0)
+                                pmc0100_chart.visible=true
+                            }
+                            else{
+                                dia.showInfo("请先打开相机！")
+                            }
+
                             break
                         case 1:
                             dia.showInfo("暂不支持该设备！")

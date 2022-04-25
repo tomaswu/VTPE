@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
-import QtCharts
+import QtCharts 2.15
+import QtQuick.Dialogs
+
 
 Window {
     id:root
@@ -138,7 +140,12 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("save a photo\n保存一张预览图片",camera_savePhoto)
-                    onClicked: console.log("camera setting")
+                    onClicked: {
+                        if (mcap.isOpened()){
+                            mcap.needPhoto()
+                            fileSave_dialog.open()
+                        }
+                    }
                 }
 
                 SToolButton{
@@ -753,6 +760,7 @@ Window {
             } // end rect
 
             // pmc0100 chart view for the serial port data
+
             ChartView {
                 id:pmc0100_chart
                 width:camera_img.paintedWidth
@@ -880,7 +888,23 @@ Window {
             }
         }// page video widget
 
-    }// end swipe
+    }// end swipe  centerWidget
+
+    // save picture dialog
+    FileDialog{
+        id: fileSave_dialog
+        title: "保存图片"
+        currentFolder: folder_recording.lastSaveFolder
+        fileMode:FileDialog.SaveFile
+        nameFilters: ["png (*.png)"]
+        onAccepted: {
+            folder_recording.lastSaveFolder = currentFolder
+            console.log(mcap.savePhoto(currentFile))
+        }
+        onRejected: { }
+        Component.onCompleted: visible = false
+    }// save fileDialog end
+
 
     // Measurement item
     MeasureScale{
@@ -923,14 +947,20 @@ Window {
         anchors.centerIn: parent
     }
 
-
     // -------------------- setting ------------------------
     Settings{
         id:global_color
-        fileName: "colorSetting.ini"
+        fileName: "Config.ini"
         category: "global_color"
         property string primary: "#555555"//"#33a3dc"
         property string ancent: "lightgray"
+    }
+
+    Settings{
+        id:folder_recording
+        fileName: "Config.ini"
+        category: "folder recording"
+        property string lastSaveFolder: ""
     }
 
     function backDefaultGlobalSettings(){

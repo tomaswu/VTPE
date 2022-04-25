@@ -39,8 +39,9 @@ public:
     QTimer *timer_refresh;
     QStringList camera_list;
     QStringList history_list;
+    double fps = 0;
     Q_PROPERTY(QStringList cameraList MEMBER camera_list NOTIFY cameraListChanged);
-
+    Q_PROPERTY(double fps MEMBER fps NOTIFY fpsChanged)
     bool time_to_refresh = true;
 
     // method
@@ -52,16 +53,20 @@ public:
     Q_INVOKABLE void openSettings(){cap->openSettings();};
     Q_INVOKABLE void setResolution(QString s){cap->setResolution(s);};
     Q_INVOKABLE QStringList getSupportedResolutions();
+    Q_INVOKABLE void needPhoto(){cap->needPhoto=true;};
+    Q_INVOKABLE bool savePhoto(QString path){return cap->photo(path);};
     void printCameralist();
     void refreshImage(QImage img);
     void alreadyStopped(){emit stopped();}
     void setTimerFresh(){time_to_refresh=true;};
+    void refreshFps(double f);
 
 signals:
     void cameraListRefreshed();
     void cameraListChanged();
     void imageRefreshed();
     void stopped();
+    void fpsChanged();
 };
 
 #endif // TCAMERA_H

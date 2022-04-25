@@ -11,6 +11,7 @@
 #include <QString>
 #include "qdebug.h"
 #include <QSize>
+#include <QUrl>
 
 TVideoCapture::TVideoCapture(QObject *parent)
     : QObject{parent}
@@ -48,13 +49,20 @@ void TVideoCapture::capture(){
        {
            bool ret = cap->read(mat);
            if (ret){
+              if (needPhoto){
+                  photo_mat = mat;
+                  needPhoto = false;
+                  photoReady = true;
+              }
               auto tmp=Mat2QImage(mat);
               fps_count+=1;
               emit imgReady(tmp);
            }
            if (fps_count==100){
                t1=clock();
-               qDebug()<<"camera fps:"<<100000/(t1-t0);
+               fps = 100000/(t1-t0);
+               emit newfps(fps);
+//               qDebug()<<"camera fps:"<<fps; //打印一下帧率
                t0=t1;
                fps_count=0;
            }
@@ -109,6 +117,14 @@ bool TVideoCapture::isOpened(){
 
 void TVideoCapture::openSettings(){
     cap->set(cv::CAP_PROP_SETTINGS,0);
+}
+
+bool TVideoCapture::photo(QString path){
+    QImage img = Mat2QImage(photo_mat);
+    QUrl s(path);
+    bool ret = img.save(s.toLocalFile());
+    photoReady=false;
+    return ret;
 }
 
 

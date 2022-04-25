@@ -42,6 +42,7 @@ TCamera::TCamera(QObject *parent)
     timer_refresh->setInterval(40);
     connect(timer_refresh,&QTimer::timeout,this,&TCamera::setTimerFresh);
     timer_refresh->start();
+    connect(cap,&TVideoCapture::newfps,this,&TCamera::refreshFps);
 }
 
 TCamera::~TCamera(){
@@ -96,6 +97,13 @@ void TCamera::printCameralist(){
 bool TCamera::open(int index){
     bool ret = cap->init(index);
     return ret;
+}
+
+void TCamera::refreshFps(double f){
+    if (fps!=f){
+        fps=f;
+        emit fpsChanged();
+    };
 }
 
 

@@ -7,6 +7,7 @@ Rectangle {
     height: 480
     color: Qt.rgba(1,1,1,0.8)
     property int padding: 20
+
     Row{
         id:port_row
         spacing: 16

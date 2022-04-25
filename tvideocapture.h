@@ -15,13 +15,16 @@ public:
     ~TVideoCapture();
 
     bool running_flag = true;
+    bool needPhoto = false;
+    bool photoReady = false;
     double fps = 0;
     int fps_count=0;
+    cv::VideoCapture *cap;
+    cv::Mat mat;
+    cv::Mat photo_mat;
     QStringList supportedResolution;
 
     // method
-    cv::VideoCapture *cap;
-    cv::Mat mat;
     bool init(int index);
     bool isOpened();
     void capture();
@@ -40,6 +43,7 @@ signals:
     void stopped();
     void imgReady(QImage img);
     void startCapture();
+    void newfps(double fps);
 };
 
 #endif // TVIDEOCAPTURE_H

@@ -608,70 +608,6 @@ Window {
         onClicked: animation_showToolbar.start()
     }
 
-    // player bar
-    Rectangle {
-        id : playerbar
-        width: toolbar.width
-        height: 120
-        color:Qt.rgba(1,1,1,0.25)
-        anchors.left: toolbar.left
-        radius:8
-        y:parent.height-height-35
-        visible: video_player.checked
-        z:3
-
-            Column{
-                anchors.fill: parent
-                padding:16
-                spacing:8
-
-                Text {
-                    id: video_fileName
-                    width: 20
-                    text: qsTr("C:/Users/tomas wu/videos/test.avi")
-                }
-
-                TriSlider{
-                    id: slider
-                    width:parent.width-2*parent.padding
-                    height: 30
-                }
-
-                Row{
-                    //播放按钮组
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing:20
-
-                    SToolButton2{
-                        id:backward
-                        imgSrc: "qrc:/imgs/ico/backward.png"
-                        btnName: ""
-                        width: 24
-                        height: 24
-                        onClicked: if (slider.value1>slider.value0)slider.value1-=1
-
-                    }
-                    SToolButton{
-                        id:play
-                        imgSrc: "qrc:/imgs/ico/play.png"
-                        btnName: ""
-                        width: 24
-                        height: 24
-                    }
-                    SToolButton2{
-                        id:forward
-                        imgSrc: "qrc:/imgs/ico/forward.png"
-                        btnName: ""
-                        width: 24
-                        height: 24
-                        onClicked: if (slider.value1<slider.value2)slider.value1+=1
-                    }
-                }// end buttons row
-
-            } //end column
-
-    } // end player bar
-
     function tbntip(s,item){
         if (item.hovered){
             stoolbutton_tooltip.x=item.x+item.parent.x
@@ -732,7 +668,7 @@ Window {
     SwipeView{
         id:centerWidget
         implicitWidth: parent.width
-        height:parent.height-toolbar.height-toolbar.y
+        height:parent.height-toolbar.height-toolbar.y-status_bar.height
         anchors.top: toolbar.bottom
         z:0
 
@@ -886,9 +822,84 @@ Window {
             Image{
 
             }
+
+            // player bar
+            Rectangle {
+                id : playerbar
+                width: toolbar.width
+                height: 120
+                color:Qt.rgba(1,1,1,0.25)
+                x:toolbar.x
+                radius:8
+                y:parent.height-height-35
+                visible: video_player.checked
+                z:3
+
+                    Column{
+                        anchors.fill: parent
+                        padding:16
+                        spacing:8
+
+                        Text {
+                            id: video_fileName
+                            width: 20
+                            text: qsTr("C:/Users/tomas wu/videos/test.avi")
+                        }
+
+                        TriSlider{
+                            id: slider
+                            width:parent.width-2*parent.padding
+                            height: 30
+                        }
+
+                        Row{
+                            //播放按钮组
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            spacing:20
+
+                            SToolButton2{
+                                id:backward
+                                imgSrc: "qrc:/imgs/ico/backward.png"
+                                btnName: ""
+                                width: 24
+                                height: 24
+                                onClicked: if (slider.value1>slider.value0)slider.value1-=1
+
+                            }
+                            SToolButton{
+                                id:play
+                                imgSrc: "qrc:/imgs/ico/play.png"
+                                btnName: ""
+                                width: 24
+                                height: 24
+                            }
+                            SToolButton2{
+                                id:forward
+                                imgSrc: "qrc:/imgs/ico/forward.png"
+                                btnName: ""
+                                width: 24
+                                height: 24
+                                onClicked: if (slider.value1<slider.value2)slider.value1+=1
+                            }
+                        }// end buttons row
+
+                    } //end column
+
+            } // end player bar
+
         }// page video widget
 
     }// end swipe  centerWidget
+
+
+    // stauts bar
+    Rectangle{
+        id: status_bar
+        width: parent.width
+        height: 20
+        color:"skyblue"
+        anchors.bottom: parent.bottom
+    }
 
     // save picture dialog
     FileDialog{

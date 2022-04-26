@@ -430,8 +430,6 @@ Window {
                     Layout.columnSpan: 8
                     Layout.alignment: Qt.AlignHCenter
                 }
-
-
             }// end for recognize
 
             ToolbarVSplit{}
@@ -668,7 +666,7 @@ Window {
     SwipeView{
         id:centerWidget
         implicitWidth: parent.width
-        height:parent.height-toolbar.height-toolbar.y-status_bar.height
+        height:parent.height-toolbar.height-toolbar.y
         anchors.top: toolbar.bottom
         z:0
 
@@ -677,7 +675,9 @@ Window {
             title: "camera"
             Rectangle{
                 id:camera_widget_bg
-                anchors.fill:parent
+                anchors.top: parent.top
+                width: parent.width
+                height: parent.height-camera_status_bar.height
                 color: Qt.rgba(0,0.6,0.6,0.2)
                 Image {
                     id:camera_img
@@ -807,6 +807,65 @@ Window {
             }// end chart view
 
 
+            // camera stauts bar
+            Rectangle{
+                id: camera_status_bar
+                width: parent.width
+                height: 28
+                color:"lightskyblue"
+                anchors.bottom: parent.bottom
+
+                Row{
+                    spacing: 30
+                    padding:10
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        id: camera_fps_text
+                        text: mcap.opened ? "相机帧率: " + mcap.fps.toString() : "相机帧率: 未打开"
+                        color: "#3c3c3c"
+                    }
+                    Text {
+                        id: camera_saveinfo
+                        text: ""
+                        color:"blue"
+                        font.underline: true
+                        MouseArea{
+                            id:camera_saveinfo_mouse
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                var path = camera_saveinfo.text.slice(14,camera_saveinfo.length)
+                                var cmd
+                                switch(Qt.platform.os){
+                                   case "windows":
+                                       path = path.replace(new RegExp("/", "g"),"\\")
+                                       cmd = `explorer /select, ${path}`
+                                       shell.system(cmd)
+                                       break
+                                   default:
+                                       dia.showInfo("本系统暂不支持在文件系统中显示该文件")
+                                       break
+                                }//end switch
+                            }// end onClicked
+                        }//end MouseArea
+
+                        Timer{
+                            id:camera_saveinfo_timer
+                            interval: 8000
+                            triggeredOnStart: false
+                            repeat: false
+                            onTriggered: camera_saveinfo.text=""
+                        }
+                        function camera_saveinfoShow(s){
+                            camera_saveinfo.text=s
+                            camera_saveinfo_timer.start()
+                        }
+                    }
+
+                }//end row
+            }// end status bar
+
+
         }// page camera widget
 
         Page{
@@ -891,16 +950,6 @@ Window {
 
     }// end swipe  centerWidget
 
-
-    // stauts bar
-    Rectangle{
-        id: status_bar
-        width: parent.width
-        height: 20
-        color:"skyblue"
-        anchors.bottom: parent.bottom
-    }
-
     // save picture dialog
     FileDialog{
         id: fileSave_dialog
@@ -910,7 +959,11 @@ Window {
         nameFilters: ["png (*.png)"]
         onAccepted: {
             folder_recording.lastSaveFolder = currentFolder
-            console.log(mcap.savePhoto(currentFile))
+            var ret = mcap.savePhoto(currentFile)
+            if(ret){
+                var s = `图片已保存 ${currentFile}`
+                camera_saveinfo.camera_saveinfoShow(s)
+            }
         }
         onRejected: { }
         Component.onCompleted: visible = false

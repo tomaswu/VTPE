@@ -40,8 +40,10 @@ public:
     QStringList camera_list;
     QStringList history_list;
     double fps = 0;
+    bool opened = false;
     Q_PROPERTY(QStringList cameraList MEMBER camera_list NOTIFY cameraListChanged);
-    Q_PROPERTY(double fps MEMBER fps NOTIFY fpsChanged)
+    Q_PROPERTY(double fps MEMBER fps NOTIFY fpsChanged);
+    Q_PROPERTY(bool opened MEMBER opened NOTIFY openedChanged);
     bool time_to_refresh = true;
 
     // method
@@ -67,6 +69,7 @@ signals:
     void imageRefreshed();
     void stopped();
     void fpsChanged();
+    void openedChanged();
 };
 
 #endif // TCAMERA_H

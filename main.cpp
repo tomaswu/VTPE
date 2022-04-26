@@ -3,6 +3,7 @@
 #include <tcamera.h>
 #include <QQmlContext>
 #include "pmc0100_com.h"
+#include "commandLineTools.h""
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +15,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("pmc0100_com",pmc0100_com);
     TCamera *mcap = new TCamera;
     engine.rootContext()->setContextProperty("mcap",mcap);
+    commandLineTools* shell = new commandLineTools;
+    engine.rootContext()->setContextProperty("shell",shell);
     engine.addImageProvider("cameraImage",mcap->ipdr);
     const QUrl url(u"qrc:/VTPE/main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

@@ -76,6 +76,11 @@ void TCamera::getCameraList(){
         emit cameraListChanged();
         history_list=camera_list;
     }
+    bool ret = cap->isOpened();
+    if(ret!=opened){
+        opened = ret;
+        emit openedChanged();
+    }
 }
 
 bool TCamera::isOpened(){
@@ -91,7 +96,6 @@ void TCamera::printCameralist(){
        qDebug()<<i;
     }
     qDebug()<<"已经打印所有相机名称";
-
 }
 
 bool TCamera::open(int index){

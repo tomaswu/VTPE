@@ -6,6 +6,7 @@ QT += quick \
 
 
 SOURCES += \
+    commandLineTools.cpp \
         main.cpp \
         pmc0100_com.cpp \
         tcamera.cpp \
@@ -82,6 +83,7 @@ macx{
 }
 
 HEADERS += \
+    commandLineTools.h \
     pmc0100_com.h \
     tcamera.h \
     tvideocapture.h

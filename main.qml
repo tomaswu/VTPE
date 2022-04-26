@@ -678,7 +678,7 @@ Window {
                 anchors.top: parent.top
                 width: parent.width
                 height: parent.height-camera_status_bar.height
-                color: Qt.rgba(0,0.6,0.6,0.2)
+                color: "#f3f3f3"//Qt.rgba(0,0.6,0.6,0.2)
                 Image {
                     id:camera_img
                     anchors.fill: parent
@@ -811,8 +811,8 @@ Window {
             Rectangle{
                 id: camera_status_bar
                 width: parent.width
-                height: 28
-                color:"lightskyblue"
+                height: 24
+                color:"#007acc"
                 anchors.bottom: parent.bottom
 
                 Row{
@@ -822,12 +822,12 @@ Window {
                     Text {
                         id: camera_fps_text
                         text: mcap.opened ? "相机帧率: " + mcap.fps.toString() : "相机帧率: 未打开"
-                        color: "#3c3c3c"
+                        color: "#ffffff"//"#3c3c3c"
                     }
                     Text {
                         id: camera_saveinfo
                         text: ""
-                        color:"blue"
+                        color:"#ffffff"
                         font.underline: true
                         MouseArea{
                             id:camera_saveinfo_mouse

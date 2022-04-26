@@ -4,10 +4,12 @@
 #include <QQmlContext>
 #include "pmc0100_com.h"
 #include "commandLineTools.h""
+#include <QIcon>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/imgs/ico/Tico.ico"));
 //    qmlRegisterType<TCamera>("TCamera",1,0,"TCamera");
 
     QQmlApplicationEngine engine;

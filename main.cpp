@@ -3,7 +3,7 @@
 #include <tcamera.h>
 #include <QQmlContext>
 #include "pmc0100_com.h"
-#include "commandLineTools.h""
+#include "commandLineTools.h"
 #include <QIcon>
 
 int main(int argc, char *argv[])

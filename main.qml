@@ -842,8 +842,12 @@ Window {
                                        cmd = `explorer /select, ${path}`
                                        shell.system(cmd)
                                        break
+                                   case "osx":
+                                       cmd = `open -R /${path}`
+                                       shell.system(cmd)
+                                       break
                                    default:
-                                       dia.showInfo("本系统暂不支持在文件系统中显示该文件")
+                                       dia.showInfo("本系统暂不支持在文件系统\n中显示该文件")
                                        break
                                 }//end switch
                             }// end onClicked
@@ -851,7 +855,7 @@ Window {
 
                         Timer{
                             id:camera_saveinfo_timer
-                            interval: 8000
+                            interval: 150000
                             triggeredOnStart: false
                             repeat: false
                             onTriggered: camera_saveinfo.text=""

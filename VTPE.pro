@@ -2,7 +2,8 @@ QT += quick \
       quickcontrols2 \
       multimedia\
       serialport\
-      charts
+      charts\
+      widgets
 
 
 SOURCES += \

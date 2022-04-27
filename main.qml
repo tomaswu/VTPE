@@ -165,7 +165,12 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("set video path\n设置录像保存位置",camera_setVideoName)
-                    onClicked: console.log("camera setting")
+                    onClicked:{
+                        var s = shell.getSaveFileName("保存",folder_recording.recordPath,"avi(*.avi)")
+                        if (s!==""){
+                            folder_recording.recordPath = s
+                        }
+                    }// end clicked
                 }
 
                 TCheckBox{
@@ -732,8 +737,8 @@ Window {
                     axisY: ValuesAxis{
                         id:pmc0100_chart_y
                         gridVisible:false
-                        min:-100
-                        max:1100
+                        min:0
+                        max:1200
                         minorTickCount: 5
                         minorGridVisible: false
                         tickCount:7
@@ -805,7 +810,6 @@ Window {
                     pmc0100_data.mycount = 0
                 }
             }// end chart view
-
 
             // camera stauts bar
             Rectangle{
@@ -950,7 +954,28 @@ Window {
 
             } // end player bar
 
-        }// page video widget
+            // camera stauts bar
+            Rectangle{
+                id: video_status_bar
+                width: parent.width
+                height: 24
+                color:"#68217a"
+                anchors.bottom: parent.bottom
+
+                Row{
+                    spacing: 30
+                    padding:10
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        id: video_fps_text
+                        text: "视频帧率: 未打开"
+                        color: "#ffffff"//"#3c3c3c"
+                    }
+
+                }//end row
+            }// end status bar
+
+        }// end page video widget
 
     }// end swipe  centerWidget
 
@@ -981,7 +1006,7 @@ Window {
         y:centerWidget.y
         z:2
         width: centerWidget.width
-        height: centerWidget.height
+        height: camera_widget_bg.height
         visible: measurement_mark.checked
         markerType: measuerment_scale_type.currentIndex
         caliFlag: false
@@ -1029,6 +1054,7 @@ Window {
         fileName: "Config.ini"
         category: "folder recording"
         property string lastSaveFolder: ""
+        property string recordPath: ""
     }
 
     function backDefaultGlobalSettings(){

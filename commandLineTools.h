@@ -13,6 +13,7 @@ public:
     ~commandLineTools();
     QProcess *p;
     Q_INVOKABLE void system(QString s);
+    Q_INVOKABLE QString getSaveFileName(QString title,QString dir,QString filter);
 
 signals:
 

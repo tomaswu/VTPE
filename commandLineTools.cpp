@@ -22,3 +22,8 @@ QString commandLineTools::getSaveFileName(QString title,QString dir,QString filt
     auto s  = QFileDialog::getSaveFileName(nullptr,title,dir,filter);
     return s;
 }
+
+QString commandLineTools::getOpenFileName(QString title,QString dir,QString filter){
+    auto s = QFileDialog::getOpenFileName(nullptr,title,dir,filter);
+    return s;
+}

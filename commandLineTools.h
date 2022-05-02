@@ -14,6 +14,7 @@ public:
     QProcess *p;
     Q_INVOKABLE void system(QString s);
     Q_INVOKABLE QString getSaveFileName(QString title,QString dir,QString filter);
+    Q_INVOKABLE QString getOpenFileName(QString title,QString dir,QString filter);
 
 signals:
 

@@ -4,6 +4,7 @@ import QtQuick.Controls
 
 Dialog {
     id : camera_settings_dialog
+    property bool photoMode: true
     width: 260
     height: 120
     background: Rectangle{
@@ -16,7 +17,22 @@ Dialog {
     Column{
         anchors.fill: parent
         padding:10
-        spacing:10
+        spacing:5
+        Row{
+            padding:10
+            spacing: 10
+            Text {
+                text: qsTr("连拍模式:")
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            CheckBox{
+                anchors.verticalCenter: parent.verticalCenter
+                id:photomode_checkbox
+                checked: camera_settings_dialog.photoMode
+                onCheckedChanged: camera_settings_dialog.photoMode = checked
+            }
+        }
+
         Row{
             padding:10
             spacing: 10

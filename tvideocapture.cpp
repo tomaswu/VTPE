@@ -60,7 +60,11 @@ void TVideoCapture::capture(){
            }
            if (fps_count==100){
                t1=clock();
-               fps = 100000/(t1-t0);
+#ifdef Q_OS_MACOS
+               fps = 100000000/(t1-t0);
+#elif Q_OS_WIN32
+               fps = 100000/(t1-t0)
+#endif
                emit newfps(fps);
 //               qDebug()<<"camera fps:"<<fps; //打印一下帧率
                t0=t1;
@@ -104,7 +108,7 @@ void TVideoCapture::stopCapture(){
 }
 
 void TVideoCapture::startRecord(QString path){
-
+    qDebug()<<"qdebug:"<<path;
 }
 
 void TVideoCapture::stopRecord(){

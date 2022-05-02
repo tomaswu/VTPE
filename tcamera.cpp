@@ -8,6 +8,8 @@
 #include <QPixmap>
 #include <QQuickImageProvider>
 #include <tvideocapture.h>
+#include <QVariantList>
+#include <opencv2/imgproc.hpp>
 
 bool equalList(QStringList m,QStringList n){
 
@@ -108,6 +110,80 @@ void TCamera::refreshFps(double f){
         fps=f;
         emit fpsChanged();
     };
+}
+
+QVariantList TCamera::calSelectScale(double row1,double row2, double col1, double col2){
+    QVariantList res;
+    double max=0;
+    double min=255;
+    double ave=0;
+    int count = 0;
+    int r1,r2,c1,c2;
+    if(cap->mat.empty()){
+        res.append(-1);
+        res.append(-1);
+        res.append(-1);
+        return res;
+    }
+    if(row1<-0.5){
+        r1=0;
+    }
+    else if(row1>0.5){
+        r1 = cap->mat.size[1];
+    }
+    else{
+        r1 = cap->mat.size[1]*(row1+0.5);
+    }
+
+    if(row2<-0.5){
+        r2=0;
+    }
+    else if(row2>0.5){
+        r2 = cap->mat.size[1];
+    }
+    else{
+        r2 = cap->mat.size[1]*(row2+0.5);
+    }
+
+    if(col1<-0.5){
+        c1=0;
+    }
+    else if(col1>0.5){
+        c1 = cap->mat.size[0];
+    }
+    else{
+        c1 = cap->mat.size[0]*(col1+0.5);
+    }
+
+    if(col2<-0.5){
+        c2=0;
+    }
+    else if(col2>0.5){
+        c2 = cap->mat.size[0];
+    }
+    else{
+        c2 = cap->mat.size[0]*(col2+0.5);
+    }
+
+//    qDebug()<<col1<<c1<<col2<<c2<<r1<<r2;
+
+    uchar* p;
+    cv::Mat gray;
+    cv::cvtColor(cap->mat,gray,cv::COLOR_BGR2GRAY);
+    for(int i=r1;i<r2;i++){
+        p = gray.ptr<uchar>(i);
+        for(int j = c1;j<c2;j++){
+            max = max>p[j] ? max:p[j];
+            min = min<p[j] ? min:p[j];
+            ave = count==0 ? p[j]:(p[j]+ave)/2;
+            count+=1;
+        }
+    }
+    res.append(max);
+    res.append(min);
+    res.append(ave);
+    return res;
+
 }
 
 

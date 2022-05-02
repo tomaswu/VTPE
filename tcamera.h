@@ -11,6 +11,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <QQuickImageProvider>
+#include <QVariantList>
 
 class imgProvider: public QQuickImageProvider
 {
@@ -57,6 +58,7 @@ public:
     Q_INVOKABLE QStringList getSupportedResolutions();
     Q_INVOKABLE void needPhoto(){cap->needPhoto=true;};
     Q_INVOKABLE bool savePhoto(QString path){return cap->photo(path);};
+    Q_INVOKABLE QVariantList calSelectScale(double row1,double row2, double col1, double col2);
     void printCameralist();
     void refreshImage(QImage img);
     void alreadyStopped(){emit stopped();}

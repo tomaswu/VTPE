@@ -23,7 +23,8 @@ resources.files = main.qml \
                   MeasureScale.qml \
                   EmailFeedback.qml \
                   DeviceList.qml\
-                  CameraSettingsDialog.qml
+                  CameraSettingsDialog.qml\
+                  SelectScale4Image.qml
 
 
 resources.prefix = /$${TARGET}
@@ -50,6 +51,7 @@ DISTFILES += \
     README.md \
     SToolButton.qml \
     SToolButton2.qml \
+    SelectScale4Image.qml \
     TCheckBox.qml \
     ToolbarVSplit.qml \
     TriSlider.qml \

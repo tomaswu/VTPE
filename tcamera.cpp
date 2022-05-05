@@ -214,6 +214,13 @@ imgProvider::~imgProvider(){
 
 };
 
+void imgProvider::setImage(QImage img){
+    QImage tmp;
+    tmp=this->img;
+    this->img=img;
+    free(tmp.bits());
+}
+
 
 QImage imgProvider::requestImage(const QString &id,QSize *size,const QSize &requestexSize){
     return this->img;

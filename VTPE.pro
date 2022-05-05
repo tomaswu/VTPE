@@ -46,6 +46,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     CameraSettingsDialog.qml \
     ColorSelector.qml \
+    CutScale.qml \
+    DESIGN.md \
     EmailFeedback.qml \
     MeasureScale.qml \
     README.md \

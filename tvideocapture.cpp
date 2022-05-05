@@ -61,6 +61,7 @@ void TVideoCapture::uninit(){
             running_flag=false;
             break;
         case workPowerCam:
+            running_flag=false;
             IMV_StopGrabbing(this->m_devHandle);
             IMV_Close(this->m_devHandle);
             m_devHandle = NULL;
@@ -120,76 +121,67 @@ void TVideoCapture::capture(){
             break;
         case workPowerCam:
             int ret;
-                ret = IMV_AttachGrabbing(this->m_devHandle,onGetFrame,this);
-                if(ret==IMV_OK){
-                    qDebug()<<"starting";
-                    IMV_StartGrabbing(this->m_devHandle);
-                    CFrameInfo frameInfo;
-                    QImage image;
-                    while(running_flag){
-                        cv::waitKey(30);
-                        this->tque.get(frameInfo);
-                        if (gvspPixelMono8 == frameInfo.m_ePixelType)
+            ret = IMV_AttachGrabbing(this->m_devHandle,onGetFrame,this);
+            if(ret==IMV_OK){
+                IMV_StartGrabbing(this->m_devHandle);
+                CFrameInfo frameInfo;
+                QImage image;
+                while(running_flag){
+                    cv::waitKey(30);
+                    this->tque.get(frameInfo);
+                    if (gvspPixelMono8 == frameInfo.m_ePixelType){
+                        image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
+                        emit imgReady(image);
+                    }
+                    else
+                    {
+                        // 转码
+                        unsigned char* pRGBbuffer = NULL;
+                        int nRgbBufferSize = 0;
+                        nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
+                        pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
+                        if (pRGBbuffer == NULL)
                         {
-                            // 显示线程中发送显示信号，在主线程中显示图像
-                            // Send display signal in display thread and display image in main thread
-//                            emit signalShowImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, (uint64_t)frameInfo.m_ePixelType);
-                            image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
-                            emit imgReady(image);
-                        }
-                        else
-                        {
-                            // 转码
-                            unsigned char* pRGBbuffer = NULL;
-                            int nRgbBufferSize = 0;
-                            nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
-                            pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
-                            if (pRGBbuffer == NULL)
-                            {
-                                // 释放内存
-                                // release memory
-                                free(frameInfo.m_pImageBuf);
-                                printf("RGBbuffer malloc failed.\n");
-                                continue;
-                            }
-
-                            IMV_PixelConvertParam stPixelConvertParam;
-                            stPixelConvertParam.nWidth = frameInfo.m_nWidth;
-                            stPixelConvertParam.nHeight = frameInfo.m_nHeight;
-                            stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
-                            stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
-                            stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
-                            stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
-                            stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
-                            stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
-                            stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
-                            stPixelConvertParam.pDstBuf = pRGBbuffer;
-                            stPixelConvertParam.nDstBufSize = nRgbBufferSize;
-
-                            int ret = IMV_PixelConvert(m_devHandle, &stPixelConvertParam);
-                            if (IMV_OK != ret)
-                            {
-                                // 释放内存
-                                // release memory
-                                printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
-                                free(frameInfo.m_pImageBuf);
-                                free(pRGBbuffer);
-                                continue;
-                            }
-
                             // 释放内存
                             // release memory
                             free(frameInfo.m_pImageBuf);
-                            // 显示线程中发送显示信号，在主线程中显示图像
-                            // Send display signal in display thread and display image in main thread
-                            //emit signalShowImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight, (uint64_t)stPixelConvertParam.eDstPixelFormat);
-                            image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
-                            emit imgReady(image);
-                        }// end else
-                    } //end while
-                }// end if
+                            printf("RGBbuffer malloc failed.\n");
+                            continue;
+                        }
+                        IMV_PixelConvertParam stPixelConvertParam;
+                        stPixelConvertParam.nWidth = frameInfo.m_nWidth;
+                        stPixelConvertParam.nHeight = frameInfo.m_nHeight;
+                        stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
+                        stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
+                        stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
+                        stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
+                        stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
+                        stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
+                        stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
+                        stPixelConvertParam.pDstBuf = pRGBbuffer;
+                        stPixelConvertParam.nDstBufSize = nRgbBufferSize;
+                        int ret = IMV_PixelConvert(m_devHandle, &stPixelConvertParam);
+                        if (IMV_OK != ret)
+                        {
+                            // 释放内存
+                            // release memory
+                            printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
+                            free(frameInfo.m_pImageBuf);
+                            free(pRGBbuffer);
+                            continue;
+                        }
+                        free(frameInfo.m_pImageBuf);
+                        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+                        emit imgReady(image);
+                    }// end else
+                } //end while
+            }// end if
+            this->running_flag=true;
+            emit stopped();
             break;
     }//end switch
+    QImage emptyImg;
+    emit imgReady(emptyImg);
 }
 
 void TVideoCapture::getSupportedResolutions(int index){
@@ -294,10 +286,8 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
     tvd->tque.push_back(frameInfo);
-
     if (tvd->tque.size() > 16)
     {
-        qDebug()<<frameInfo.m_ePixelType;
         CFrameInfo frameOld;
         if (tvd->tque.get(frameOld))
         {

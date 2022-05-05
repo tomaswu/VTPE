@@ -21,7 +21,7 @@ public:
     ~imgProvider();
     QImage requestImage(const QString &id,QSize *size,const QSize &requestexSize);
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
-    void setImage(QImage img);
+    void setImage(QImage img,int camera_type);
 };
 
 class TCamera : public QObject

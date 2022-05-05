@@ -67,19 +67,22 @@ CONFIG += debug_and_release
 win32{
 
     INCLUDEPATH += \
-        E:\Tomas_temp\opencv\op4\opencv\build\include
-    LIBS += -LE:\Tomas_temp\opencv\op4\opencv\build\x64\vc15\lib
+        E:\Tomas_temp\opencv\op4\opencv\build\include \
+        ./include
+
+    LIBS += -LE:\Tomas_temp\opencv\op4\opencv\build\x64\vc15\lib \
+            -LE:\private\TomasWu\CPP_programs\VTPE\Depends\workPower\x64\vs2013shared
 
     CONFIG(debug,debug|release){
-
-        LIBS += -lopencv_world455d
+        LIBS += -lopencv_world455d -lMVSDKmd
     }
     CONFIG(release,debug|release){
+        LIBS += -lopencv_world455 -lMVSDKmd
 
-        LIBS += -lopencv_world455
     }
-
 }
+
+
 macx{
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 12.0
     INCLUDEPATH += /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4
@@ -88,6 +91,7 @@ macx{
 }
 
 HEADERS += \
+    cameraMessageQue.h \
     commandLineTools.h \
     pmc0100_com.h \
     tcamera.h \

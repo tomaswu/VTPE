@@ -12,6 +12,8 @@
 #include "qdebug.h"
 #include <QSize>
 #include <QUrl>
+#include <IMVAPI/IMVApi.h>
+#include <IMVAPI/IMVDefines.h>
 
 TVideoCapture::TVideoCapture(QObject *parent)
     : QObject{parent}
@@ -26,57 +28,168 @@ TVideoCapture::~TVideoCapture(){
 
 bool TVideoCapture::init(int index){
     bool ret=false;
-    getSupportedResolutions(index);
-    if ((QSysInfo::productType()=="windows")){
-        ret = cap->open(index,cv::CAP_DSHOW);
-    }
-    else{
-        ret = cap->open(index);
+    set_indexAndType(index);
+    switch (this->CamType){
+        case cvCam:
+            getSupportedResolutions(this->index);
+            if (QSysInfo::productType()=="windows"){
+                ret = cap->open(this->index,cv::CAP_DSHOW);
+            }
+            else{
+                ret = cap->open(this->index);
+            }
+            break;
+        case workPowerCam:
+            IMV_DeviceList p;
+            IMV_EnumDevices(&p,IMV_EInterfaceType::interfaceTypeUsb3);
+            char* key = p.pDevInfo[this->index].cameraKey;
+            int res = IMV_CreateHandle(&m_devHandle,modeByCameraKey,key);
+            if (res==IMV_OK){
+                res = IMV_Open(m_devHandle);
+                if(res==IMV_OK){
+                    ret=true;
+                }
+            }
+            break;
     }
     return ret;
 }
 
 void TVideoCapture::uninit(){
-    running_flag=false;
+    switch (this->CamType){
+        case cvCam:
+            running_flag=false;
+            break;
+        case workPowerCam:
+            IMV_StopGrabbing(this->m_devHandle);
+            IMV_Close(this->m_devHandle);
+            m_devHandle = NULL;
+            break;
+    }
+}
+
+void TVideoCapture::set_indexAndType(int index){
+    if (index<cvCamNum){
+        this->index=index;
+        this->CamType = cvCam;
+    }
+    else if(index>=cvCamNum && index<cvCamNum+workPowerCamNum){
+        this->index=index-cvCamNum;
+        this->CamType=workPowerCam;
+    }
 }
 
 void TVideoCapture::capture(){
-    if (cap->isOpened()){
-       fps_count=0;
-       clock_t t0=clock();
-       clock_t t1;
-       while (running_flag)
-       {
-           bool ret = cap->read(mat);
-           if (ret){
-              if (needPhoto){
-                  photo_mat = mat;
-                  needPhoto = false;
-                  photoReady = true;
-              }
-              auto tmp=Mat2QImage(mat);
-              fps_count+=1;
-              emit imgReady(tmp);
-           }
-           if (fps_count==100){
-               t1=clock();
-#ifdef Q_OS_MACOS
-               fps = 100000000/(t1-t0);
-#elif Q_OS_WIN32
-               fps = 100000/(t1-t0)
-#endif
-               emit newfps(fps);
-//               qDebug()<<"camera fps:"<<fps; //打印一下帧率
-               t0=t1;
+    switch (this->CamType){
+        case cvCam:
+            if (cap->isOpened()){
                fps_count=0;
-           }
+               clock_t t0=clock();
+               clock_t t1;
+               while (running_flag)
+               {
+                   bool ret = cap->read(mat);
+                   if (ret){
+                      if (needPhoto){
+                          photo_mat = mat;
+                          needPhoto = false;
+                          photoReady = true;
+                      }
+                      auto tmp=Mat2QImage(mat);
+                      fps_count+=1;
+                      emit imgReady(tmp);
+                   }
+                   if (fps_count==100){
+                       t1=clock();
+            #ifdef Q_OS_MACOS
+                       fps = 100000000/(t1-t0);
+            #elif defined Q_OS_WIN32
+                       fps = 100000/(t1-t0);
+            #endif
+                       emit newfps(fps);
+            //               qDebug()<<"camera fps:"<<fps; //打印一下帧率
+                       t0=t1;
+                       fps_count=0;
+                   }
 
-       }
-       cap->release();
-       running_flag=true;
-       emit stopped();
-    }
+               }
+               cap->release();
+               running_flag=true;
+               emit stopped();
+            }
+            break;
+        case workPowerCam:
+            int ret;
+                ret = IMV_AttachGrabbing(this->m_devHandle,onGetFrame,this);
+                if(ret==IMV_OK){
+                    qDebug()<<"starting";
+                    IMV_StartGrabbing(this->m_devHandle);
+                    CFrameInfo frameInfo;
+                    QImage image;
+                    while(running_flag){
+                        cv::waitKey(30);
+                        this->tque.get(frameInfo);
+                        if (gvspPixelMono8 == frameInfo.m_ePixelType)
+                        {
+                            // 显示线程中发送显示信号，在主线程中显示图像
+                            // Send display signal in display thread and display image in main thread
+//                            emit signalShowImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, (uint64_t)frameInfo.m_ePixelType);
+                            image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
+                            emit imgReady(image);
+                        }
+                        else
+                        {
+                            // 转码
+                            unsigned char* pRGBbuffer = NULL;
+                            int nRgbBufferSize = 0;
+                            nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
+                            pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
+                            if (pRGBbuffer == NULL)
+                            {
+                                // 释放内存
+                                // release memory
+                                free(frameInfo.m_pImageBuf);
+                                printf("RGBbuffer malloc failed.\n");
+                                continue;
+                            }
 
+                            IMV_PixelConvertParam stPixelConvertParam;
+                            stPixelConvertParam.nWidth = frameInfo.m_nWidth;
+                            stPixelConvertParam.nHeight = frameInfo.m_nHeight;
+                            stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
+                            stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
+                            stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
+                            stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
+                            stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
+                            stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
+                            stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
+                            stPixelConvertParam.pDstBuf = pRGBbuffer;
+                            stPixelConvertParam.nDstBufSize = nRgbBufferSize;
+
+                            int ret = IMV_PixelConvert(m_devHandle, &stPixelConvertParam);
+                            if (IMV_OK != ret)
+                            {
+                                // 释放内存
+                                // release memory
+                                printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
+                                free(frameInfo.m_pImageBuf);
+                                free(pRGBbuffer);
+                                continue;
+                            }
+
+                            // 释放内存
+                            // release memory
+                            free(frameInfo.m_pImageBuf);
+                            // 显示线程中发送显示信号，在主线程中显示图像
+                            // Send display signal in display thread and display image in main thread
+                            //emit signalShowImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight, (uint64_t)stPixelConvertParam.eDstPixelFormat);
+                            image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+                            emit imgReady(image);
+                        }// end else
+                    } //end while
+                }// end if
+            break;
+    }//end switch
 }
 
 void TVideoCapture::getSupportedResolutions(int index){
@@ -95,6 +208,7 @@ void TVideoCapture::getSupportedResolutions(int index){
     }
 }
 
+
 void TVideoCapture::setResolution(QString s){
     auto r = s.split("X");
     int width = r[0].toInt();
@@ -102,6 +216,7 @@ void TVideoCapture::setResolution(QString s){
     cap->set(cv::CAP_PROP_FRAME_WIDTH,width);
     cap->set(cv::CAP_PROP_FRAME_HEIGHT,height);
 }
+
 
 void TVideoCapture::stopCapture(){
 
@@ -116,7 +231,14 @@ void TVideoCapture::stopRecord(){
 }
 
 bool TVideoCapture::isOpened(){
-    return cap->isOpened();
+    switch (this->CamType){
+        case cvCam:
+            return cap->isOpened();
+        case workPowerCam:
+            return IMV_IsOpen(this->m_devHandle);
+        default:
+            return false;
+    }
 }
 
 void TVideoCapture::openSettings(){
@@ -147,4 +269,42 @@ cv::Mat TVideoCapture::QImage2Mat(QImage const& image)
     cv::Mat mat;
     cv::cvtColor(tmp, mat,CV_BGR2RGB);
     return mat;
+}
+
+//work power camera callback function for grabbing
+// Data frame callback function
+static void onGetFrame(IMV_Frame* pFrame, void* pUser)
+{
+    TVideoCapture* tvd = (TVideoCapture*)pUser;
+    if (pFrame == NULL)
+    {
+        printf("pFrame is NULL\n");
+        return;
+    }
+
+//    printf("Get frame blockId = %llu\n", pFrame->frameInfo.blockId);
+    CFrameInfo frameInfo;
+    frameInfo.m_nWidth = (int)pFrame->frameInfo.width;
+    frameInfo.m_nHeight = (int)pFrame->frameInfo.height;
+    frameInfo.m_nBufferSize = (int)pFrame->frameInfo.size;
+    frameInfo.m_nPaddingX = (int)pFrame->frameInfo.paddingX;
+    frameInfo.m_nPaddingY = (int)pFrame->frameInfo.paddingY;
+    frameInfo.m_ePixelType = pFrame->frameInfo.pixelFormat;
+    frameInfo.m_pImageBuf = (unsigned char *)malloc(sizeof(unsigned char) * frameInfo.m_nBufferSize);
+    frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
+    memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
+    tvd->tque.push_back(frameInfo);
+
+    if (tvd->tque.size() > 16)
+    {
+        qDebug()<<frameInfo.m_ePixelType;
+        CFrameInfo frameOld;
+        if (tvd->tque.get(frameOld))
+        {
+            free(frameOld.m_pImageBuf);
+            frameOld.m_pImageBuf = NULL;
+        }
+    }
+
+    return;
 }

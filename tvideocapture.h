@@ -6,6 +6,45 @@
 #include <QImage>
 #include <QTimer>
 #include <QStringList>
+#include <IMVAPI/IMVApi.h>
+#include <IMVAPI/IMVDefines.h>
+#include <cameraMessageQue.h>
+
+enum CameraType{
+    cvCam,
+    workPowerCam
+};
+
+class CFrameInfo //华谷动力
+{
+public:
+    CFrameInfo()
+    {
+        m_pImageBuf = NULL;
+        m_nBufferSize = 0;
+        m_nWidth = 0;
+        m_nHeight = 0;
+        m_ePixelType = gvspPixelMono8;
+        m_nPaddingX = 0;
+        m_nPaddingY = 0;
+        m_nTimeStamp = 0;
+    }
+
+    ~CFrameInfo()
+    {
+    }
+
+public:
+    unsigned char*	m_pImageBuf;
+    int				m_nBufferSize;
+    int				m_nWidth;
+    int				m_nHeight;
+    IMV_EPixelType	m_ePixelType;
+    int				m_nPaddingX;
+    int				m_nPaddingY;
+    uint64_t		m_nTimeStamp;
+};
+
 
 class TVideoCapture : public QObject
 {
@@ -13,18 +52,24 @@ class TVideoCapture : public QObject
 public:
     explicit TVideoCapture(QObject *parent = nullptr);
     ~TVideoCapture();
-
-    bool running_flag = true;
-    bool needPhoto = false;
-    bool photoReady = false;
-    double fps = 0;
-    int fps_count=0;
-    cv::VideoCapture *cap;
-    cv::Mat mat;
-    cv::Mat photo_mat;
-    QStringList supportedResolution;
+    bool                    running_flag = true;
+    bool                    needPhoto = false;
+    bool                    photoReady = false;
+    int                     cvCamNum = 0;  // opencv相机 在Tcamera中刷新列表时同步刷新此数量
+    int                     workPowerCamNum = 0; //华谷动力相机 同上
+    int                     index = -1; //当前打开的相机序号
+    int                     CamType;
+    double                  fps = 0;
+    int                     fps_count=0;
+    IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
+    TMessageQue<CFrameInfo>  tque;
+    cv::VideoCapture        *cap;
+    cv::Mat                 mat;
+    cv::Mat                 photo_mat;
+    QStringList             supportedResolution;
 
     // method
+    void set_indexAndType(int index);
     bool init(int index);
     bool isOpened();
     void capture();
@@ -45,5 +90,7 @@ signals:
     void startCapture();
     void newfps(double fps);
 };
+
+static void onGetFrame(IMV_Frame* pFrame, void* pUser);
 
 #endif // TVIDEOCAPTURE_H

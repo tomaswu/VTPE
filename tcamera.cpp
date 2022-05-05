@@ -10,6 +10,8 @@
 #include <tvideocapture.h>
 #include <QVariantList>
 #include <opencv2/imgproc.hpp>
+#include <IMVAPI/IMVApi.h>
+#include <IMVAPI/IMVDefines.h>
 
 bool equalList(QStringList m,QStringList n){
 
@@ -69,10 +71,25 @@ void TCamera::getCameraList(){
     QMediaDevices mds;
     history_list = camera_list;
     QList<QCameraDevice> rlist = mds.videoInputs();
+    cap->cvCamNum =  rlist.length();
     camera_list.clear();
     for (auto &c: rlist){
         camera_list.append(c.description());
     };
+#ifdef Q_OS_WINDOWS //华谷动力相机只支持windows系统
+    IMV_DeviceList *p = new IMV_DeviceList;
+    IMV_EnumDevices(p,IMV_EInterfaceType::interfaceTypeUsb3);
+    cap->workPowerCamNum = p->nDevNum;
+    for (uint i=0;i<p->nDevNum;i++){
+        if(strlen(p->pDevInfo[i].cameraName)){
+            camera_list.append(p->pDevInfo->cameraName);
+        }
+        else{
+            camera_list.append(p->pDevInfo[i].modelName);
+        }
+    }
+#endif
+
     emit cameraListRefreshed();
     if(!equalList(camera_list,history_list)){
         emit cameraListChanged();

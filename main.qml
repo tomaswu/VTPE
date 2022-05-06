@@ -348,17 +348,25 @@ Window {
                 rows: 4
 
                 SToolButton{
-                    id:video_player
+                    id:video_open
                     Layout.row: 0
                     Layout.column: 0
                     Layout.alignment: Qt.AlignLeft
-                    imgSrc: "qrc:/imgs/ico/film.png"
-                    checkable: true
+                    imgSrc: "qrc:/imgs/ico/file.png"
                     btnName: ""
                     width: 24
                     height: 24
-                    onHoveredChanged: tbntip("show/hide player\n tools\n显示/关闭播放工具",video_player)
-                    onClicked: playerbar.visible=!playerbar.visible
+                    onHoveredChanged: tbntip("open video\n打开视频",video_open)
+                    onClicked: {
+                        var fileName=shell.getOpenFileName("打开视频",folder_recording.recordPath,"avi(*.avi)|mp4(*.mp4)")
+                        if(fileName){
+                            var dir = shell.getFolderFromFilePath(fileName)
+                            folder_recording.recordPath = dir
+                            centerWidget.currentIndex = 1
+
+                        }
+
+                    }
                 }
 
                 Text{
@@ -382,9 +390,23 @@ Window {
                 }
 
                 SToolButton{
-                    id:video_analysis_para
+                    id:video_player
                     Layout.row: 1
                     Layout.column: 0
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/film.png"
+                    checkable: true
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("show/hide player\n tools\n显示/关闭播放工具",video_player)
+                    onClicked: playerbar.visible=!playerbar.visible
+                }
+
+                SToolButton{
+                    id:video_analysis_para
+                    Layout.row: 1
+                    Layout.column: 1
                     Layout.alignment: Qt.AlignLeft
                     imgSrc: "qrc:/imgs/ico/para.png"
                     btnName: ""
@@ -398,7 +420,7 @@ Window {
                 SToolButton{
                     id:video_table
                     Layout.row: 1
-                    Layout.column: 1
+                    Layout.column: 2
                     Layout.alignment: Qt.AlignLeft
                     imgSrc: "qrc:/imgs/ico/table.png"
                     btnName: ""
@@ -411,7 +433,7 @@ Window {
                 SToolButton{
                     id:video_fig
                     Layout.row: 1
-                    Layout.column: 2
+                    Layout.column: 3
                     Layout.alignment: Qt.AlignLeft
                     imgSrc: "qrc:/imgs/ico/curve3.png"
                     btnName: ""

@@ -2,6 +2,7 @@
 #include <QProcess>
 #include <QString>
 #include <QFileDialog>
+#include <QFileInfo>
 
 
 commandLineTools::commandLineTools(QObject *parent)
@@ -26,4 +27,9 @@ QString commandLineTools::getSaveFileName(QString title,QString dir,QString filt
 QString commandLineTools::getOpenFileName(QString title,QString dir,QString filter){
     auto s = QFileDialog::getOpenFileName(nullptr,title,dir,filter);
     return s;
+}
+
+QString commandLineTools::getFolderFromFilePath(QString path){
+    QFileInfo f(path);
+    return f.dir().absolutePath();
 }

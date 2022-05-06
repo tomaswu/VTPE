@@ -237,8 +237,10 @@ bool TVideoCapture::isOpened(){
     switch (this->CamType){
         case cvCam:
             return cap->isOpened();
+        #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
         case workPowerCam:
             return IMV_IsOpen(this->m_devHandle);
+        #endif
         default:
             return false;
     }

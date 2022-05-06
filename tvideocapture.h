@@ -18,6 +18,7 @@ enum CameraType{
     workPowerCam
 };
 
+#ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
 class CFrameInfo //华谷动力相机帧信息
 {
 public:
@@ -47,6 +48,7 @@ public:
     int				m_nPaddingY;
     uint64_t		m_nTimeStamp;
 };
+#endif
 
 
 class TVideoCapture : public QObject
@@ -64,8 +66,10 @@ public:
     int                     CamType;
     double                  fps = 0;
     int                     fps_count=0;
+    #ifdef Q_OS_WINOWS
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     TMessageQue<CFrameInfo>  tque;
+    #endif
     cv::VideoCapture        *cap;
     cv::Mat                 mat;
     cv::Mat                 photo_mat;

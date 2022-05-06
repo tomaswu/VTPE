@@ -11,6 +11,7 @@ SOURCES += \
         main.cpp \
         pmc0100_com.cpp \
         tcamera.cpp \
+    tvideoanalysis.cpp \
         tvideocapture.cpp \
 
 resources.files = main.qml \
@@ -95,4 +96,5 @@ HEADERS += \
     commandLineTools.h \
     pmc0100_com.h \
     tcamera.h \
+    tvideoanalysis.h \
     tvideocapture.h

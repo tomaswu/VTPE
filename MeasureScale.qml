@@ -147,11 +147,19 @@ Item {
         MouseArea{
             id:canvasMouseArea
             anchors.fill: parent
-            onPressed: {
+            onPressed: function(mouse){
                 cvs.x0 = mouseX
                 cvs.y0 = mouseY
+                if(measurement_select.checked){
+                    mouse.accepted=false
+                }
             }
-            onPositionChanged: cvs.requestPaint()
+            onPositionChanged: function(mouse){
+                cvs.requestPaint()
+                if(measurement_select.checked){
+                    mouse.accepted=false
+                }
+            }
             onReleased: {
                 if(caliFlag){
                     cvs.pixLength=Math.sqrt(Math.pow(cvs.x0,2)+Math.pow(cvs.y0,2))

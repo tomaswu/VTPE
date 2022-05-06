@@ -31,16 +31,17 @@ public:
     explicit TCamera(QObject *parent = nullptr);
     ~TCamera();
     // member
-    imgProvider *ipdr;
-    QThread thread;
-    TVideoCapture *cap;
-    QMediaDevices *uvc_cap;
-    QTimer *timer;
-    QTimer *timer_refresh;
-    QStringList camera_list;
-    QStringList history_list;
-    double fps = 0;
-    bool opened = false;
+    imgProvider                             *ipdr;
+    QThread                                 thread;
+    TVideoCapture                           *cap;
+    QMediaDevices                           *uvc_cap;
+    QTimer                                  *timer;
+    QTimer                                  *timer_refresh;
+    QStringList                             camera_list;
+    QStringList                             history_list;
+    double                                  fps = 0;
+    bool                                    opened = false;
+
     Q_PROPERTY(QStringList cameraList MEMBER camera_list NOTIFY cameraListChanged);
     Q_PROPERTY(double fps MEMBER fps NOTIFY fpsChanged);
     Q_PROPERTY(bool opened MEMBER opened NOTIFY openedChanged);

@@ -10,8 +10,11 @@
 #include <tvideocapture.h>
 #include <QVariantList>
 #include <opencv2/imgproc.hpp>
-#include <IMVAPI/IMVApi.h>
-#include <IMVAPI/IMVDefines.h>
+
+//#ifdef  Q_OS_WINDOWS //华谷动力相机仅支持windows
+//#include <IMVAPI/IMVApi.h>
+//#include <IMVAPI/IMVDefines.h>
+//#endif
 
 bool equalList(QStringList m,QStringList n){
 
@@ -89,7 +92,6 @@ void TCamera::getCameraList(){
         }
     }
 #endif
-
     emit cameraListRefreshed();
     if(!equalList(camera_list,history_list)){
         emit cameraListChanged();
@@ -142,51 +144,57 @@ QVariantList TCamera::calSelectScale(double row1,double row2, double col1, doubl
         res.append(-1);
         return res;
     }
+
     if(row1<-0.5){
         r1=0;
     }
     else if(row1>0.5){
-        r1 = cap->mat.size[1];
+        r1 = cap->mat.size[0];
     }
     else{
-        r1 = cap->mat.size[1]*(row1+0.5);
+        r1 = cap->mat.size[0]*(row1+0.5);
     }
 
     if(row2<-0.5){
         r2=0;
     }
     else if(row2>0.5){
-        r2 = cap->mat.size[1];
+        r2 = cap->mat.size[0];
     }
     else{
-        r2 = cap->mat.size[1]*(row2+0.5);
+        r2 = cap->mat.size[0]*(row2+0.5);
     }
 
     if(col1<-0.5){
         c1=0;
     }
     else if(col1>0.5){
-        c1 = cap->mat.size[0];
+        c1 = cap->mat.size[1];
     }
     else{
-        c1 = cap->mat.size[0]*(col1+0.5);
+        c1 = cap->mat.size[1]*(col1+0.5);
     }
 
     if(col2<-0.5){
         c2=0;
     }
     else if(col2>0.5){
-        c2 = cap->mat.size[0];
+        c2 = cap->mat.size[1];
     }
     else{
-        c2 = cap->mat.size[0]*(col2+0.5);
+        c2 = cap->mat.size[1]*(col2+0.5);
     }
 
-//    qDebug()<<col1<<c1<<col2<<c2<<r1<<r2;
-
     uchar* p;
+    cv::Mat img;
+    img = this->cap->QImage2Mat(this->ipdr->img);
     cv::Mat gray;
-    cv::cvtColor(cap->mat,gray,cv::COLOR_BGR2GRAY);
+    if (img.channels()==3){
+        cv::cvtColor(img,gray,cv::COLOR_BGR2GRAY);
+    }
+    else{
+        gray = img;
+    }
     for(int i=r1;i<r2;i++){
         p = gray.ptr<uchar>(i);
         for(int j = c1;j<c2;j++){
@@ -230,11 +238,21 @@ void imgProvider::setImage(QImage img,int camera_type){
 
 
 QImage imgProvider::requestImage(const QString &id,QSize *size,const QSize &requestexSize){
+    if (this->img.isNull()){
+        QImage bimg(640,480,QImage::Format_RGB888);
+        bimg.fill("black");
+        return bimg;
+    }
     return this->img;
 };
 
 QPixmap imgProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
+    if (this->img.isNull()){
+        QPixmap bimg(640,480);
+        bimg.fill("black");
+        return bimg;
+    }
     return QPixmap::fromImage(this->img);
 };
 

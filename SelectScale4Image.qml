@@ -5,6 +5,7 @@ Item {
     id: select_scale
     width:400
     height: 300
+    visible: false
     property int maxgray: 255
     property int mingray: 0
     property double averagegray: 0
@@ -49,21 +50,23 @@ Item {
         interval: 100
         repeat: true
         onTriggered: {
-            if(camera_img.paintedWidth>0){
-                var row1,row2,col1,col2,x0,y0
-                x0 = camera_img.width/2
-                y0 = camera_img.height/2
-                col1 = (select_scale.x-x0)/(camera_img.paintedWidth)
-                col2 = (select_scale.x+select_scale.width-x0)/(camera_img.paintedWidth)
-                row1 = (select_scale.y-toolbar.height-y0)/(camera_img.paintedHeight)
-                row2 = (select_scale.y-toolbar.height+select_scale.height-y0)/(camera_img.paintedHeight)
-                var r = mcap.calSelectScale(row1,row2,col1,col2)
-                parent.maxgray = r[0]
-                parent.mingray = r[1]
-                parent.averagegray = r[2].toFixed(2)
+            if(mcap.isOpened()){
+                if(camera_img.paintedWidth>0){
+                    var row1,row2,col1,col2,x0,y0
+                    x0 = camera_img.width/2
+                    y0 = camera_img.height/2
+                    col1 = (select_scale.x-x0)/(camera_img.paintedWidth)
+                    col2 = (select_scale.x+select_scale.width-x0)/(camera_img.paintedWidth)
+                    row1 = (select_scale.y-toolbar.height-y0)/(camera_img.paintedHeight)
+                    row2 = (select_scale.y-toolbar.height+select_scale.height-y0)/(camera_img.paintedHeight)
+                    var r = mcap.calSelectScale(row1,row2,col1,col2)
+                    parent.maxgray = r[0]
+                    parent.mingray = r[1]
+                    parent.averagegray = r[2].toFixed(2)
+                }
             }
-        }
-    }
+        }// end on triggered
+    }// end timer
 
     function setValue(a,b,c){
         maxgray = a

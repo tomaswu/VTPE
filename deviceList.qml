@@ -92,13 +92,18 @@ Rectangle {
                 text:"打开"
                 onClicked: {
                     devs.visible=false
+                    if (measurement_mark.checked)measurement_mark.checked=false
 //                    var s = devlist.model.get(devlist.currentIndex).description
                     var m;
                     switch (devlist.currentIndex){
                         case 0:
+                            if (port_index.currentIndex===-1){
+                                dia.showInfo("请选择端口")
+                                break
+                            }
                             if (mcap.isOpened()){
                                 pmc0100_chart.clear()
-                                pmc0100_com.start(0)
+                                pmc0100_com.start(port_index.currentIndex)
                                 pmc0100_chart.visible=true
                             }
                             else{

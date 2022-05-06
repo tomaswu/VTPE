@@ -6,7 +6,7 @@ Dialog {
     id : camera_settings_dialog
     property bool photoMode: true
     width: 260
-    height: 120
+    height: 180
     background: Rectangle{
         id:dia_bg
         anchors.fill: parent

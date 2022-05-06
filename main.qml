@@ -237,10 +237,13 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("calibrate the scale\n定标比例尺",measurement_cali)
                     checkable: true
-                    onCheckedChanged: mscale.caliFlag = measurement_cali.checked
+                    onCheckedChanged: {
+                        if(measurement_select.checked&&checked)measurement_select.checked=false
+                        mscale.caliFlag = measurement_cali.checked
+                    }
                 }
 
-                SToolButton2{
+                SToolButton{
                     id:measurement_select
                     checkable: true
                     Layout.row: 1
@@ -250,7 +253,7 @@ Window {
                     btnName: ""
                     width: 24
                     height: 24
-                    onHoveredChanged: tbntip("select a select for \nmeasurement\n选择范围进行测量",measurement_select)
+                    onHoveredChanged: tbntip("select a scale for \nmeasurement\n选择范围进行测量",measurement_select)
                     onCheckedChanged: {
                         mouseArea_select.enabled = checked
                         s4i.visible = checked
@@ -697,8 +700,13 @@ Window {
                     Connections{
                         target: mcap
                         function onImageRefreshed(){
+                            if(mcap.isOpened()){
                             camera_img.source=""
                             camera_img.source="image://cameraImage"
+                            }else{
+                                camera_img.source=""
+                            }
+
                         }
                     }//end Connections
                 } // end image
@@ -985,6 +993,7 @@ Window {
     MouseArea{
         id: mouseArea_select
         anchors.fill: centerWidget
+        enabled: measurement_select.checked
         property double x0: 0
         property double y0: 0
         onPressed: {
@@ -993,27 +1002,29 @@ Window {
         }
 
         onPositionChanged: {
-            var w = mouseX-x0
-            var h = mouseY-y0
-            s4i.visible = true
-            if (w>0){
-                s4i.width = w
-                s4i.x = x0+centerWidget.x
-            }
-            else{
-                s4i.width = -w
-                s4i.x = mouseX+centerWidget.x
-            }
+            if(measurement_select.checked){
+                var w = mouseX-x0
+                var h = mouseY-y0
+                s4i.visible = true
+                if (w>0){
+                    s4i.width = w
+                    s4i.x = x0+centerWidget.x
+                }
+                else{
+                    s4i.width = -w
+                    s4i.x = mouseX+centerWidget.x
+                }
 
-            if (h>=0){
-                s4i.height = h
-                s4i.y = y0+centerWidget.y
+                if (h>=0){
+                    s4i.height = h
+                    s4i.y = y0+centerWidget.y
+                }
+                else{
+                    s4i.height = -h
+                    s4i.y = mouseY+centerWidget.y
+                }
             }
-            else{
-                s4i.height = -h
-                s4i.y = mouseY+centerWidget.y
-            }
-        }
+        } //end onPositionChanged
     } // end mouse area
 
     SelectScale4Image{

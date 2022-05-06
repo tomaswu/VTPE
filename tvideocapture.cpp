@@ -12,8 +12,11 @@
 #include "qdebug.h"
 #include <QSize>
 #include <QUrl>
+
+#ifdef Q_OS_WINDOWS
 #include <IMVAPI/IMVApi.h>
 #include <IMVAPI/IMVDefines.h>
+#endif
 
 TVideoCapture::TVideoCapture(QObject *parent)
     : QObject{parent}
@@ -39,6 +42,7 @@ bool TVideoCapture::init(int index){
                 ret = cap->open(this->index);
             }
             break;
+        #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
         case workPowerCam:
             IMV_DeviceList p;
             IMV_EnumDevices(&p,IMV_EInterfaceType::interfaceTypeUsb3);
@@ -51,6 +55,7 @@ bool TVideoCapture::init(int index){
                 }
             }
             break;
+         #endif //华谷动力相机只支持windows
     }
     return ret;
 }
@@ -60,12 +65,14 @@ void TVideoCapture::uninit(){
         case cvCam:
             running_flag=false;
             break;
+        #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
         case workPowerCam:
             running_flag=false;
             IMV_StopGrabbing(this->m_devHandle);
             IMV_Close(this->m_devHandle);
             m_devHandle = NULL;
             break;
+        #endif //华谷动力相机只支持windows
     }
 }
 
@@ -74,10 +81,12 @@ void TVideoCapture::set_indexAndType(int index){
         this->index=index;
         this->CamType = cvCam;
     }
+    #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
     else if(index>=cvCamNum && index<cvCamNum+workPowerCamNum){
         this->index=index-cvCamNum;
         this->CamType=workPowerCam;
     }
+    #endif//华谷动力相机只支持windows
 }
 
 void TVideoCapture::capture(){
@@ -119,6 +128,7 @@ void TVideoCapture::capture(){
                emit stopped();
             }
             break;
+        #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
         case workPowerCam:
             int ret;
             ret = IMV_AttachGrabbing(this->m_devHandle,onGetFrame,this);
@@ -127,7 +137,7 @@ void TVideoCapture::capture(){
                 CFrameInfo frameInfo;
                 QImage image;
                 while(running_flag){
-                    cv::waitKey(30);
+                    cv::waitKeyEx(30);
                     this->tque.get(frameInfo);
                     if (gvspPixelMono8 == frameInfo.m_ePixelType){
                         image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
@@ -179,6 +189,7 @@ void TVideoCapture::capture(){
             this->running_flag=true;
             emit stopped();
             break;
+        #endif //华谷动力相机只支持windows
     }//end switch
     QImage emptyImg;
     emit imgReady(emptyImg);
@@ -245,6 +256,20 @@ bool TVideoCapture::photo(QString path){
     return ret;
 }
 
+void TVideoCapture::setExposureTime(double minisecond){
+    switch (this->CamType){
+        case cvCam:
+            this->cap->set(cv::CAP_PROP_EXPOSURE,minisecond);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            IMV_SetDoubleFeatureValue(m_devHandle, "ExposureTime", minisecond);
+        #endif
+
+    }
+
+}
+
 
 QImage TVideoCapture::Mat2QImage(cv::Mat const& mat)
 {
@@ -263,6 +288,7 @@ cv::Mat TVideoCapture::QImage2Mat(QImage const& image)
     return mat;
 }
 
+#ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
 //work power camera callback function for grabbing
 // Data frame callback function
 static void onGetFrame(IMV_Frame* pFrame, void* pUser)
@@ -298,3 +324,4 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
 
     return;
 }
+#endif //华谷动力相机只支持windows

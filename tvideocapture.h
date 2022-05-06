@@ -6,16 +6,19 @@
 #include <QImage>
 #include <QTimer>
 #include <QStringList>
+
+#ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
 #include <IMVAPI/IMVApi.h>
 #include <IMVAPI/IMVDefines.h>
 #include <cameraMessageQue.h>
+#endif // 华谷动力相机仅支持windows
 
 enum CameraType{
     cvCam,
     workPowerCam
 };
 
-class CFrameInfo //华谷动力
+class CFrameInfo //华谷动力相机帧信息
 {
 public:
     CFrameInfo()
@@ -83,6 +86,7 @@ public:
     cv::Mat QImage2Mat(QImage const &image);
     void getSupportedResolutions(int index);
     void setResolution(QString s);
+    void setExposureTime(double millisecond);
 
 signals:
     void stopped();
@@ -91,6 +95,8 @@ signals:
     void newfps(double fps);
 };
 
+#ifdef Q_OS_WINDOWS //华谷动力相机只支持windows 图像处理回调函数
 static void onGetFrame(IMV_Frame* pFrame, void* pUser);
+#endif //华谷动力相机只支持windows
 
 #endif // TVIDEOCAPTURE_H

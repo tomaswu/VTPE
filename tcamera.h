@@ -41,29 +41,30 @@ public:
     QStringList                             history_list;
     double                                  fps = 0;
     bool                                    opened = false;
+    bool                                    time_to_refresh = true;
 
     Q_PROPERTY(QStringList cameraList MEMBER camera_list NOTIFY cameraListChanged);
     Q_PROPERTY(double fps MEMBER fps NOTIFY fpsChanged);
     Q_PROPERTY(bool opened MEMBER opened NOTIFY openedChanged);
-    bool time_to_refresh = true;
+
 
     // method
     void getCameraList();
-    Q_INVOKABLE bool open(int index);
-    Q_INVOKABLE void startCapture(){emit cap->startCapture();};
-    Q_INVOKABLE bool isOpened();
-    Q_INVOKABLE void release();
-    Q_INVOKABLE void openSettings(){cap->openSettings();};
-    Q_INVOKABLE void setResolution(QString s){cap->setResolution(s);};
-    Q_INVOKABLE QStringList getSupportedResolutions();
-    Q_INVOKABLE void needPhoto(){cap->needPhoto=true;};
-    Q_INVOKABLE bool savePhoto(QString path){return cap->photo(path);};
-    Q_INVOKABLE QVariantList calSelectScale(double row1,double row2, double col1, double col2);
-    void printCameralist();
-    void refreshImage(QImage img);
-    void alreadyStopped(){emit stopped();}
-    void setTimerFresh(){time_to_refresh=true;};
-    void refreshFps(double f);
+    Q_INVOKABLE bool                open(int index);
+    Q_INVOKABLE void                startCapture(){emit cap->startCapture();};
+    Q_INVOKABLE bool                isOpened();
+    Q_INVOKABLE void                release();
+    Q_INVOKABLE void                openSettings(){cap->openSettings();};
+    Q_INVOKABLE void                setResolution(QString s){cap->setResolution(s);};
+    Q_INVOKABLE QStringList         getSupportedResolutions();
+    Q_INVOKABLE void                needPhoto(){cap->needPhoto=true;};
+    Q_INVOKABLE bool                savePhoto(QString path){return cap->photo(path);};
+    Q_INVOKABLE QVariantList        calSelectScale(double row1,double row2, double col1, double col2);
+    void                            printCameralist();
+    void                            refreshImage(QImage img);
+    void                            alreadyStopped(){emit stopped();}
+    void                            setTimerFresh(){time_to_refresh=true;};
+    void                            refreshFps(double f);
 
 signals:
     void cameraListRefreshed();

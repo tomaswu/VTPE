@@ -94,7 +94,7 @@ void TVideoCapture::capture(){
         case cvCam:
             if (cap->isOpened()){
                fps_count=0;
-               clock_t t0=clock();
+               t0=clock();
                clock_t t1;
                while (running_flag)
                {
@@ -113,7 +113,7 @@ void TVideoCapture::capture(){
                        t1=clock();
             #ifdef Q_OS_MACOS
                        fps = 100000000/(t1-t0);
-            #elif defined Q_OS_WIN32
+            #elif defined Q_OS_WINDOWS
                        fps = 100000/(t1-t0);
             #endif
                        emit newfps(fps);
@@ -301,7 +301,7 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
         printf("pFrame is NULL\n");
         return;
     }
-
+    tvd->fps_count+=1;
 //    printf("Get frame blockId = %llu\n", pFrame->frameInfo.blockId);
     CFrameInfo frameInfo;
     frameInfo.m_nWidth = (int)pFrame->frameInfo.width;
@@ -324,6 +324,13 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
         }
     }
 
-    return;
+    if (tvd->fps_count==100){
+        clock_t t = clock();
+        tvd->fps = 100000/(t-tvd->t0);
+        emit tvd->newfps(tvd->fps);
+        tvd->t0=t;
+        tvd->fps_count=0;
+    }
+
 }
 #endif //华谷动力相机只支持windows

@@ -66,7 +66,8 @@ public:
     int                     CamType;
     double                  fps = 0;
     int                     fps_count=0;
-    #ifdef Q_OS_WINOWS
+    clock_t                 t0 = clock(); //for fps calculation start time
+    #ifdef Q_OS_WINDOWS
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     TMessageQue<CFrameInfo>  tque;
     #endif
@@ -76,21 +77,21 @@ public:
     QStringList             supportedResolution;
 
     // method
-    void set_indexAndType(int index);
-    bool init(int index);
-    bool isOpened();
-    void capture();
-    void uninit();
-    void stopCapture();
-    bool photo(QString path);
-    void startRecord(QString path);
-    void stopRecord();
-    void openSettings();
-    QImage Mat2QImage(cv::Mat const &mat);
-    cv::Mat QImage2Mat(QImage const &image);
-    void getSupportedResolutions(int index);
-    void setResolution(QString s);
-    void setExposureTime(double millisecond);
+    void                set_indexAndType(int index);
+    bool                init(int index);
+    bool                isOpened();
+    void                capture();
+    void                uninit();
+    void                stopCapture();
+    bool                photo(QString path);
+    void                startRecord(QString path);
+    void                stopRecord();
+    void                openSettings();
+    QImage              Mat2QImage(cv::Mat const &mat);
+    cv::Mat             QImage2Mat(QImage const &image);
+    void                getSupportedResolutions(int index);
+    void                setResolution(QString s);
+    void                setExposureTime(double millisecond);
 
 signals:
     void stopped();

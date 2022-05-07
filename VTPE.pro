@@ -45,10 +45,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    CameraMoreSettingsWindow.qml \
     CameraSettingsDialog.qml \
     ColorSelector.qml \
     CutScale.qml \
     DESIGN.md \
+    Depends/workPower/win32/vs2013shared/MVSDKmd.lib \
+    Depends/workPower/x64/vs2013shared/MVSDKmd.lib \
     EmailFeedback.qml \
     MeasureScale.qml \
     README.md \
@@ -94,6 +97,8 @@ macx{
 HEADERS += \
     cameraMessageQue.h \
     commandLineTools.h \
+    include/IMVAPI/IMVApi.h \
+    include/IMVAPI/IMVDefines.h \
     pmc0100_com.h \
     tcamera.h \
     tvideoanalysis.h \

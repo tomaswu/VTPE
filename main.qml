@@ -166,9 +166,9 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("set video path\n设置录像保存位置",camera_setVideoName)
                     onClicked:{
-                        var s = shell.getSaveFileName("保存",folder_recording.recordPath,"avi(*.avi)")
+                        var s = shell.getSaveFileName("保存",folder_recording.lastOPenedFolder,"avi(*.avi)")
                         if (s!==""){
-                            folder_recording.recordPath = s
+                            folder_recording.lastOPenedFolder = s
                         }
                     }// end clicked
                 }
@@ -358,12 +358,11 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("open video\n打开视频",video_open)
                     onClicked: {
-                        var fileName=shell.getOpenFileName("打开视频",folder_recording.recordPath,"avi(*.avi)|mp4(*.mp4)")
+                        var fileName=shell.getOpenFileName("打开视频",folder_recording.recordPath,"video(*.avi *.mp4)")
                         if(fileName){
                             var dir = shell.getFolderFromFilePath(fileName)
                             folder_recording.recordPath = dir
                             centerWidget.currentIndex = 1
-
                         }
 
                     }
@@ -1130,6 +1129,7 @@ Window {
         category: "folder recording"
         property string lastSaveFolder: ""
         property string recordPath: ""
+        property string lastOPenedFolder:""
     }
 
     function backDefaultGlobalSettings(){

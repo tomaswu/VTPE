@@ -60,6 +60,7 @@ public:
     Q_INVOKABLE void                needPhoto(){cap->needPhoto=true;};
     Q_INVOKABLE bool                savePhoto(QString path){return cap->photo(path);};
     Q_INVOKABLE QVariantList        calSelectScale(double row1,double row2, double col1, double col2);
+    Q_INVOKABLE int                 getCameraType();
     void                            printCameralist();
     void                            refreshImage(QImage img);
     void                            alreadyStopped(){emit stopped();}

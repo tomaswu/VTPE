@@ -53,10 +53,26 @@ Dialog {
             Button{
                 id:more_settings
                 text: "更多设置"
-                enabled: Qt.platform.os==="windows" ? true:false
                 onClicked: {
                     camera_settings_dialog.close()
-                    mcap.openSettings()
+                    if(Qt.platform.os === "windows"){
+                        var camtype = mcap.getCameraType()
+                        switch (camtype){
+                            case 0:
+                                mcap.openSettings()
+                                break
+                            case 1:
+                                camera_settings_widnow.show()
+                                break
+                        }
+                    }
+                    else{
+                        camera_settings_widnow.show()
+                    }
+
+
+
+//
                 }
             }
         }

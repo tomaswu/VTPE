@@ -25,7 +25,8 @@ resources.files = main.qml \
                   EmailFeedback.qml \
                   DeviceList.qml\
                   CameraSettingsDialog.qml\
-                  SelectScale4Image.qml
+                  SelectScale4Image.qml \
+                  CameraMoreSettingsWindow.qml
 
 
 resources.prefix = /$${TARGET}

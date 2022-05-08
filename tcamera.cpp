@@ -211,6 +211,10 @@ QVariantList TCamera::calSelectScale(double row1,double row2, double col1, doubl
 
 }
 
+int TCamera::getCameraType(){
+    return cap->CamType;
+}
+
 
 //==============================================
 

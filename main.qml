@@ -1114,6 +1114,13 @@ Window {
         anchors.centerIn: parent
     }
 
+
+
+    CameraMoreSettingsWindow{
+        id : camera_settings_widnow
+    }
+
+
     // -------------------- setting ------------------------
     Settings{
         id:global_color

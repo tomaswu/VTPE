@@ -32,9 +32,9 @@ TVideoCapture::~TVideoCapture(){
 bool TVideoCapture::init(int index){
     bool ret=false;
     set_indexAndType(index);
+    getSupportedResolutions(this->index);
     switch (this->CamType){
-        case cvCam:
-            getSupportedResolutions(this->index);
+        case cvCam:     
             if (QSysInfo::productType()=="windows"){
                 ret = cap->open(this->index,cv::CAP_DSHOW);
             }
@@ -138,6 +138,9 @@ void TVideoCapture::capture(){
                 QImage image;
                 while(running_flag){
                     cv::waitKeyEx(30);
+                    if(tque.size()==0){
+                        continue;
+                    }
                     this->tque.get(frameInfo);
                     if (gvspPixelMono8 == frameInfo.m_ePixelType){
                         image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
@@ -196,21 +199,32 @@ void TVideoCapture::capture(){
 }
 
 void TVideoCapture::getSupportedResolutions(int index){
-    QMediaDevices mds;
-    QString s;
-    QList<QCameraDevice> rlist = mds.videoInputs();
     supportedResolution.clear();
-    auto c = rlist[index];
-    auto resolutions = c.photoResolutions();
-    for (auto &c : resolutions){
-        s="%1X%2";
-        s=s.arg(c.width()).arg(c.height());
-        if (!supportedResolution.contains(s)){
-            supportedResolution.append(s);
+    switch (this->CamType){
+        case cvCam:
+        {
+            QMediaDevices mds;
+            QString s;
+            QList<QCameraDevice> rlist = mds.videoInputs();
+            auto c = rlist[index];
+            auto resolutions = c.photoResolutions();
+            for (auto &c : resolutions){
+                s="%1X%2";
+                s=s.arg(c.width()).arg(c.height());
+                if (!supportedResolution.contains(s)){
+                    supportedResolution.append(s);
+                }
+            }
+            break;
+        }
+        case workPowerCam:
+        {
+            supportedResolution.append("1280X720");
+            supportedResolution.append("640X480");
+            break;
         }
     }
 }
-
 
 void TVideoCapture::setResolution(QString s){
     auto r = s.split("X");
@@ -323,7 +337,6 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
             frameOld.m_pImageBuf = NULL;
         }
     }
-
     if (tvd->fps_count==100){
         clock_t t = clock();
         tvd->fps = 100000/(t-tvd->t0);
@@ -331,6 +344,5 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
         tvd->t0=t;
         tvd->fps_count=0;
     }
-
 }
 #endif //华谷动力相机只支持windows

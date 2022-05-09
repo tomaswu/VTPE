@@ -10,6 +10,10 @@ Window{
     id: subwindow
     width: 420
     height: 500
+    maximumWidth: width
+    minimumWidth: width
+    maximumHeight: height
+    minimumHeight: height
 
     Column{
         anchors.fill:parent
@@ -20,7 +24,7 @@ Window{
             width: parent.width-parent.padding*2
             height:420
             border.width: 1
-            border.color: "lightgreen"
+            border.color: "skyblue"
             property int sapcing: 10
 
                 Text {
@@ -52,7 +56,10 @@ Window{
                     }
                     selectByMouse: true
                     text: fps_slider.value
-                    onTextChanged: fps_slider.value = text
+                    onAccepted: {
+                        fps_slider.value = text
+                        focus = false
+                    }
                 }
 
                 Text {
@@ -94,7 +101,10 @@ Window{
                     x:300
                     anchors.verticalCenter: exposure_time_text.verticalCenter
                     text: exposure_time_slider.value.toFixed(2)
-                    onTextChanged: exposure_time_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        exposure_time_slider.value = text
+                    }
                 }
 
                 Text {
@@ -107,7 +117,7 @@ Window{
                 Slider{
                     id: gian_slider
                     from: 0
-                    to:1
+                    to:32
                     stepSize: 0.01
                     width: 180
                     x:fps_slider.x
@@ -119,13 +129,16 @@ Window{
                     id:gian_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /1.00|0[\.][0-9]{1,2}/
+                        regularExpression: /[0-2][0-9][\.][0-9]{1,2}|[3][0-2][\.][0-9]{1,2}/
                     }
                     width: 60
                     x:300
                     anchors.verticalCenter: gian_text.verticalCenter
                     text: gian_slider.value.toFixed(2)
-                    onTextChanged: gian_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        gian_slider.value = text
+                    }
                 }
 
                 Text {
@@ -156,7 +169,10 @@ Window{
                     x:300
                     anchors.verticalCenter: gamma_text.verticalCenter
                     text: gamma_slider.value.toFixed(2)
-                    onTextChanged: gamma_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        gamma_slider.value = text
+                    }
                 }
 
 
@@ -182,13 +198,16 @@ Window{
                     id:denoise_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /1.00|0[\.][0-9]{1,2}/
+                        regularExpression: /1.00|0\.[0-9]{1,2}/
                     }
                     width: 60
                     x:300
                     anchors.verticalCenter: denoise_text.verticalCenter
                     text: denoise_slider.value.toFixed(2)
-                    onTextChanged: denoise_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        denoise_slider.value = text
+                    }
                 }
 
                 Text {
@@ -219,7 +238,10 @@ Window{
                     x:300
                     anchors.verticalCenter: acuity_text.verticalCenter
                     text: acuity_slider.value.toFixed(2)
-                    onTextChanged: acuity_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        acuity_slider.value = text
+                    }
                 }
 
                 Text {
@@ -250,7 +272,10 @@ Window{
                     x:300
                     anchors.verticalCenter: brightness_text.verticalCenter
                     text: brightness_slider.value.toFixed(0)
-                    onTextChanged: brightness_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        brightness_slider.value = text
+                    }
                 }
 
 
@@ -282,7 +307,10 @@ Window{
                     x:300
                     anchors.verticalCenter: digtalshift_text.verticalCenter
                     text: digtalshift_slider.value.toFixed(0)
-                    onTextChanged: digtalshift_slider.value = text
+                    onAccepted: {
+                        focus = false
+                        digtalshift_slider.value = text
+                    }
                 }
                 Text {
                     id: balance_text

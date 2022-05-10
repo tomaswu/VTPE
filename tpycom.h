@@ -1,6 +1,9 @@
 #ifndef TPYCOM_H
 #define TPYCOM_H
+
+#undef slots
 #include <Python.h>
+#define slots
 
 class TPyCom
 {

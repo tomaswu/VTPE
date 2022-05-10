@@ -7,11 +7,12 @@ QT += quick \
 
 
 SOURCES += \
-    commandLineTools.cpp \
+        commandLineTools.cpp \
         main.cpp \
         pmc0100_com.cpp \
         tcamera.cpp \
-    tvideoanalysis.cpp \
+        tpycom.cpp \
+        tvideoanalysis.cpp \
         tvideocapture.cpp \
 
 resources.files = main.qml \
@@ -64,25 +65,28 @@ DISTFILES += \
     TriSlider.qml \
     deviceList.qml \
     maskImage.qml \
-    qtquickcontrols2.conf
+    python_scripts/data_process.py \
+    qtquickcontrols2.conf \
 
 
 CONFIG += debug_and_release
 
-win32{
+windows{
 
     INCLUDEPATH += \
         E:\Tomas_temp\opencv\op4\opencv\build\include \
-        ./include
+        ./include \
+        "C:\Users\Tomas Wu\AppData\Local\Programs\Python\Python310\include"
 
     LIBS += -LE:\Tomas_temp\opencv\op4\opencv\build\x64\vc15\lib \
-            -LE:\private\TomasWu\CPP_programs\VTPE\Depends\workPower\x64\vs2013shared
+            -LE:\private\TomasWu\CPP_programs\VTPE\Depends\workPower\x64\vs2013shared \
+            -L"C:\Users\Tomas Wu\AppData\Local\Programs\Python\Python310\libs"
 
     CONFIG(debug,debug|release){
-        LIBS += -lopencv_world455d -lMVSDKmd
+        LIBS += -lopencv_world455d -lMVSDKmd -lpython3_d -l_tkinter
     }
     CONFIG(release,debug|release){
-        LIBS += -lopencv_world455 -lMVSDKmd
+        LIBS += -lopencv_world455 -lMVSDKmd -lpython3 -l_tkinter
 
     }
 }
@@ -102,5 +106,8 @@ HEADERS += \
     include/IMVAPI/IMVDefines.h \
     pmc0100_com.h \
     tcamera.h \
+    tpycom.h \
     tvideoanalysis.h \
     tvideocapture.h
+
+

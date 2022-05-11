@@ -14,6 +14,7 @@ Window{
     minimumWidth: width
     maximumHeight: height
     minimumHeight: height
+    title: "相机设置"
 
     Column{
         anchors.fill:parent
@@ -333,7 +334,7 @@ Window{
             Button{
                 id:confirm
                 text:"确定"
-                onClicked: { }
+                onClicked: {shell.pyScriptTest()}
             }
             Button{
                 id:cancel

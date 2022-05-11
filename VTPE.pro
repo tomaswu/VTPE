@@ -5,6 +5,16 @@ QT += quick \
       charts\
       widgets
 
+HEADERS += \
+    cameraMessageQue.h \
+    commandLineTools.h \
+    include/IMVAPI/IMVApi.h \
+    include/IMVAPI/IMVDefines.h \
+    pmc0100_com.h \
+    tcamera.h \
+    tpycom.h \
+    tvideoanalysis.h \
+    tvideocapture.h
 
 SOURCES += \
         commandLineTools.cpp \
@@ -91,6 +101,7 @@ windows{
     }
     CONFIG(release,debug|release){
         LIBS += -lopencv_world455 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc142-mt-x64-1_79
+        QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\"
     }
 }
 
@@ -107,16 +118,3 @@ macx{
     QMAKE_POST_LINK += cp $$PWD/python_scripts/data_process.py $$OUT_PWD/data_process.py
 
 }
-
-HEADERS += \
-    cameraMessageQue.h \
-    commandLineTools.h \
-    include/IMVAPI/IMVApi.h \
-    include/IMVAPI/IMVDefines.h \
-    pmc0100_com.h \
-    tcamera.h \
-    tpycom.h \
-    tvideoanalysis.h \
-    tvideocapture.h
-
-

@@ -9,7 +9,6 @@
 
 int main(int argc, char *argv[])
 {
-    TPyCom com;
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/imgs/ico/Tico.ico"));
 //    qmlRegisterType<TCamera>("TCamera",1,0,"TCamera");

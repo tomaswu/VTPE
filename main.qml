@@ -186,7 +186,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("Calculate camera \nmatrix\n计算相机矩阵",camera_matrix)
-                    onClicked: console.log("camera setting")
+                    onClicked: shell.pyScriptTest()
                 }
 
                 Text{

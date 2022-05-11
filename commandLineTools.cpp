@@ -9,10 +9,17 @@ commandLineTools::commandLineTools(QObject *parent)
     : QObject{parent}
 {
     p = new QProcess;
+    tpycom = new TPyCom;
+    thread = new QThread;
+    tpycom->moveToThread(thread);
+    thread->start();
 }
 
 commandLineTools::~commandLineTools(){
     delete p;
+    thread->terminate();
+    delete tpycom;
+    delete thread;
 }
 
 void commandLineTools::system(QString s){

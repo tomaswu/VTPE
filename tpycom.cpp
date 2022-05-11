@@ -5,22 +5,34 @@
 using namespace std;
 namespace bpy = boost::python;
 
-TPyCom::TPyCom()
+TPyCom::TPyCom(QObject *parent):
+    QObject{parent}
 {
     Py_Initialize();
-    boostTest();
 }
+
+
 TPyCom::~TPyCom(){
     Py_Finalize();
 }
 
-int TPyCom::boostTest(){
 
+int TPyCom::boostTest(){
     bpy::object m = bpy::import("data_process");
     m.attr("pyHello")();
-//    Py_Finalize();
     cout<<"finished"<<endl;
     return 0;
+}
+
+std::vector<std::string> TPyCom::getFiles(std::string path){
+    bpy::object m =bpy::import("os");
+    auto p = m.attr("listdir")(path);
+    auto a = std::vector<string>(boost::python::stl_input_iterator<string>(p),boost::python::stl_input_iterator<string>());
+    for (int i=0;i<a.size();i++){
+        a[i]=path+"/"+a[i];
+    }
+    return a;
+
 }
 
 // 边写边学，获取返回的string

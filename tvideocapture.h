@@ -6,6 +6,10 @@
 #include <QImage>
 #include <QTimer>
 #include <QStringList>
+#include <string>
+#include <vector>
+#include <io.h>
+#include <fstream>
 
 #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
 #include <IMVAPI/IMVApi.h>
@@ -92,6 +96,8 @@ public:
     void                getSupportedResolutions(int index);
     void                setResolution(QString s);
     void                setExposureTime(double millisecond);
+    void                getCameraMatrix();
+    void                getFiles(std::string path, std::vector<std::string> *files);
 
 signals:
     void stopped();

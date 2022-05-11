@@ -47,7 +47,6 @@ public:
     Q_PROPERTY(double fps MEMBER fps NOTIFY fpsChanged);
     Q_PROPERTY(bool opened MEMBER opened NOTIFY openedChanged);
 
-
     // method
     void getCameraList();
     Q_INVOKABLE bool                open(int index);

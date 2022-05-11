@@ -12,6 +12,12 @@
 #include "qdebug.h"
 #include <QSize>
 #include <QUrl>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
+#include <vector>
+#include <string>
+#include <commandLineTools.h>
 
 #ifdef Q_OS_WINDOWS
 #include <IMVAPI/IMVApi.h>
@@ -23,6 +29,7 @@ TVideoCapture::TVideoCapture(QObject *parent)
 {
     cap = new cv::VideoCapture;
     connect(this,&TVideoCapture::startCapture,this,&TVideoCapture::capture);
+    this->getCameraMatrix();
 }
 
 TVideoCapture::~TVideoCapture(){
@@ -345,4 +352,116 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
         tvd->fps_count=0;
     }
 }
+
+void TVideoCapture::getCameraMatrix(){
+    commandLineTools com;
+    std::string filePath = "F:\\Users\\Tomas\\Desktop\\calipics";
+    //获取该路径下的所有文件
+    std::vector<std::string> files = com.tpycom->getFiles(filePath);
+
+
+    const int board_w = 6;
+    const int board_h = 9;
+    const int NPoints = board_w * board_h;//棋盘格内角点总数
+    const int boardSize = 30; //mm
+    cv::Mat image,grayimage;
+    cv::Size ChessBoardSize = cv::Size(board_w, board_h);
+    std::vector<cv::Point2f> tempcorners;
+
+    int flag = 0;
+    flag |= cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC;
+    //flag |= cv::fisheye::CALIB_CHECK_COND;
+    flag |= cv::fisheye::CALIB_FIX_SKEW;
+    //flag |= cv::fisheye::CALIB_USE_INTRINSIC_GUESS;
+
+    std::vector<cv::Point3f> object;
+    for (int j = 0; j < NPoints; j++)
+    {
+        object.push_back(cv::Point3f((j % board_w) * boardSize, (j / board_w) * boardSize, 0));
+    }
+
+    cv::Matx33d intrinsics;//z:相机内参
+    cv::Vec4d distortion_coeff;//z:相机畸变系数
+
+    std::vector<std::vector<cv::Point3f> > objectv;
+    std::vector<std::vector<cv::Point2f> > imagev;
+
+    cv::Size corrected_size(1280, 720);
+    cv::Mat mapx, mapy;
+    cv::Mat corrected;
+
+    std::ofstream intrinsicfile("intrinsics_front1103.txt");
+    std::ofstream disfile("dis_coeff_front1103.txt");
+    int num = 0;
+
+    while (num < files.size())
+    {
+        image = cv::imread(files[num]);
+        if (image.empty())
+            break;
+        imshow("corner_image", image);
+        cv::waitKey(10);
+        cvtColor(image, grayimage, CV_BGR2GRAY);
+        bool findchessboard = cv::checkChessboard(grayimage, ChessBoardSize);
+        if (findchessboard)
+        {
+            bool find_corners_result = findChessboardCorners(grayimage, ChessBoardSize, tempcorners, 3);
+            if (find_corners_result)
+            {
+                cornerSubPix(grayimage, tempcorners, cvSize(5, 5), cvSize(-1, -1), cvTermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                drawChessboardCorners(image, ChessBoardSize, tempcorners, find_corners_result);
+                imshow("corner_image", image);
+                cv::waitKey(100);
+                objectv.push_back(object);
+                imagev.push_back(tempcorners);
+                std::cout << "capture " << num << " pictures" << std::endl;
+            }
+        }
+        tempcorners.clear();
+        num++;
+    }
+
+    cv::fisheye::calibrate(objectv, imagev, cv::Size(image.cols,image.rows), intrinsics, distortion_coeff, cv::noArray(), cv::noArray(), flag, cv::TermCriteria(3, 20, 1e-6));
+    cv::fisheye::initUndistortRectifyMap(intrinsics, distortion_coeff, cv::Matx33d::eye(), intrinsics, corrected_size, CV_16SC2, mapx, mapy);
+
+    for(int i=0; i<3; ++i)
+    {
+        for(int j=0; j<3; ++j)
+        {
+            intrinsicfile<<intrinsics(i,j)<<"\t";
+        }
+        intrinsicfile<<std::endl;
+    }
+    for(int i=0; i<4; ++i)
+    {
+        disfile<<distortion_coeff(i)<<"\t";
+    }
+    intrinsicfile.close();
+    disfile.close();
+
+    num = 0;
+    while (num < files.size())
+    {
+        image = cv::imread(files[num++]);
+
+        if (image.empty())
+            break;
+        cv::remap(image, corrected, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_TRANSPARENT);
+        cv::imshow("corner_image", image);
+        cv::imshow("corrected", corrected);
+        cv::waitKey(200);
+    }
+
+    cv::destroyWindow("corner_image");
+    cv::destroyWindow("corrected");
+
+    image.release();
+    grayimage.release();
+    corrected.release();
+    mapx.release();
+    mapy.release();
+
+}
+
+
 #endif //华谷动力相机只支持windows

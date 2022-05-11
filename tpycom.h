@@ -3,13 +3,14 @@
 
 #undef slots
 #include <Python.h>
-#define slots
+#define slots Q_SLOTS
 
 class TPyCom
 {
 public:
     TPyCom();
-    int ComTest();
+    ~TPyCom();
+    int boostTest();
 };
 
 #endif // TPYCOM_H

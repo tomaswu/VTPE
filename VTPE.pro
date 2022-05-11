@@ -110,11 +110,12 @@ macx{
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 12.0
 
     INCLUDEPATH += /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4 \
-                   /Library/Frameworks/Python.framework/Versions/3.10/include/python3.10
+                   /Library/Frameworks/Python.framework/Versions/3.10/include/python3.10 \
+                   /Users/tomaswu/usr/boost_1_79_0
 
     LIBS += -L/opt/homebrew/Cellar/opencv/4.5.5/lib -lopencv_core -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio
-    LIBS += -L//Library/Frameworks/Python.framework/Versions/3.10/lib -lpython3.10
-
+    LIBS += -L/Library/Frameworks/Python.framework/Versions/3.10/lib -lpython3.10
+    LIBS += -L/Users/tomaswu/usr/boost_1_79_0/stage/lib -lboost_python310
     QMAKE_POST_LINK += cp $$PWD/python_scripts/data_process.py $$OUT_PWD/data_process.py
 
 }

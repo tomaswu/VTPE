@@ -9,6 +9,11 @@ TPyCom::TPyCom(QObject *parent):
     QObject{parent}
 {
     Py_Initialize();
+    #ifdef Q_OS_OSX
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("sys.path.append('./../../../')");
+    #endif
+
 }
 
 
@@ -18,6 +23,9 @@ TPyCom::~TPyCom(){
 
 
 int TPyCom::boostTest(){
+    if(!Py_IsInitialized()){
+        Py_Initialize();
+    }
     bpy::object m = bpy::import("data_process");
     m.attr("pyHello")();
     cout<<"finished"<<endl;

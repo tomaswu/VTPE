@@ -29,7 +29,7 @@ TVideoCapture::TVideoCapture(QObject *parent)
 {
     cap = new cv::VideoCapture;
     connect(this,&TVideoCapture::startCapture,this,&TVideoCapture::capture);
-    this->getCameraMatrix();
+//    this->getCameraMatrix();
 }
 
 TVideoCapture::~TVideoCapture(){

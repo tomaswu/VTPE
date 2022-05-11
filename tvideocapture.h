@@ -8,7 +8,6 @@
 #include <QStringList>
 #include <string>
 #include <vector>
-#include <io.h>
 #include <fstream>
 
 #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows

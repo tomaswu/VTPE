@@ -10,9 +10,9 @@ commandLineTools::commandLineTools(QObject *parent)
 {
     p = new QProcess;
     tpycom = new TPyCom;
-    thread = new QThread;
-    tpycom->moveToThread(thread);
-    thread->start();
+//    thread = new QThread;
+//    tpycom->moveToThread(thread);
+//    thread->start();
 }
 
 commandLineTools::~commandLineTools(){

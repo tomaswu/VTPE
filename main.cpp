@@ -6,6 +6,8 @@
 #include "commandLineTools.h"
 #include <QIcon>
 #include "tpycom.h"
+#include <iostream>
+#include <Python.h>
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +20,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("pmc0100_com",pmc0100_com);
     TCamera *mcap = new TCamera;
     engine.rootContext()->setContextProperty("mcap",mcap);
-    commandLineTools* shell = new commandLineTools;
     engine.rootContext()->setContextProperty("shell",shell);
     engine.addImageProvider("cameraImage",mcap->ipdr);
     const QUrl url(u"qrc:/VTPE/main.qml"_qs);
@@ -28,5 +29,17 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
-    return app.exec();
+    int app_ret = app.exec();
+
+
+    //资源释放
+    if(Py_IsInitialized()){
+        Py_Finalize();
+    }
+
+    delete shell; //全局指针变量，可以控制释放顺序
+//    delete mcap; //不知道原因，释放时还会被qml读取一些变量
+    delete pmc0100_com;
+
+    return app_ret;
 }

@@ -15,7 +15,7 @@ public:
     explicit TPyCom(QObject *parent = nullptr);
     ~TPyCom();
     int boostTest();
-     std::vector<std::string> getFiles(std::string path);
+    std::vector<std::string> getFiles(std::string path);
 
 signals:
 

@@ -3,16 +3,18 @@
 #include <QString>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <iostream>
 
+commandLineTools* shell = new commandLineTools; //全局变量
 
 commandLineTools::commandLineTools(QObject *parent)
     : QObject{parent}
 {
     p = new QProcess;
     tpycom = new TPyCom;
-//    thread = new QThread;
-//    tpycom->moveToThread(thread);
-//    thread->start();
+    thread = new QThread;
+    tpycom->moveToThread(thread);
+    thread->start();
 }
 
 commandLineTools::~commandLineTools(){

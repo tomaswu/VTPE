@@ -29,4 +29,6 @@ signals:
 
 };
 
+extern commandLineTools* shell;//全局变量
+
 #endif // COMMANDLINETOOLS_H

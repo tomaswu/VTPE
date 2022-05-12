@@ -2,25 +2,26 @@
 #include <iostream>
 #include <QtGlobal>
 #include <boost/python.hpp>
+#include <Python.h>
+
 using namespace std;
 namespace bpy = boost::python;
 
 TPyCom::TPyCom(QObject *parent):
     QObject{parent}
 {
+    if(!Py_IsInitialized()){
     Py_Initialize();
+    }
     #ifdef Q_OS_OSX
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("sys.path.append('./../../../')");
     #endif
-
 }
-
 
 TPyCom::~TPyCom(){
-    Py_Finalize();
-}
 
+}
 
 int TPyCom::boostTest(){
     if(!Py_IsInitialized()){
@@ -28,7 +29,7 @@ int TPyCom::boostTest(){
     }
     bpy::object m = bpy::import("data_process");
     m.attr("pyHello")();
-    cout<<"finished"<<endl;
+    cout<<"finished from c++"<<endl;
     return 0;
 }
 
@@ -40,7 +41,6 @@ std::vector<std::string> TPyCom::getFiles(std::string path){
         a[i]=path+"/"+a[i];
     }
     return a;
-
 }
 
 // 边写边学，获取返回的string

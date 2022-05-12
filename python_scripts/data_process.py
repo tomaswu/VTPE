@@ -1,6 +1,7 @@
 # This Python file uses the following encoding: utf-8
 import numpy as np
 import sys
+import time
 
 def print(obj,end='\n'):
     s=obj.__str__()
@@ -9,7 +10,7 @@ def print(obj,end='\n'):
 
 def pyHello():
     a = np.linspace(1, 10, 10)
-    print("print test!")
+    print(f"print test! {time.ctime()}")
     print(a)
     print("hello world! python")
 

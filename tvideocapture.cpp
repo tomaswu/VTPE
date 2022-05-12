@@ -353,17 +353,17 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     }
 }
 
+#endif //华谷动力相机只支持windows
+
 void TVideoCapture::getCameraMatrix(){
-    commandLineTools com;
     std::string filePath = "F:\\Users\\Tomas\\Desktop\\calipics";
     //获取该路径下的所有文件
-    std::vector<std::string> files = com.tpycom->getFiles(filePath);
-
+    std::vector<std::string> files = shell->tpycom->getFiles(filePath);
 
     const int board_w = 6;
     const int board_h = 9;
     const int NPoints = board_w * board_h;//棋盘格内角点总数
-    const int boardSize = 30; //mm
+    const int boardSize = 25; //mm
     cv::Mat image,grayimage;
     cv::Size ChessBoardSize = cv::Size(board_w, board_h);
     std::vector<cv::Point2f> tempcorners;
@@ -386,21 +386,20 @@ void TVideoCapture::getCameraMatrix(){
     std::vector<std::vector<cv::Point3f> > objectv;
     std::vector<std::vector<cv::Point2f> > imagev;
 
-    cv::Size corrected_size(1280, 720);
+    cv::Size corrected_size(1920, 1080);
     cv::Mat mapx, mapy;
     cv::Mat corrected;
 
     std::ofstream intrinsicfile("intrinsics_front1103.txt");
     std::ofstream disfile("dis_coeff_front1103.txt");
-    int num = 0;
 
+    int num = 0;
     while (num < files.size())
     {
         image = cv::imread(files[num]);
         if (image.empty())
             break;
-        imshow("corner_image", image);
-        cv::waitKey(10);
+
         cvtColor(image, grayimage, CV_BGR2GRAY);
         bool findchessboard = cv::checkChessboard(grayimage, ChessBoardSize);
         if (findchessboard)
@@ -408,10 +407,10 @@ void TVideoCapture::getCameraMatrix(){
             bool find_corners_result = findChessboardCorners(grayimage, ChessBoardSize, tempcorners, 3);
             if (find_corners_result)
             {
-                cornerSubPix(grayimage, tempcorners, cvSize(5, 5), cvSize(-1, -1), cvTermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                cornerSubPix(grayimage, tempcorners, cv::Size(15, 15), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
                 drawChessboardCorners(image, ChessBoardSize, tempcorners, find_corners_result);
-                imshow("corner_image", image);
-                cv::waitKey(100);
+//                imshow("corner_image", image);
+//                cv::waitKey(100);
                 objectv.push_back(object);
                 imagev.push_back(tempcorners);
                 std::cout << "capture " << num << " pictures" << std::endl;
@@ -422,38 +421,39 @@ void TVideoCapture::getCameraMatrix(){
     }
 
     cv::fisheye::calibrate(objectv, imagev, cv::Size(image.cols,image.rows), intrinsics, distortion_coeff, cv::noArray(), cv::noArray(), flag, cv::TermCriteria(3, 20, 1e-6));
-    cv::fisheye::initUndistortRectifyMap(intrinsics, distortion_coeff, cv::Matx33d::eye(), intrinsics, corrected_size, CV_16SC2, mapx, mapy);
 
+    //这部分为保存参数到文件
     for(int i=0; i<3; ++i)
     {
         for(int j=0; j<3; ++j)
         {
-            intrinsicfile<<intrinsics(i,j)<<"\t";
+            intrinsicfile<<std::setiosflags(std::ios::left)<<std::setw(20)<<std::setfill(' ')<<intrinsics(i,j);
         }
         intrinsicfile<<std::endl;
     }
     for(int i=0; i<4; ++i)
     {
-        disfile<<distortion_coeff(i)<<"\t";
+        disfile<<std::setiosflags(std::ios::left)<<std::setw(20)<<std::setfill(' ')<<distortion_coeff(i);
     }
     intrinsicfile.close();
     disfile.close();
 
-    num = 0;
-    while (num < files.size())
-    {
-        image = cv::imread(files[num++]);
+    //以下部分为校正后的图像
+//    cv::fisheye::initUndistortRectifyMap(intrinsics, distortion_coeff, cv::Matx33d::eye(), intrinsics, corrected_size, CV_16SC2, mapx, mapy);
+//    num = 0;
+//    while (num < files.size())
+//    {
+//        image = cv::imread(files[num++]);
+//        if (image.empty())
+//            break;
+//        cv::remap(image, corrected, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+//        cv::imshow("corner_image", image);
+//        cv::imshow("corrected", corrected);
+//        cv::waitKey(0);
+//    }
 
-        if (image.empty())
-            break;
-        cv::remap(image, corrected, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_TRANSPARENT);
-        cv::imshow("corner_image", image);
-        cv::imshow("corrected", corrected);
-        cv::waitKey(200);
-    }
-
-    cv::destroyWindow("corner_image");
-    cv::destroyWindow("corrected");
+//    cv::destroyWindow("corner_image");
+//    cv::destroyWindow("corrected");
 
     image.release();
     grayimage.release();
@@ -462,6 +462,3 @@ void TVideoCapture::getCameraMatrix(){
     mapy.release();
 
 }
-
-
-#endif //华谷动力相机只支持windows

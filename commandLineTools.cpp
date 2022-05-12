@@ -19,8 +19,8 @@ commandLineTools::commandLineTools(QObject *parent)
 
 commandLineTools::~commandLineTools(){
     delete p;
-    thread->terminate();
     delete tpycom;
+    thread->terminate();
     delete thread;
 }
 

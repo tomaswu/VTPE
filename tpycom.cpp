@@ -37,7 +37,7 @@ std::vector<std::string> TPyCom::getFiles(std::string path){
     bpy::object m =bpy::import("os");
     auto p = m.attr("listdir")(path);
     auto a = std::vector<string>(boost::python::stl_input_iterator<string>(p),boost::python::stl_input_iterator<string>());
-    for (int i=0;i<a.size();i++){
+    for (int i=0;i<(int)a.size();i++){
         a[i]=path+"/"+a[i];
     }
     return a;

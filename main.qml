@@ -177,6 +177,8 @@ Window {
                     id:camera_cali
                     text: "畸变校正"
                     Layout.columnSpan: 3
+                    checked: false
+                    onCheckStateChanged: mcap.setCaliFlag(checked)
                 }
 
                 SToolButton{

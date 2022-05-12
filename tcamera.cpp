@@ -10,6 +10,7 @@
 #include <tvideocapture.h>
 #include <QVariantList>
 #include <opencv2/imgproc.hpp>
+#include <iostream>
 
 //#ifdef  Q_OS_WINDOWS //华谷动力相机仅支持windows
 //#include <IMVAPI/IMVApi.h>
@@ -217,6 +218,10 @@ QVariantList TCamera::calSelectScale(double row1,double row2, double col1, doubl
 
 int TCamera::getCameraType(){
     return cap->CamType;
+}
+
+void TCamera::setCaliFlag(bool flag){
+    this->cap->cali_flag=flag;
 }
 
 

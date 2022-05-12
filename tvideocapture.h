@@ -72,12 +72,13 @@ public:
     clock_t                 t0 = clock(); //for fps calculation start time
     #ifdef Q_OS_WINDOWS
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
-    TMessageQue<CFrameInfo>  tque;
+    TMessageQue<CFrameInfo> tque;
     #endif
     cv::VideoCapture        *cap;
     cv::Mat                 mat;
     cv::Mat                 photo_mat;
     QStringList             supportedResolution;
+    bool                    cali_flag=false;
 
     // method
     void                set_indexAndType(int index);

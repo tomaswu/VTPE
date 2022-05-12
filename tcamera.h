@@ -65,6 +65,7 @@ public:
     void                            alreadyStopped(){emit stopped();}
     void                            setTimerFresh(){time_to_refresh=true;};
     void                            refreshFps(double f);
+    Q_INVOKABLE void                setCaliFlag(bool flag);
 
 signals:
     void cameraListRefreshed();

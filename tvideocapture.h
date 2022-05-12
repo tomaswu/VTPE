@@ -97,6 +97,7 @@ public:
     void                setExposureTime(double millisecond);
     void                getCameraMatrix();
     void                getFiles(std::string path, std::vector<std::string> *files);
+    bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
 
 signals:
     void stopped();

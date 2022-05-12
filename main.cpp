@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     PMC0100_COM *pmc0100_com = new PMC0100_COM;
     engine.rootContext()->setContextProperty("pmc0100_com",pmc0100_com);
-    TCamera *mcap = new TCamera;
+    TCamera *mcap = new TCamera(&app);
     engine.rootContext()->setContextProperty("mcap",mcap);
     engine.rootContext()->setContextProperty("shell",shell);
     engine.addImageProvider("cameraImage",mcap->ipdr);
@@ -31,14 +31,13 @@ int main(int argc, char *argv[])
     engine.load(url);
     int app_ret = app.exec();
 
-
     //资源释放
     if(Py_IsInitialized()){
         Py_Finalize();
     }
 
     delete shell; //全局指针变量，可以控制释放顺序
-//    delete mcap; //不知道原因，释放时还会被qml读取一些变量
+//    delete mcap; //不知道为什么在释放时还会被qml读取一些变量,导致程序崩溃
     delete pmc0100_com;
 
     return app_ret;

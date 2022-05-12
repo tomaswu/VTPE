@@ -389,9 +389,7 @@ void TVideoCapture::getCameraMatrix(){
     cv::Size corrected_size(1920, 1080);
     cv::Mat mapx, mapy;
     cv::Mat corrected;
-
-    std::ofstream intrinsicfile("intrinsics_front1103.txt");
-    std::ofstream disfile("dis_coeff_front1103.txt");
+    std::ofstream camera_matrix("cameraMatrix");
 
     int num = 0;
     while (num < files.size())
@@ -427,16 +425,15 @@ void TVideoCapture::getCameraMatrix(){
     {
         for(int j=0; j<3; ++j)
         {
-            intrinsicfile<<std::setiosflags(std::ios::left)<<std::setw(20)<<std::setfill(' ')<<intrinsics(i,j);
+            camera_matrix<<std::setiosflags(std::ios::left)<<std::setw(20)<<std::setfill(' ')<<intrinsics(i,j);
         }
-        intrinsicfile<<std::endl;
+        camera_matrix<<std::endl;
     }
     for(int i=0; i<4; ++i)
     {
-        disfile<<std::setiosflags(std::ios::left)<<std::setw(20)<<std::setfill(' ')<<distortion_coeff(i);
+        camera_matrix<<std::setiosflags(std::ios::left)<<std::setw(20)<<std::setfill(' ')<<distortion_coeff(i);
     }
-    intrinsicfile.close();
-    disfile.close();
+    camera_matrix.close();
 
     //以下部分为校正后的图像
 //    cv::fisheye::initUndistortRectifyMap(intrinsics, distortion_coeff, cv::Matx33d::eye(), intrinsics, corrected_size, CV_16SC2, mapx, mapy);
@@ -461,4 +458,28 @@ void TVideoCapture::getCameraMatrix(){
     mapx.release();
     mapy.release();
 
+}
+
+bool TVideoCapture::readCameraMatrix(cv::Matx33d &K,cv::Vec4d &D){
+    std::ifstream camera_matrix("cameraMatrix");
+    if(!camera_matrix.is_open()){
+        return false;
+    }
+    double tmp;
+    int n=0;
+    while(camera_matrix>>tmp){
+        std::cout<<tmp<<std::endl;
+        if (n<9){
+             K(n/3,n%3)=tmp;
+        }
+        else{
+           D((n-9)%4)=tmp;
+        }
+        n+=1;
+    }
+    if (n>13){
+        return false;
+    }
+
+    return true;
 }

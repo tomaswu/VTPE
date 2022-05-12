@@ -53,9 +53,13 @@ TCamera::TCamera(QObject *parent)
 }
 
 TCamera::~TCamera(){
+    timer->stop();
+    timer_refresh->stop();
+    thread.terminate();
+    delete cap;
     delete timer;
     delete ipdr;
-    thread.terminate();
+    delete timer_refresh;
 }
 
 QStringList TCamera::getSupportedResolutions(){

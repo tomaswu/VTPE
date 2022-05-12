@@ -3,7 +3,7 @@ QT += quick \
       multimedia\
       serialport\
       charts\
-      widgets
+      widgets\
 
 HEADERS += \
     cameraMessageQue.h \
@@ -109,7 +109,8 @@ windows{
 macx{
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 12.0
 
-    INCLUDEPATH += /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4 \
+    INCLUDEPATH += \#/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include \
+                   /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4 \
                    /Library/Frameworks/Python.framework/Versions/3.10/include/python3.10 \
                    /Users/tomaswu/usr/boost_1_79_0
 

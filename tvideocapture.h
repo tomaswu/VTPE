@@ -76,9 +76,15 @@ public:
     #endif
     cv::VideoCapture        *cap;
     cv::Mat                 mat;
+    cv::Mat                 correctedMat;
     cv::Mat                 photo_mat;
     QStringList             supportedResolution;
     bool                    cali_flag=false;
+    cv::Matx33d             intrinsics_matrix;
+    cv::Vec4d               distortion_coeff;
+    cv::Mat                 mapx;
+    cv::Mat                 mapy;
+    cv::Size2i              correctSize;
 
     // method
     void                set_indexAndType(int index);
@@ -99,6 +105,7 @@ public:
     void                getCameraMatrix();
     void                getFiles(std::string path, std::vector<std::string> *files);
     bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
+    bool                initUndistort(cv::MatSize size);
 
 signals:
     void stopped();

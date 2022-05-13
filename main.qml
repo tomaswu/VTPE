@@ -893,7 +893,7 @@ Window {
 
                         Timer{
                             id:camera_saveinfo_timer
-                            interval: 150000
+                            interval: 18000
                             triggeredOnStart: false
                             repeat: false
                             onTriggered: camera_saveinfo.text=""
@@ -1015,7 +1015,11 @@ Window {
 
     MouseArea{
         id: mouseArea_select
-        anchors.fill: centerWidget
+        x:centerWidget.x
+        y:centerWidget.y
+        width:centerWidget.width
+        height: camera_widget_bg.height
+        z:mscale-1
         enabled: measurement_select.checked
         property double x0: 0
         property double y0: 0
@@ -1052,6 +1056,7 @@ Window {
 
     SelectScale4Image{
         id:s4i
+        y:centerWidget.y
         visible: false
     }
 

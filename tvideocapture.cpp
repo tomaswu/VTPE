@@ -30,6 +30,8 @@ TVideoCapture::TVideoCapture(QObject *parent)
     cap = new cv::VideoCapture;
     connect(this,&TVideoCapture::startCapture,this,&TVideoCapture::capture);
 //    this->getCameraMatrix();
+    readCameraMatrix(intrinsics_matrix,distortion_coeff);
+
 }
 
 TVideoCapture::~TVideoCapture(){
@@ -103,16 +105,30 @@ void TVideoCapture::capture(){
                fps_count=0;
                t0=clock();
                clock_t t1;
+               QImage tmp;
                while (running_flag)
                {
                    bool ret = cap->read(mat);
                    if (ret){
-                      if (needPhoto){
-                          photo_mat = mat;
-                          needPhoto = false;
-                          photoReady = true;
+                      if (cali_flag){
+                          if(correctSize.width!=mat.size[1] || correctSize.height!=mat.size[0]){
+                              initUndistort(mat.size);
+                          }
+                          cv::remap(mat, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+                          if(needPhoto){
+                              photo_mat = correctedMat;
+                              needPhoto = false;
+                              photoReady = true;
+                          }
+                          tmp=Mat2QImage(correctedMat);
+                      }else{
+                          if(needPhoto){
+                              photo_mat = mat;
+                              needPhoto = false;
+                              photoReady = true;
+                          }
+                          tmp=Mat2QImage(mat);
                       }
-                      auto tmp=Mat2QImage(mat);
                       fps_count+=1;
                       emit imgReady(tmp);
                    }
@@ -139,19 +155,24 @@ void TVideoCapture::capture(){
         case workPowerCam:
             int ret;
             ret = IMV_AttachGrabbing(this->m_devHandle,onGetFrame,this);
+            cv::Mat tmp;
             if(ret==IMV_OK){
                 IMV_StartGrabbing(this->m_devHandle);
                 CFrameInfo frameInfo;
                 QImage image;
                 while(running_flag){
-                    cv::waitKeyEx(30);
+                    cv::waitKeyEx(40);
                     if(tque.size()==0){
                         continue;
                     }
                     this->tque.get(frameInfo);
-                    if (gvspPixelMono8 == frameInfo.m_ePixelType){
+                    if (gvspPixelMono8 == frameInfo.m_ePixelType){ //黑白相机暂不支持拍照和校正等功能，没有黑白相机验证。
                         image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
-                        emit imgReady(image);
+                        tmp = QImage2Mat(image);
+                        tmp.copyTo(mat);
+                        tmp.release();
+                        free(image.bits());
+                        emit imgReady(Mat2QImage(mat));
                     }
                     else
                     {
@@ -192,7 +213,35 @@ void TVideoCapture::capture(){
                         }
                         free(frameInfo.m_pImageBuf);
                         image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
-                        emit imgReady(image);
+                        if(cali_flag){
+                            tmp = QImage2Mat(image);
+                            tmp.copyTo(mat);
+                            tmp.release();
+                            free(image.bits());
+                            if(correctSize.width!=mat.size[1] || correctSize.height!=mat.size[0]){
+                                initUndistort(mat.size);
+                            }
+                            cv::remap(mat, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+                            if(needPhoto){
+                                photo_mat = correctedMat;
+                                needPhoto = false;
+                                photoReady = true;
+                            }
+                            emit imgReady(Mat2QImage(correctedMat));
+                        }
+                        else{
+                            tmp = QImage2Mat(image);
+                            tmp.copyTo(mat);
+                            tmp.release();
+                            free(image.bits());
+                            if(needPhoto){
+                                photo_mat = mat;
+                                needPhoto = false;
+                                photoReady = true;
+                            }
+                            emit imgReady(Mat2QImage(mat));
+                        }
+
                     }// end else
                 } //end while
             }// end if
@@ -201,8 +250,6 @@ void TVideoCapture::capture(){
             break;
         #endif //华谷动力相机只支持windows
     }//end switch
-    QImage emptyImg;
-    emit imgReady(emptyImg);
 }
 
 void TVideoCapture::getSupportedResolutions(int index){
@@ -468,7 +515,6 @@ bool TVideoCapture::readCameraMatrix(cv::Matx33d &K,cv::Vec4d &D){
     double tmp;
     int n=0;
     while(camera_matrix>>tmp){
-        std::cout<<tmp<<std::endl;
         if (n<9){
              K(n/3,n%3)=tmp;
         }
@@ -480,6 +526,13 @@ bool TVideoCapture::readCameraMatrix(cv::Matx33d &K,cv::Vec4d &D){
     if (n>13){
         return false;
     }
-
     return true;
+}
+
+bool TVideoCapture::initUndistort(cv::MatSize size){
+    this->correctSize.width=size[1];
+    this->correctSize.height=size[0];
+    cv::fisheye::initUndistortRectifyMap(intrinsics_matrix, distortion_coeff, cv::Matx33d::eye(), intrinsics_matrix, correctSize, CV_16SC2, mapx, mapy);
+    return true;
+
 }

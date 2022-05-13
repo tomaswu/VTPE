@@ -69,7 +69,7 @@ QStringList TCamera::getSupportedResolutions(){
 
 void TCamera::refreshImage(QImage img){
     if (time_to_refresh){
-        this->ipdr->setImage(img,this->cap->CamType);
+        this->ipdr->setImage(img);
         emit this->imageRefreshed();
         time_to_refresh=false;
     }
@@ -235,18 +235,8 @@ imgProvider::~imgProvider(){
 
 };
 
-void imgProvider::setImage(QImage img,int camera_type){
-    switch (camera_type){
-        case cvCam:
-            this->img=img;
-            break;
-        case workPowerCam:
-            QImage tmp;
-            tmp=this->img;
-            this->img=img;
-            if (!tmp.isNull())free(tmp.bits());
-            break;
-    }
+void imgProvider::setImage(QImage img){
+    this->img=img;
 }
 
 

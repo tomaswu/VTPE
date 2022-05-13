@@ -8,6 +8,7 @@
 #include "tpycom.h"
 #include <iostream>
 #include <Python.h>
+#include <tvideoanalysis.h>
 
 int main(int argc, char *argv[])
 {
@@ -19,9 +20,12 @@ int main(int argc, char *argv[])
     PMC0100_COM *pmc0100_com = new PMC0100_COM;
     engine.rootContext()->setContextProperty("pmc0100_com",pmc0100_com);
     TCamera *mcap = new TCamera();
+    TVideoAnalysis *mvid = new TVideoAnalysis;
     engine.rootContext()->setContextProperty("mcap",mcap);
+    engine.rootContext()->setContextProperty("mvid",mvid);
     engine.rootContext()->setContextProperty("shell",shell);
     engine.addImageProvider("cameraImage",mcap->ipdr);
+    engine.addImageProvider("videoImage",mvid->ipdr);
     const QUrl url(u"qrc:/VTPE/main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
@@ -41,6 +45,7 @@ int main(int argc, char *argv[])
     delete shell; //全局指针变量，可以控制释放顺序,在mac下，如果不py_exit则无法结束线程
     delete mcap; //不知道为什么在释放时还会被qml读取一些变量,导致程序崩溃，py_exit后也没这个问题了
     delete pmc0100_com;
+    delete mvid;
 
     return app_ret;
 }

@@ -921,8 +921,24 @@ Window {
             }
 
             Image{
+                id:video_img
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+                source:""
+                cache: false
+                Connections{
+                    target: mvid
+                    function onImageRefreshed(){
+                        if(mvid.isOpened()){
+                        video_img.source=""
+                        video_img.source="image://videoImage"
+                        }else{
+                            camera_img.source=""
+                        }
 
-            }
+                    }
+                }//end Connections
+            } //end image
 
             // player bar
             Rectangle {
@@ -973,6 +989,9 @@ Window {
                                 btnName: ""
                                 width: 24
                                 height: 24
+                                onClicked: {
+                                    mvid.play_pause()
+                                }
                             }
                             SToolButton2{
                                 id:forward

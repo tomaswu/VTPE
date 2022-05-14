@@ -366,7 +366,6 @@ Window {
                             folder_recording.recordPath = dir
                             centerWidget.currentIndex = 1
                         }
-
                     }
                 }
 
@@ -967,6 +966,17 @@ Window {
                             id: slider
                             width:parent.width-2*parent.padding
                             height: 30
+                            from: 0
+                            to: mvid.getFrameCount()
+                            value0: 0
+                            value1: mvid.pos
+                            value2: mvid.getFrameCount()
+                            Connections{
+                                target: mvid
+                                function onPosChanged(){
+                                    console.log(mvid.pos)
+                                }
+                            }
                         }
 
                         Row{

@@ -36,11 +36,20 @@ void TVideoAnalysis::open(string path){
 }
 
 int TVideoAnalysis::getPos(){
-    return video_reader->get(cv::CAP_PROP_POS_FRAMES);
+    int p = video_reader->get(cv::CAP_PROP_POS_FRAMES);
+    if (p!=pos){
+        emit posChanged();
+    }
+    pos=p;
+    return pos;
 }
 
 bool TVideoAnalysis::setPos(int i){
     bool ret = video_reader->set(cv::CAP_PROP_POS_FRAMES,i);
+    if (ret){
+        pos=i;
+        emit posChanged();
+    }
     return ret;
 }
 
@@ -73,7 +82,7 @@ void TVideoAnalysis::getFrame(){
     video_reader->read(img);
     ipdr->img = Mat2QImage(img);
     emit imageRefreshed();
-    int pos = getPos();
+    getPos();
     if(pos==endPos){
         setPos(beginPos);
     }

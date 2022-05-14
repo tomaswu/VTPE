@@ -49,9 +49,12 @@ public:
     void                                getFrame();
     void                                setPlaySpeed(double speed);
     Q_INVOKABLE void                    play_pause();
+    Q_PROPERTY(int pos MEMBER pos NOTIFY posChanged);
+
 
 signals:
     void imageRefreshed();
+    void posChanged();
 
 };
 

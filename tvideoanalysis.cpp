@@ -17,8 +17,7 @@ TVideoAnalysis::TVideoAnalysis(QObject *parent)
     play_timer = new QTimer;
     connect(this->play_timer,&QTimer::timeout,this,&TVideoAnalysis::getFrame);
     play_timer->setInterval(5);
-    this->open(this->testfile);
-    this->getFrame();
+//    this->open(this->testfile);
 }
 
 TVideoAnalysis::~TVideoAnalysis(){
@@ -28,11 +27,22 @@ TVideoAnalysis::~TVideoAnalysis(){
     delete video_reader;
 }
 
-void TVideoAnalysis::open(string path){
-    video_reader->open(path);
-    setPlaySpeed(1.0);
-    setBeginPos(0);
-    setEndPos(getFrameCount());
+void TVideoAnalysis::open(QString path){
+    if(play_timer->isActive())
+    {
+        play_timer->stop();
+    }
+    if(video_reader->isOpened()){
+        video_reader->release();
+    }
+    video_reader->open(path.toStdString());
+    if (video_reader->isOpened()){
+        setPlaySpeed(1.0);
+        setBeginPos(0);
+        setEndPos(getFrameCount());
+        getFrame();
+        emit alreadyOpened();
+    }
 }
 
 int TVideoAnalysis::getPos(){
@@ -79,7 +89,10 @@ bool TVideoAnalysis::isOpened(){
 }
 
 void TVideoAnalysis::getFrame(){
-    video_reader->read(img);
+    bool ret = video_reader->read(img);
+    if(!ret){
+        return;
+    }
     ipdr->img = Mat2QImage(img);
     emit imageRefreshed();
     getPos();

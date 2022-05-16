@@ -32,7 +32,7 @@ public:
     int                                 endPos;
     imgProvider                         *ipdr;
     QTimer                              *play_timer;
-    std::string                          testfile="/Users/tomaswu/Movies/test.mp4";
+    std::string                          testfile="C:\\Users\\Tomas Wu\\Videos\\202203151103光镊演示.mp4";
 
     //method
     cv::Mat                             QImage2Mat(QImage const& image);
@@ -44,17 +44,20 @@ public:
     Q_INVOKABLE int                     getEndPos();
     Q_INVOKABLE void                    setEndPos(int i);
     Q_INVOKABLE int                     getFrameCount();
-    Q_INVOKABLE void                    open(std::string path);
+    Q_INVOKABLE void                    open(QString path);
     Q_INVOKABLE bool                    isOpened();
     void                                getFrame();
     void                                setPlaySpeed(double speed);
     Q_INVOKABLE void                    play_pause();
+
+    // qml read
     Q_PROPERTY(int pos MEMBER pos NOTIFY posChanged);
 
 
 signals:
     void imageRefreshed();
     void posChanged();
+    void alreadyOpened();
 
 };
 

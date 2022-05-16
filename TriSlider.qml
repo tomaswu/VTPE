@@ -15,9 +15,9 @@ Item{
         property string scolor0: "green"
         property string scolor1: "blue"
         property string scolor2: "red"
+        signal setValue1();
         width: 60
         height: 20
-
         Item{
             id:lines
             width: parent.width-triSlider.sliderWidth
@@ -113,6 +113,7 @@ Item{
                     if(tmp>s2.x)triSlider.value1=triSlider.value2
                     label.showOn(1)
                     label.focus=false
+                    setValue1()
                 }
                 onReleased: {
                     label.delay_hide(800)

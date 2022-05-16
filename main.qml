@@ -365,6 +365,11 @@ Window {
                             var dir = shell.getFolderFromFilePath(fileName)
                             folder_recording.recordPath = dir
                             centerWidget.currentIndex = 1
+                            if(Qt.platform.os==="windows"){
+                                fileName = fileName.replace(new RegExp("/", "g"),"\\")
+                                console.log(fileName)
+                            }//end switch
+                            mvid.open(fileName)
                         }
                     }
                 }
@@ -400,7 +405,16 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("show/hide player\n tools\n显示/关闭播放工具",video_player)
-                    onClicked: playerbar.visible=!playerbar.visible
+                    onCheckedChanged: {
+                        if(checked){
+                            centerWidget.currentIndex=1
+                            centerWidget.interactive = false
+                        }
+                        else{
+                            centerWidget.interactive = true
+                        }
+                        playerbar.visible=!playerbar.visible
+                    }
                 }
 
                 SToolButton{
@@ -949,7 +963,7 @@ Window {
                 radius:8
                 y:parent.height-height-35
                 visible: video_player.checked
-                z:3
+                z:video_widget.z+1
 
                     Column{
                         anchors.fill: parent
@@ -966,15 +980,21 @@ Window {
                             id: slider
                             width:parent.width-2*parent.padding
                             height: 30
-                            from: 0
-                            to: mvid.getFrameCount()
-                            value0: 0
-                            value1: mvid.pos
-                            value2: mvid.getFrameCount()
+                            onSetValue1:mvid.setPos(value1)
                             Connections{
                                 target: mvid
                                 function onPosChanged(){
-                                    console.log(mvid.pos)
+                                    slider.value1 = mvid.pos
+                                }
+                            }
+                            Connections{
+                                target: mvid
+                                function onAlreadyOpened(){
+                                    slider.from = 0
+                                    slider.to = mvid.getFrameCount()
+                                    slider.value2 = slider.to
+                                    slider.value1=1
+                                    console.log("test")
                                 }
                             }
                         }
@@ -1000,7 +1020,12 @@ Window {
                                 width: 24
                                 height: 24
                                 onClicked: {
-                                    mvid.play_pause()
+                                    if (mvid.isOpened()){
+                                        mvid.play_pause()
+                                    }
+                                    else{
+                                        dia.showInfo("请先打开视频！")
+                                    }
                                 }
                             }
                             SToolButton2{

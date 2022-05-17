@@ -53,8 +53,6 @@ public:
     Q_INVOKABLE void                startCapture(){emit cap->startCapture();};
     Q_INVOKABLE bool                isOpened();
     Q_INVOKABLE void                release();
-    Q_INVOKABLE void                openSettings(){cap->openSettings();};
-    Q_INVOKABLE void                setResolution(QString s){cap->setResolution(s);};
     Q_INVOKABLE QStringList         getSupportedResolutions();
     Q_INVOKABLE void                needPhoto(){cap->needPhoto=true;};
     Q_INVOKABLE bool                savePhoto(QString path){return cap->photo(path);};
@@ -66,6 +64,14 @@ public:
     void                            setTimerFresh(){time_to_refresh=true;};
     void                            refreshFps(double f);
     Q_INVOKABLE void                setCaliFlag(bool flag);
+
+    // 相机设置函数
+    Q_INVOKABLE void                openSettings(){cap->openSettings();};
+    Q_INVOKABLE void                setResolution(QString s){cap->setResolution(s);};
+    Q_INVOKABLE bool                setExposureTime(double minisecond){return cap->setExposureTime(minisecond);}; //曝光时间
+    Q_INVOKABLE bool                setGain(double dGainRaw){return cap->setAdjustPluse(dGainRaw);}; //增益
+    Q_INVOKABLE bool                setGamma(double gamma){return cap->setGamma(gamma);}; //gamma
+
 
 signals:
     void cameraListRefreshed();

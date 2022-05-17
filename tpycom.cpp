@@ -43,6 +43,23 @@ std::vector<std::string> TPyCom::getFiles(std::string path){
     return a;
 }
 
+bool TPyCom::sendEmail(QString content,QString subject,QString to,QString from, QString password){
+    bool ret = false;
+    if(!Py_IsInitialized()){
+        Py_Initialize();
+    }
+    bpy::object m = bpy::import("temail");
+    bpy::object email = m.attr("Mail")();
+    email.attr("sender") = from.toStdString();
+    email.attr("mail_pass") = password.toStdString();
+    bpy::list recvs;
+    recvs.append(to.toStdString());
+    email.attr("receivers") = recvs;
+    bpy::object r = email.attr("send")(content.toStdString(),subject.toStdString());
+    ret = bpy::extract<bool>(r);
+    return ret;
+}
+
 // 边写边学，获取返回的string
 //    char *bytes = PyBytes_AsString(res);
 //    PyObject *str = PyUnicode_AsEncodedString(res, "utf-8", "~E~");

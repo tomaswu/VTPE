@@ -76,6 +76,7 @@ DISTFILES += \
     deviceList.qml \
     maskImage.qml \
     python_scripts/data_process.py \
+    python_scripts/temail.py \
     qtquickcontrols2.conf \
 
 
@@ -97,11 +98,13 @@ windows{
     CONFIG(debug,debug|release){
         LIBS += -lopencv_world455d -lMVSDKmd -lpython310 -l_tkinter \ #这里如果使用python3_d则会在import numpy等三方库时出错
                 -lboost_python310-vc142-mt-x64-1_79
-        QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\debug\\data_process.py\"
+        QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
+                           copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
     }
     CONFIG(release,debug|release){
         LIBS += -lopencv_world455 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc142-mt-x64-1_79
-        QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\"
+        QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
+                           copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
     }
 }
 

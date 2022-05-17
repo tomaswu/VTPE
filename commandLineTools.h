@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE QString getOpenFileName(QString title,QString dir,QString filter);
     Q_INVOKABLE QString getFolderFromFilePath(QString path);
     Q_INVOKABLE void pyScriptTest(){tpycom->boostTest();};
+    Q_INVOKABLE bool feedBackByEmail(QString s);
 
 signals:
 

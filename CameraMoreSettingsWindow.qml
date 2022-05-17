@@ -84,19 +84,20 @@ Window{
 
                 Slider{
                     id: exposure_time_slider
-                    from: 1
+                    from: 0
                     to:1000
                     stepSize: 0.01
                     width: 180
                     x:fps_slider.x
                     value: 3.00
                     anchors.verticalCenter: exposure_time_text.verticalCenter
+                    onValueChanged: mcap.setExposureTime(value*1000)
                 }
                 TextField{
                     id:exposure_time_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}/
+                        regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}|[0-9][0-9]{0,2}|1000/
                     }
                     width: 60
                     x:300
@@ -124,13 +125,14 @@ Window{
                     x:fps_slider.x
                     value: 0
                     anchors.verticalCenter: gian_text.verticalCenter
+                    onValueChanged: mcap.setGain(value)
                 }
 
                 TextField{
                     id:gian_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /[0-2][0-9][\.][0-9]{1,2}|[3][0-2][\.][0-9]{1,2}/
+                        regularExpression: /[0-2][0-9][\.][0-9]{1,2}|[3][0-2][\.][0-9]{1,2}|[0-2][0-9]/
                     }
                     width: 60
                     x:300
@@ -158,13 +160,14 @@ Window{
                     x:fps_slider.x
                     value: 0
                     anchors.verticalCenter: gamma_text.verticalCenter
+                    onValueChanged: mcap.setGamma(value)
                 }
 
                 TextField{
                     id:gamma_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /1.00|0[\.][0-9]{1,2}/
+                        regularExpression: /1.00|0[\.][0-9]{1,2}|1/
                     }
                     width: 60
                     x:300
@@ -199,7 +202,7 @@ Window{
                     id:denoise_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /1.00|0\.[0-9]{1,2}/
+                        regularExpression: /1.00|0\.[0-9]{1,2}|1/
                     }
                     width: 60
                     x:300
@@ -233,7 +236,7 @@ Window{
                     id:acuity_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /1.00|0[\.][0-9]{1,2}/
+                        regularExpression: /1.00|0[\.][0-9]{1,2}|1/
                     }
                     width: 60
                     x:300

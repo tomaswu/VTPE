@@ -61,6 +61,9 @@ bool TVideoCapture::init(int index){
                 res = IMV_Open(m_devHandle);
                 if(res==IMV_OK){
                     ret=true;
+                    IMV_SetBoolFeatureValue(m_devHandle,"AcquisitionFrameRateEnable",true);
+                    IMV_SetDoubleFeatureValue(m_devHandle, "AcquisitionFrameRate",50);
+
                 }
             }
             break;
@@ -326,20 +329,56 @@ bool TVideoCapture::photo(QString path){
     return ret;
 }
 
-void TVideoCapture::setExposureTime(double minisecond){
+bool TVideoCapture::setExposureTime(double minisecond){
+    bool ret = false;
     switch (this->CamType){
         case cvCam:
-            this->cap->set(cv::CAP_PROP_EXPOSURE,minisecond);
+            ret = this->cap->set(cv::CAP_PROP_EXPOSURE,minisecond);
             break;
         #ifdef Q_OS_WIN
         case workPowerCam:
-            IMV_SetDoubleFeatureValue(m_devHandle, "ExposureTime", minisecond);
+            if(IMV_SetDoubleFeatureValue(m_devHandle, "ExposureTime", minisecond)==0){
+                ret = true;
+            }
+            break;
         #endif
-
     }
-
+    return ret;
 }
 
+bool TVideoCapture::setAdjustPluse(double dGainRaw){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            ret = this->cap->set(cv::CAP_PROP_GAIN,dGainRaw);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetDoubleFeatureValue(m_devHandle, "GainRaw",dGainRaw)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setGamma(double gamma){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            ret = this->cap->set(cv::CAP_PROP_GAMMA,gamma);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetDoubleFeatureValue(m_devHandle, "Gamma",gamma)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
 
 QImage TVideoCapture::Mat2QImage(cv::Mat const& mat)
 {

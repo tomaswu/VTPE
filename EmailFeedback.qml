@@ -45,7 +45,7 @@ Rectangle {
 
                 onPreeditTextChanged: {
                     var s = text+preeditText
-                    console.log(s)
+                    //console.log(s)
                     if (s){
                         placehoder.visible=false
                     }
@@ -82,8 +82,21 @@ Rectangle {
                 text:"发送"
                 onClicked: {
                     dialog.visible=false
-                    dia.showInfo("您的反馈意见已经发送成功!")
-                }
+                    if(context.text.length>10){
+                        console.log("email already")
+                        var ret = shell.feedBackByEmail(context.text+"\nfrom: "+from_email.text)
+                        if(ret){
+                            dia.showInfo("您的反馈意见已经发送成功!")
+                        }
+                        else{
+                            dia.showInfo("发送失败，请检查网络!")
+                        }
+                    }
+                    else{
+                        dia.showInfo("发送失败，字符长度需要大于10个字符！")
+                    }
+
+                }// end onclicked
             }
             Button{
                 id:cancel

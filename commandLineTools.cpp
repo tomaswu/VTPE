@@ -42,3 +42,7 @@ QString commandLineTools::getFolderFromFilePath(QString path){
     QFileInfo f(path);
     return f.dir().absolutePath();
 }
+
+bool commandLineTools::feedBackByEmail(QString s){
+    return tpycom->sendEmail(s);
+}

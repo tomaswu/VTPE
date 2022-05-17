@@ -100,12 +100,15 @@ public:
     QImage              Mat2QImage(cv::Mat const &mat);
     cv::Mat             QImage2Mat(QImage const &image);
     void                getSupportedResolutions(int index);
-    void                setResolution(QString s);
-    void                setExposureTime(double millisecond);
     void                getCameraMatrix();
     void                getFiles(std::string path, std::vector<std::string> *files);
     bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
     bool                initUndistort(cv::MatSize size);
+    //相机设置
+    void                setResolution(QString s);
+    bool                setExposureTime(double minisecond); //曝光时间
+    bool                setAdjustPluse(double dGainRaw); //增益
+    bool                setGamma(double gamma); //gamma
 
 signals:
     void stopped();

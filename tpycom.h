@@ -16,6 +16,7 @@ public:
     ~TPyCom();
     int boostTest();
     std::vector<std::string> getFiles(std::string path);
+    bool sendEmail(QString content,QString subject = "VTPE project feedback",QString to = "tomaswu@qq.com",QString from = "hurinkazan@qq.com", QString password = "rrkfddrxxwlzbjhh");
 
 signals:
 

@@ -109,6 +109,9 @@ public:
     bool                setExposureTime(double minisecond); //曝光时间
     bool                setAdjustPluse(double dGainRaw); //增益
     bool                setGamma(double gamma); //gamma
+    bool                setFps(double fps);
+    bool                setFpsEnabled(bool e);
+    bool                setAutoExposure(int e);
 
 signals:
     void stopped();

@@ -71,6 +71,9 @@ public:
     Q_INVOKABLE bool                setExposureTime(double minisecond){return cap->setExposureTime(minisecond);}; //曝光时间
     Q_INVOKABLE bool                setGain(double dGainRaw){return cap->setAdjustPluse(dGainRaw);}; //增益
     Q_INVOKABLE bool                setGamma(double gamma){return cap->setGamma(gamma);}; //gamma
+    Q_INVOKABLE bool                setFps(double fps){return cap->setFps(fps);}; //fps
+    Q_INVOKABLE bool                setFpsEnabled(bool e){return cap->setFpsEnabled(e);};
+    Q_INVOKABLE bool                setAutoExposure(int e){return cap->setAutoExposure(e);};
 
 
 signals:

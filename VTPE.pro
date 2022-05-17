@@ -5,6 +5,8 @@ QT += quick \
       charts\
       widgets\
 
+CONFIG += c++17
+
 HEADERS += \
     cameraMessageQue.h \
     commandLineTools.h \

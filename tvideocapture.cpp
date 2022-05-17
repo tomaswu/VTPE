@@ -60,10 +60,7 @@ bool TVideoCapture::init(int index){
             if (res==IMV_OK){
                 res = IMV_Open(m_devHandle);
                 if(res==IMV_OK){
-                    ret=true;
-                    IMV_SetBoolFeatureValue(m_devHandle,"AcquisitionFrameRateEnable",true);
-                    IMV_SetDoubleFeatureValue(m_devHandle, "AcquisitionFrameRate",50);
-
+                    ret=true;             
                 }
             }
             break;
@@ -291,7 +288,6 @@ void TVideoCapture::setResolution(QString s){
     cap->set(cv::CAP_PROP_FRAME_HEIGHT,height);
 }
 
-
 void TVideoCapture::stopCapture(){
 
 }
@@ -372,6 +368,57 @@ bool TVideoCapture::setGamma(double gamma){
         #ifdef Q_OS_WIN
         case workPowerCam:
             if(IMV_SetDoubleFeatureValue(m_devHandle, "Gamma",gamma)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setFps(double fps){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            ret = this->cap->set(cv::CAP_PROP_FPS,fps);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetDoubleFeatureValue(m_devHandle, "AcquisitionFrameRate",fps)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setFpsEnabled(bool e){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return true;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetBoolFeatureValue(m_devHandle, "AcquisitionFrameRateEnable",e)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setAutoExposure(int e){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetEnumFeatureValue(m_devHandle,"ExposureAuto",e)==0){
                 ret = true;
             }
             break;

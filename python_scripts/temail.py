@@ -24,10 +24,10 @@ def test():
 class Mail:
     def __init__(self, receivers=[]):
         # 第三方 SMTP 服务
-        self.mail_host="smtp.qq.com"       #设置服务器:这个是qq邮箱服务器，直接复制就可以
-        self.mail_pass=""           #刚才我们获取的授权码
-        self.sender = ""      #你的邮箱地址 
-        self.receivers = []  #收件人的邮箱地址，可设置为你的QQ邮箱或者其他邮箱，可多个
+        self.mail_host="smtp.qq.com" #服务器
+        self.mail_pass=""     #smtp授权码
+        self.sender = ""      #发件人邮箱地址
+        self.receivers = []  #收件人的邮箱地址列表
 
     def send(self,content=None,subject=None,msgtype=None):
         if content is None:
@@ -50,8 +50,3 @@ class Mail:
         except smtplib.SMTPException as e:
             print(f'邮件发送失败   {e}')
             return False
-
-# just for test
-if  __name__ == '__main__':
-    mail = Mail()
-    mail.send()

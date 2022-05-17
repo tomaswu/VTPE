@@ -35,6 +35,14 @@ Window{
                     y:20
                 }
 
+                CheckBox{
+                    id: fps_checked
+                    x: 60
+                    anchors.verticalCenter: fps_text.verticalCenter
+                    checked:false
+                    onCheckedChanged:mcap.setFpsEnabled(checked)
+                }
+
                 Slider{
                     id: fps_slider
                     from: 1
@@ -44,6 +52,7 @@ Window{
                     x:100
                     value: 210
                     anchors.verticalCenter: fps_text.verticalCenter
+                    onValueChanged: mcap.setFps(value)
                 }
 
                 TextField{
@@ -74,6 +83,12 @@ Window{
                     x:fps_slider.x
                     anchors.verticalCenter: auto_exposure_text.verticalCenter
                     model: ["关闭","一次","连续"]
+                    onCurrentIndexChanged: {
+                        mcap.setAutoExposure(currentIndex)
+                        if(currentIndex===0){
+                            mcap.setExposureTime(exposure_time_slider.value*1000)
+                        }
+                    }
                 }
                 Text {
                     id: exposure_time_text
@@ -84,7 +99,7 @@ Window{
 
                 Slider{
                     id: exposure_time_slider
-                    from: 0
+                    from: 0.01
                     to:1000
                     stepSize: 0.01
                     width: 180
@@ -118,7 +133,7 @@ Window{
 
                 Slider{
                     id: gian_slider
-                    from: 0
+                    from: 1
                     to:32
                     stepSize: 0.01
                     width: 180
@@ -132,7 +147,7 @@ Window{
                     id:gian_input
                     selectByMouse:true
                     validator: RegularExpressionValidator {
-                        regularExpression: /[0-2][0-9][\.][0-9]{1,2}|[3][0-2][\.][0-9]{1,2}|[0-2][0-9]/
+                        regularExpression: /[0-2][0-9][\.][0-9]{1,2}|[3][0-2][\.][0-9]{1,2}|[0-2][0-9]|[0-9]/
                     }
                     width: 60
                     x:300

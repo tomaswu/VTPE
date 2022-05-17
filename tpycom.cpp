@@ -29,6 +29,11 @@ int TPyCom::boostTest(){
     }
     bpy::object m = bpy::import("data_process");
     m.attr("pyHello")();
+    bpy::list lrs;
+    lrs.append("nice");
+    lrs.append(15);
+    int s = bpy::extract<int>(lrs[1]);
+    cout<<"list test: ,"<<s<<endl;
     cout<<"finished from c++"<<endl;
     return 0;
 }
@@ -36,7 +41,7 @@ int TPyCom::boostTest(){
 std::vector<std::string> TPyCom::getFiles(std::string path){
     bpy::object m =bpy::import("os");
     auto p = m.attr("listdir")(path);
-    auto a = std::vector<string>(boost::python::stl_input_iterator<string>(p),boost::python::stl_input_iterator<string>());
+    auto a = std::vector<string>(bpy::stl_input_iterator<string>(p),bpy::stl_input_iterator<string>());
     for (int i=0;i<(int)a.size();i++){
         a[i]=path+"/"+a[i];
     }

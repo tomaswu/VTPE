@@ -427,6 +427,127 @@ bool TVideoCapture::setAutoExposure(int e){
     return ret;
 }
 
+bool TVideoCapture::setBrightness(int b){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            ret = cap->set(cv::CAP_PROP_BRIGHTNESS,b);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetIntFeatureValue(m_devHandle,"Brightness",b)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setDigtalShift(int shift){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetIntFeatureValue(m_devHandle,"DigitalShift",shift)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setAcuityEnabled(bool e){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetBoolFeatureValue(m_devHandle,"SharpnessEnabled",e)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setAcuity(int acuity){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetIntFeatureValue(m_devHandle,"Sharpness",acuity)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setDenoiseEnabled(bool e){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetBoolFeatureValue(m_devHandle,"DenoisingEnabled",e)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool   TVideoCapture::setDenoise(int deniose){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetIntFeatureValue(m_devHandle,"Denoising",deniose)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setAutoBalance(int e){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceWhiteAuto",e)==0){
+                ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+
+
 QImage TVideoCapture::Mat2QImage(cv::Mat const& mat)
 {
     cv::Mat temp;

@@ -109,9 +109,16 @@ public:
     bool                setExposureTime(double minisecond); //曝光时间
     bool                setAdjustPluse(double dGainRaw); //增益
     bool                setGamma(double gamma); //gamma
-    bool                setFps(double fps);
-    bool                setFpsEnabled(bool e);
-    bool                setAutoExposure(int e);
+    bool                setFps(double fps); //手动设置帧率
+    bool                setFpsEnabled(bool e); //手动帧率
+    bool                setAutoExposure(int e); //自动曝光
+    bool                setBrightness(int b); //亮度
+    bool                setDigtalShift(int shift); //数字位移
+    bool                setAcuityEnabled(bool e); //启用锐度
+    bool                setAcuity(int acuity); //锐度
+    bool                setDenoiseEnabled(bool e);//启用降噪
+    bool                setDenoise(int denoise); // 降噪
+    bool                setAutoBalance(int e); //自动白平衡
 
 signals:
     void stopped();

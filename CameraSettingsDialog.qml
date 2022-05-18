@@ -63,6 +63,7 @@ Dialog {
                                 break
                             case 1:
                                 camera_settings_widnow.show()
+                                camera_settings_widnow.setLastSettings()
                                 break
                         }
                     }

@@ -74,6 +74,12 @@ public:
     Q_INVOKABLE bool                setFps(double fps){return cap->setFps(fps);}; //fps
     Q_INVOKABLE bool                setFpsEnabled(bool e){return cap->setFpsEnabled(e);};
     Q_INVOKABLE bool                setAutoExposure(int e){return cap->setAutoExposure(e);};
+    Q_INVOKABLE bool                setBrightness(int b){return cap->setBrightness(b);};
+    Q_INVOKABLE bool                setDigtalShift(int shift){return cap->setDigtalShift(shift);};
+    Q_INVOKABLE bool                setAcuityEnabled(bool e){return cap->setAcuityEnabled(e);};
+    Q_INVOKABLE bool                setAcuity(int a){return cap->setAcuity(a);};
+    Q_INVOKABLE bool                setDenoiseEnabled(bool e){return cap->setDenoiseEnabled(e);};
+    Q_INVOKABLE bool                setDenoise(int d){return cap->setDenoise(d);};
 
 
 signals:

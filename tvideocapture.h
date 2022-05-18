@@ -73,6 +73,7 @@ public:
     clock_t                 t_show = clock(); //用来判断是否到时间显示了
     #ifdef Q_OS_WINDOWS
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
+    IMV_RecordParam         stRecordParam; //录像参数
     TMessageQue<CFrameInfo> tque;
     #endif
     cv::VideoCapture        *cap;

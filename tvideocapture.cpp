@@ -331,17 +331,64 @@ void TVideoCapture::stopCapture(){
 }
 
 void TVideoCapture::startRecord(QString path){
-    cv::Size size = getCurrentResolution();
-    qDebug()<<"qdebug:"<<size.width<<"  "<<size.height;
-    outputVideo.open(path.toStdString(),cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),this->fps,size,true);
-    if(outputVideo.isOpened()){
-        record_flag=true;
+    cv::Size size=getCurrentResolution();
+    switch (this->CamType){
+        case cvCam:
+            qDebug()<<"qdebug:"<<size.width<<"  "<<size.height;
+            outputVideo.open(path.toStdString(),cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),this->fps,size,true);
+            if(outputVideo.isOpened()){
+                record_flag=true;
+            }
+            break;
+        #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+        case workPowerCam:
+            memset(&stRecordParam, 0, sizeof(stRecordParam));
+
+            // 视频图像宽
+            // video image width
+            stRecordParam.nWidth = (unsigned int)size.width;
+
+            // 视频图像高
+            // video image height
+            stRecordParam.nHeight = (unsigned int)size.height;
+
+            // 帧率(大于0)。请设置成实际取流帧率。
+            // frame rate(greater than 0). Please set to the actual streaming frame rate.
+            stRecordParam.fFameRate = fps;
+
+            // 视频质量(1-100)。参数越大，视频越清晰，但体积也越大。
+            // video quality(1-100). The larger the parameter, the clearer the video, but the larger the volume.
+            stRecordParam.nQuality = 75;
+
+            // 视频格式
+            // video format
+            stRecordParam.recordFormat = typeVideoFormatAVI;
+
+            // 如果是绝对路径，例如"D:/Test/Record.avi"，请确保路径确实存在。
+            // if it is a full path like "D:/Test/Record.avi", please make sure that the path does exist.
+            stRecordParam.pRecordFilePath = path.toStdString().c_str();
+
+            // 打开录像句柄
+            // open the record handle
+            IMV_OpenRecord(this->m_devHandle, &stRecordParam);
+            record_flag=true;
+
+            break;
+        #endif
     }
 }
 
 void TVideoCapture::stopRecord(){
-    record_flag = false;
-    outputVideo.release();
+    switch (this->CamType){
+        case cvCam:
+            record_flag = false;
+            outputVideo.release();
+        #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+        case workPowerCam:
+            IMV_CloseRecord(this->m_devHandle);
+            record_flag = false;
+        #endif
+    }
 }
 
 

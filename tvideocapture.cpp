@@ -308,10 +308,18 @@ void TVideoCapture::setResolution(QString s){
         #ifdef Q_OS_WIN
         case workPowerCam:
             IMV_StopGrabbing(this->m_devHandle);
-            IMV_SetIntFeatureValue(m_devHandle,"Width",width);
-            IMV_SetIntFeatureValue(m_devHandle,"OffsetX",(1280-width)/2);
-            IMV_SetIntFeatureValue(m_devHandle,"Height",height);
-            IMV_SetIntFeatureValue(m_devHandle,"OffsetY",(1024-height)/2);
+            if(width!=1280&&height!=1024){
+                IMV_SetIntFeatureValue(m_devHandle,"Width",width);
+                IMV_SetIntFeatureValue(m_devHandle,"Height",height);
+                IMV_SetIntFeatureValue(m_devHandle,"OffsetX",(1280-width)/2);
+                IMV_SetIntFeatureValue(m_devHandle,"OffsetY",(1024-height)/2);
+            }
+            else{
+                IMV_SetIntFeatureValue(m_devHandle,"OffsetX",0);
+                IMV_SetIntFeatureValue(m_devHandle,"OffsetY",0);
+                IMV_SetIntFeatureValue(m_devHandle,"Width",width);
+                IMV_SetIntFeatureValue(m_devHandle,"Height",height);
+            }
             IMV_StartGrabbing(this->m_devHandle);
             break;
         #endif

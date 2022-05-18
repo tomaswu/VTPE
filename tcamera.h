@@ -64,6 +64,9 @@ public:
     void                            setTimerFresh(){time_to_refresh=true;};
     void                            refreshFps(double f);
     Q_INVOKABLE void                setCaliFlag(bool flag);
+    Q_INVOKABLE void                startRecord(QString path){cap->startRecord(path);};
+    Q_INVOKABLE void                stopRecord(){cap->stopRecord();};
+    Q_INVOKABLE bool                isRecord(){return cap->record_flag;};
 
     // 相机设置函数
     Q_INVOKABLE void                openSettings(){cap->openSettings();};
@@ -80,7 +83,10 @@ public:
     Q_INVOKABLE bool                setAcuity(int a){return cap->setAcuity(a);};
     Q_INVOKABLE bool                setDenoiseEnabled(bool e){return cap->setDenoiseEnabled(e);};
     Q_INVOKABLE bool                setDenoise(int d){return cap->setDenoise(d);};
-
+    Q_INVOKABLE bool                setAutoBalance(int e){return cap->setAutoBalance(e);};
+    Q_INVOKABLE bool                setBalanceR(double r){return cap->setBalanceR(r);};
+    Q_INVOKABLE bool                setBalanceG(double g){return cap->setBalanceG(g);};
+    Q_INVOKABLE bool                setBalanceB(double b){return cap->setBalanceB(b);};
 
 signals:
     void cameraListRefreshed();

@@ -9,7 +9,7 @@ import QtQuick.Dialogs
 Window{
     id: subwindow
     width: 420
-    height: 500
+    height: 560
     maximumWidth: width
     minimumWidth: width
     maximumHeight: height
@@ -26,10 +26,10 @@ Window{
         Rectangle{
             id : para_widget
             width: parent.width-parent.padding*2
-            height:420
+            height:480
             border.width: 1
             border.color: "skyblue"
-            property int sapcing: 10
+            property int ysapcing: 20
 
                 Text {
                     id: fps_text
@@ -79,7 +79,7 @@ Window{
                     id: auto_exposure_text
                     text: qsTr("自动曝光")
                     x:fps_text.x
-                    y:60
+                    y:fps_text.y+height+parent.ysapcing
                 }
                 ComboBox{
                     id:auto_exposure_combox
@@ -97,7 +97,7 @@ Window{
                     id: exposure_time_text
                     text: qsTr("曝光时间")
                     x:fps_text.x
-                    y:100
+                    y:auto_exposure_text.y+height+parent.ysapcing
                 }
 
                 Slider{
@@ -131,7 +131,7 @@ Window{
                     id: gian_text
                     text: qsTr("增益")
                     x:fps_text.x
-                    y:140
+                    y:exposure_time_text.y+height+parent.ysapcing
                 }
 
                 Slider{
@@ -166,7 +166,7 @@ Window{
                     id: gamma_text
                     text: qsTr("伽马")
                     x:fps_text.x
-                    y:180
+                    y:gian_text.y+height+parent.ysapcing
                 }
 
                 Slider{
@@ -202,7 +202,7 @@ Window{
                     id: denoise_text
                     text: qsTr("降噪")
                     x:fps_text.x
-                    y:220
+                    y:gamma_text.y+height+parent.ysapcing
                 }
 
                 CheckBox{
@@ -245,7 +245,7 @@ Window{
                     id: acuity_text
                     text: qsTr("锐度")
                     x:fps_text.x
-                    y:260
+                    y:denoise_text.y+height+parent.ysapcing
                 }
 
                 CheckBox{
@@ -288,7 +288,7 @@ Window{
                     id: brightness_text
                     text: qsTr("亮度")
                     x:fps_text.x
-                    y:300
+                    y:acuity_text.y+height+parent.ysapcing
                 }
 
                 Slider{
@@ -324,7 +324,7 @@ Window{
                     id: digtalshift_text
                     text: qsTr("数字位移")
                     x:fps_text.x
-                    y:340
+                    y:brightness_text.y+height+parent.ysapcing
                 }
 
                 Slider{
@@ -358,14 +358,129 @@ Window{
                     id: balance_text
                     text: qsTr("自动白平衡")
                     x:fps_text.x
-                    y:380
+                    y:digtalshift_text.y+height+parent.ysapcing
                 }
                 ComboBox{
                     id:balance_combox
                     x:fps_slider.x
                     anchors.verticalCenter: balance_text.verticalCenter
                     model: ["关闭","一次","连续"]
+                    onCurrentIndexChanged: {
+                        mcap.setAutoBalance(currentIndex);
+                        if(currentIndex===0){
+                            balanceR_slider.valueChanged()
+                            balanceG_slider.valueChanged()
+                            balanceB_slider.valueChanged()
+                        }
+                    }
+
                 }
+
+                Text {
+                    id: balanceR_text
+                    text: qsTr("红色增益")
+                    x:fps_text.x
+                    y:balance_text.y+height+parent.ysapcing
+                }
+
+                Slider{
+                    id: balanceR_slider
+                    from: 0
+                    to:15
+                    stepSize: 0.01
+                    width: 180
+                    x:fps_slider.x
+                    value: 0
+                    anchors.verticalCenter: balanceR_text.verticalCenter
+                    onValueChanged:mcap.setBalanceR(value)
+                }
+
+                TextField{
+                    id:balanceR_input
+                    selectByMouse:true
+                    validator: RegularExpressionValidator {
+                        regularExpression: /15.00|[0-9][\.][0-9]{1,2}|1[0-4][\.][0-9]{1,2}|[0-9]|1[0-5]/
+                    }
+                    width: 60
+                    x:300
+                    anchors.verticalCenter: balanceR_text.verticalCenter
+                    text: balanceR_slider.value.toFixed(2)
+                    onAccepted: {
+                        focus = false
+                        balanceR_slider.value = text
+                    }
+                }
+
+                Text {
+                    id: balanceG_text
+                    text: qsTr("绿色增益")
+                    x:fps_text.x
+                    y:balanceR_text.y+height+parent.ysapcing
+                }
+
+                Slider{
+                    id: balanceG_slider
+                    from: 0
+                    to:15
+                    stepSize: 0.01
+                    width: 180
+                    x:fps_slider.x
+                    value: 0
+                    anchors.verticalCenter: balanceG_text.verticalCenter
+                    onValueChanged:mcap.setBalanceG(value)
+                }
+
+                TextField{
+                    id:balanceG_input
+                    selectByMouse:true
+                    validator: RegularExpressionValidator {
+                        regularExpression: /15.00|[0-9][\.][0-9]{1,2}|1[0-4][\.][0-9]{1,2}|[0-9]|1[0-5]/
+                    }
+                    width: 60
+                    x:300
+                    anchors.verticalCenter: balanceG_text.verticalCenter
+                    text: balanceG_slider.value.toFixed(2)
+                    onAccepted: {
+                        focus = false
+                        balanceG_slider.value = text
+                    }
+                }
+
+                Text {
+                    id: balanceB_text
+                    text: qsTr("蓝色增益")
+                    x:fps_text.x
+                    y:balanceG_text.y+height+parent.ysapcing
+                }
+
+                Slider{
+                    id: balanceB_slider
+                    from: 0
+                    to:15
+                    stepSize: 0.01
+                    width: 180
+                    x:fps_slider.x
+                    value: 0
+                    anchors.verticalCenter: balanceB_text.verticalCenter
+                    onValueChanged:mcap.setBalanceB(value)
+                }
+
+                TextField{
+                    id:balanceB_input
+                    selectByMouse:true
+                    validator: RegularExpressionValidator {
+                        regularExpression: /15.00|[0-9][\.][0-9]{1,2}|1[0-4][\.][0-9]{1,2}|[0-9]|1[0-5]/
+                    }
+                    width: 60
+                    x:300
+                    anchors.verticalCenter: balanceB_text.verticalCenter
+                    text: balanceB_slider.value.toFixed(2)
+                    onAccepted: {
+                        focus = false
+                        balanceB_slider.value = text
+                    }
+                }
+
         }// end para widget
 
         Row{
@@ -400,7 +515,7 @@ Window{
         id:default_set
         text:"恢复默认参数"
         x:fps_text.x
-        y: 460
+        y: 520
         onClicked: {
             resetDefaultSettings();
         }
@@ -420,6 +535,9 @@ Window{
         brightness_slider.value = 50
         digtalshift_slider.value = 0
         balance_combox.currentIndex = 0
+        balanceR_slider.value = 1.68
+        balanceG_slider.value = 1.0
+        balanceB_slider.value = 1.37
         emitSetSignal()
     }
 
@@ -437,6 +555,9 @@ Window{
         brightness_slider.value = workPowerSettings.brightness
         digtalshift_slider.value = workPowerSettings.digtalshift
         balance_combox.currentIndex = workPowerSettings.balance
+        balanceR_slider.value = workPowerSettings.balanceR
+        balanceG_slider.value = workPowerSettings.balanceG
+        balanceB_slider.value = workPowerSettings.balanceB
         emitSetSignal()
     }
 
@@ -454,6 +575,9 @@ Window{
         workPowerSettings.brightness = brightness_slider.value
         workPowerSettings.digtalshift = digtalshift_slider.value
         workPowerSettings.balance = balance_combox.currentIndex
+        workPowerSettings.balanceR = balanceR_slider.value
+        workPowerSettings.balanceG = balanceG_slider.value
+        workPowerSettings.balanceB = balanceB_slider.value
     }
 
     function emitSetSignal(){
@@ -470,6 +594,9 @@ Window{
         brightness_slider.valueChanged()
         digtalshift_slider.valueChanged()
         balance_combox.currentIndexChanged()
+        balanceR_slider.valueChanged()
+        balanceG_slider.valueChanged()
+        balanceB_slider.valueChanged()
     }
 
 // settings
@@ -490,9 +617,9 @@ Window{
         property real brightness: 50
         property real digtalshift: 0
         property real balance: 0
-        property real blanceR: 1.68
-        property real blanceG: 1.0
-        property real blanceB: 1.37
+        property real balanceR: 1.68
+        property real balanceG: 1.0
+        property real balanceB: 1.37
     }
 
 }

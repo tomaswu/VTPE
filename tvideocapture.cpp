@@ -60,7 +60,7 @@ bool TVideoCapture::init(int index){
             if (res==IMV_OK){
                 res = IMV_Open(m_devHandle);
                 if(res==IMV_OK){
-                    ret=true;             
+                    ret=true;
                 }
             }
             break;
@@ -99,6 +99,8 @@ void TVideoCapture::set_indexAndType(int index){
 }
 
 void TVideoCapture::capture(){
+    clock_t showtime;
+    bool time2show;
     switch (this->CamType){
         case cvCam:
             if (cap->isOpened()){
@@ -110,27 +112,39 @@ void TVideoCapture::capture(){
                {
                    bool ret = cap->read(mat);
                    if (ret){
-                      if (cali_flag){
-                          if(correctSize.width!=mat.size[1] || correctSize.height!=mat.size[0]){
-                              initUndistort(mat.size);
-                          }
-                          cv::remap(mat, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
-                          if(needPhoto){
-                              photo_mat = correctedMat;
-                              needPhoto = false;
-                              photoReady = true;
-                          }
-                          tmp=Mat2QImage(correctedMat);
-                      }else{
-                          if(needPhoto){
-                              photo_mat = mat;
-                              needPhoto = false;
-                              photoReady = true;
-                          }
-                          tmp=Mat2QImage(mat);
+                      if(this->record_flag){
+                          this->outputVideo.write(mat);
+                      }
+                      showtime = clock();
+                      #ifdef Q_OS_MACOS
+                      time2show = (40000<(showtime-this->t_show));
+                      #elif defined Q_OS_WINDOWS
+                      time2show = (40<(showtime-this->t_show));
+                      #endif
+                      if(time2show){
+                          this->t_show = showtime;
+                          if (cali_flag){
+                              if(correctSize.width!=mat.size[1] || correctSize.height!=mat.size[0]){
+                                  initUndistort(mat.size);
+                              }
+                              cv::remap(mat, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+                              if(needPhoto){
+                                  photo_mat = correctedMat;
+                                  needPhoto = false;
+                                  photoReady = true;
+                              }
+                              tmp=Mat2QImage(correctedMat);
+                          }else{
+                              if(needPhoto){
+                                  photo_mat = mat;
+                                  needPhoto = false;
+                                  photoReady = true;
+                              }
+                              tmp=Mat2QImage(mat);
+                          } // end cali_falg
+                          emit imgReady(tmp);
                       }
                       fps_count+=1;
-                      emit imgReady(tmp);
                    }
                    if (fps_count==100){
                        t1=clock();
@@ -144,7 +158,6 @@ void TVideoCapture::capture(){
                        t0=t1;
                        fps_count=0;
                    }
-
                }
                cap->release();
                running_flag=true;
@@ -161,88 +174,91 @@ void TVideoCapture::capture(){
                 CFrameInfo frameInfo;
                 QImage image;
                 while(running_flag){
-                    cv::waitKeyEx(40);
                     if(tque.size()==0){
                         continue;
                     }
                     this->tque.get(frameInfo);
-                    if (gvspPixelMono8 == frameInfo.m_ePixelType){ //黑白相机暂不支持拍照和校正等功能，没有黑白相机验证。
-                        image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
-                        tmp = QImage2Mat(image);
-                        tmp.copyTo(mat);
-                        tmp.release();
-                        free(image.bits());
-                        emit imgReady(Mat2QImage(mat));
-                    }
-                    else
-                    {
-                        // 转码
-                        unsigned char* pRGBbuffer = NULL;
-                        int nRgbBufferSize = 0;
-                        nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
-                        pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
-                        if (pRGBbuffer == NULL)
-                        {
-                            // 释放内存
-                            // release memory
-                            free(frameInfo.m_pImageBuf);
-                            printf("RGBbuffer malloc failed.\n");
-                            continue;
-                        }
-                        IMV_PixelConvertParam stPixelConvertParam;
-                        stPixelConvertParam.nWidth = frameInfo.m_nWidth;
-                        stPixelConvertParam.nHeight = frameInfo.m_nHeight;
-                        stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
-                        stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
-                        stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
-                        stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
-                        stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
-                        stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
-                        stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
-                        stPixelConvertParam.pDstBuf = pRGBbuffer;
-                        stPixelConvertParam.nDstBufSize = nRgbBufferSize;
-                        int ret = IMV_PixelConvert(m_devHandle, &stPixelConvertParam);
-                        if (IMV_OK != ret)
-                        {
-                            // 释放内存
-                            // release memory
-                            printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
-                            free(frameInfo.m_pImageBuf);
-                            free(pRGBbuffer);
-                            continue;
-                        }
-                        free(frameInfo.m_pImageBuf);
-                        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
-                        if(cali_flag){
+                    showtime = clock();
+                    time2show = (40<(showtime-this->t_show));
+                    if(time2show){
+                        if (gvspPixelMono8 == frameInfo.m_ePixelType){ //黑白相机暂不支持拍照和校正等功能，没有黑白相机验证。
+                            image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
                             tmp = QImage2Mat(image);
                             tmp.copyTo(mat);
                             tmp.release();
                             free(image.bits());
-                            if(correctSize.width!=mat.size[1] || correctSize.height!=mat.size[0]){
-                                initUndistort(mat.size);
-                            }
-                            cv::remap(mat, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
-                            if(needPhoto){
-                                photo_mat = correctedMat;
-                                needPhoto = false;
-                                photoReady = true;
-                            }
-                            emit imgReady(Mat2QImage(correctedMat));
-                        }
-                        else{
-                            tmp = QImage2Mat(image);
-                            tmp.copyTo(mat);
-                            tmp.release();
-                            free(image.bits());
-                            if(needPhoto){
-                                photo_mat = mat;
-                                needPhoto = false;
-                                photoReady = true;
-                            }
                             emit imgReady(Mat2QImage(mat));
                         }
+                        else
+                        {
+                            // 转码
+                            unsigned char* pRGBbuffer = NULL;
+                            int nRgbBufferSize = 0;
+                            nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
+                            pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
+                            if (pRGBbuffer == NULL)
+                            {
+                                // 释放内存
+                                // release memory
+                                free(frameInfo.m_pImageBuf);
+                                printf("RGBbuffer malloc failed.\n");
+                                continue;
+                            }
+                            IMV_PixelConvertParam stPixelConvertParam;
+                            stPixelConvertParam.nWidth = frameInfo.m_nWidth;
+                            stPixelConvertParam.nHeight = frameInfo.m_nHeight;
+                            stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
+                            stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
+                            stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
+                            stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
+                            stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
+                            stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
+                            stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
+                            stPixelConvertParam.pDstBuf = pRGBbuffer;
+                            stPixelConvertParam.nDstBufSize = nRgbBufferSize;
+                            int ret = IMV_PixelConvert(m_devHandle, &stPixelConvertParam);
+                            if (IMV_OK != ret)
+                            {
+                                // 释放内存
+                                // release memory
+                                printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
+                                free(frameInfo.m_pImageBuf);
+                                free(pRGBbuffer);
+                                continue;
+                            }
+                            free(frameInfo.m_pImageBuf);
+                            image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+                            if(cali_flag){
+                                tmp = QImage2Mat(image);
+                                tmp.copyTo(mat);
+                                tmp.release();
+                                free(image.bits());
+                                if(correctSize.width!=mat.size[1] || correctSize.height!=mat.size[0]){
+                                    initUndistort(mat.size);
+                                }
+                                cv::remap(mat, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+                                if(needPhoto){
+                                    photo_mat = correctedMat;
+                                    needPhoto = false;
+                                    photoReady = true;
+                                }
+                                emit imgReady(Mat2QImage(correctedMat));
 
-                    }// end else
+                            }
+                            else{
+                                tmp = QImage2Mat(image);
+                                tmp.copyTo(mat);
+                                tmp.release();
+                                free(image.bits());
+                                if(needPhoto){
+                                    photo_mat = mat;
+                                    needPhoto = false;
+                                    photoReady = true;
+                                }
+                                emit imgReady(Mat2QImage(mat));
+                            }
+                        }// end 转码 else
+                    }// end if time2show
                 } //end while
             }// end if
             this->running_flag=true;
@@ -273,7 +289,7 @@ void TVideoCapture::getSupportedResolutions(int index){
         }
         case workPowerCam:
         {
-            supportedResolution.append("1280X720");
+            supportedResolution.append("1280X1024");
             supportedResolution.append("640X480");
             break;
         }
@@ -284,8 +300,22 @@ void TVideoCapture::setResolution(QString s){
     auto r = s.split("X");
     int width = r[0].toInt();
     int height = r[1].toInt();
-    cap->set(cv::CAP_PROP_FRAME_WIDTH,width);
-    cap->set(cv::CAP_PROP_FRAME_HEIGHT,height);
+    switch (this->CamType){
+        case cvCam:
+            cap->set(cv::CAP_PROP_FRAME_WIDTH,width);
+            cap->set(cv::CAP_PROP_FRAME_HEIGHT,height);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            IMV_StopGrabbing(this->m_devHandle);
+            IMV_SetIntFeatureValue(m_devHandle,"Width",width);
+            IMV_SetIntFeatureValue(m_devHandle,"OffsetX",(1280-width)/2);
+            IMV_SetIntFeatureValue(m_devHandle,"Height",height);
+            IMV_SetIntFeatureValue(m_devHandle,"OffsetY",(1024-height)/2);
+            IMV_StartGrabbing(this->m_devHandle);
+            break;
+        #endif
+    }
 }
 
 void TVideoCapture::stopCapture(){
@@ -293,12 +323,19 @@ void TVideoCapture::stopCapture(){
 }
 
 void TVideoCapture::startRecord(QString path){
-    qDebug()<<"qdebug:"<<path;
+    cv::Size size = getCurrentResolution();
+    qDebug()<<"qdebug:"<<size.width<<"  "<<size.height;
+    outputVideo.open(path.toStdString(),cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),this->fps,size,true);
+    if(outputVideo.isOpened()){
+        record_flag=true;
+    }
 }
 
 void TVideoCapture::stopRecord(){
-
+    record_flag = false;
+    outputVideo.release();
 }
+
 
 bool TVideoCapture::isOpened(){
     switch (this->CamType){
@@ -323,6 +360,27 @@ bool TVideoCapture::photo(QString path){
     bool ret = img.save(s.toLocalFile());
     photoReady=false;
     return ret;
+}
+
+cv::Size TVideoCapture::getCurrentResolution(){
+    cv::Size size;
+    int64_t width;
+    int64_t height;
+    switch (this->CamType){
+        case cvCam:
+            size.width = cap->get(cv::CAP_PROP_FRAME_WIDTH);
+            size.height = cap->get(cv::CAP_PROP_FRAME_HEIGHT);
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            IMV_GetIntFeatureValue(this->m_devHandle,"Width",&width);
+            size.width = width;
+            IMV_GetIntFeatureValue(this->m_devHandle,"Height",&height);
+            size.height = height;
+            break;
+        #endif
+    }
+    return size;
 }
 
 bool TVideoCapture::setExposureTime(double minisecond){
@@ -512,7 +570,7 @@ bool TVideoCapture::setDenoiseEnabled(bool e){
     return ret;
 }
 
-bool   TVideoCapture::setDenoise(int deniose){
+bool TVideoCapture::setDenoise(int deniose){
     bool ret = false;
     switch (this->CamType){
         case cvCam:
@@ -546,7 +604,56 @@ bool TVideoCapture::setAutoBalance(int e){
     return ret;
 }
 
+bool TVideoCapture::setBalanceR(double r){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceRatioSelector",0)==0){
+                if(IMV_SetDoubleFeatureValue(m_devHandle,"BalanceRatio",r)==0)ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
 
+bool TVideoCapture::setBalanceG(double g){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceRatioSelector",1)==0){
+                if(IMV_SetDoubleFeatureValue(m_devHandle,"BalanceRatio",g)==0)ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
+
+bool TVideoCapture::setBalanceB(double b){
+    bool ret = false;
+    switch (this->CamType){
+        case cvCam:
+            return false;
+            break;
+        #ifdef Q_OS_WIN
+        case workPowerCam:
+            if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceRatioSelector",2)==0){
+                if(IMV_SetDoubleFeatureValue(m_devHandle,"BalanceRatio",b)==0)ret = true;
+            }
+            break;
+        #endif
+    }
+    return ret;
+}
 
 QImage TVideoCapture::Mat2QImage(cv::Mat const& mat)
 {
@@ -743,3 +850,15 @@ bool TVideoCapture::initUndistort(cv::MatSize size){
     return true;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

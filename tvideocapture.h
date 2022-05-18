@@ -70,11 +70,14 @@ public:
     double                  fps = 0;
     int                     fps_count=0;
     clock_t                 t0 = clock(); //for fps calculation start time
+    clock_t                 t_show = clock(); //用来判断是否到时间显示了
     #ifdef Q_OS_WINDOWS
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     TMessageQue<CFrameInfo> tque;
     #endif
     cv::VideoCapture        *cap;
+    cv::VideoWriter         outputVideo;
+    bool                    record_flag = false;
     cv::Mat                 mat;
     cv::Mat                 correctedMat;
     cv::Mat                 photo_mat;
@@ -104,6 +107,7 @@ public:
     void                getFiles(std::string path, std::vector<std::string> *files);
     bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
     bool                initUndistort(cv::MatSize size);
+    cv::Size            getCurrentResolution();
     //相机设置
     void                setResolution(QString s);
     bool                setExposureTime(double minisecond); //曝光时间
@@ -119,6 +123,9 @@ public:
     bool                setDenoiseEnabled(bool e);//启用降噪
     bool                setDenoise(int denoise); // 降噪
     bool                setAutoBalance(int e); //自动白平衡
+    bool                setBalanceR(double r);
+    bool                setBalanceG(double g);
+    bool                setBalanceB(double b);
 
 signals:
     void stopped();

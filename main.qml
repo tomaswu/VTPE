@@ -108,6 +108,9 @@ Window {
                             }
                         }
                         else{
+                            if(mcap.isRecord()){
+                                mcap.stopRecord()
+                            }
                             mcap.release()
                         }
                     }//end onclick
@@ -155,7 +158,19 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("strat/stop capture\n开始/停止录像",camera_capture)
-                    onClicked: console.log("camera setting")
+                    onClicked: {
+                        if(mcap.isOpened()){
+                            if(!mcap.isRecord()){
+                                console.log("start")
+                                mcap.startRecord(folder_recording.recordPath)
+                            }
+                            else{
+                                console.log("stop");
+                                mcap.stopRecord();
+                                camera_saveinfo.camera_saveinfoShow(folder_recording.recordPath)
+                            }
+                        }
+                    }
                 }
 
                 SToolButton{
@@ -166,9 +181,9 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("set video path\n设置录像保存位置",camera_setVideoName)
                     onClicked:{
-                        var s = shell.getSaveFileName("保存",folder_recording.lastOPenedFolder,"avi(*.avi)")
+                        var s = shell.getSaveFileName("保存",folder_recording.recordPath,"avi(*.avi)")
                         if (s!==""){
-                            folder_recording.lastOPenedFolder = s
+                            folder_recording.recordPath = s
                         }
                     }// end clicked
                 }
@@ -1174,8 +1189,6 @@ Window {
         id:camera_settings_dialog
         anchors.centerIn: parent
     }
-
-
 
     CameraMoreSettingsWindow{
         id : camera_settings_widnow

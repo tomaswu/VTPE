@@ -9,7 +9,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
-
+#include <QThread>
+#include <qdebug.h>
 #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
 #include <IMVAPI/IMVApi.h>
 #include <IMVAPI/IMVDefines.h>
@@ -51,6 +52,29 @@ public:
     int				m_nPaddingY;
     uint64_t		m_nTimeStamp;
 };
+
+
+
+class recordThread: public QThread
+{
+    Q_OBJECT
+public:
+    explicit recordThread(IMV_HANDLE m_devHandle,IMV_RecordParam *st,TMessageQue<CFrameInfo> *que,QObject *parent = NULL);
+    bool runFlag = true;
+    bool forceQuit = false;
+    IMV_RecordParam *stRecordParam;
+    void run();
+    IMV_HANDLE m_devHandle;
+    TMessageQue<CFrameInfo> * que = NULL;
+    void stopRecord(bool forceQuit=false){this->runFlag=false;this->forceQuit=forceQuit;};
+
+signals:
+    void recordFinished();
+
+};
+
+
+
 #endif
 
 
@@ -75,6 +99,9 @@ public:
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     IMV_RecordParam         stRecordParam; //录像参数
     TMessageQue<CFrameInfo> tque;
+    TMessageQue<CFrameInfo> recordQue;
+    recordThread            *record_thread;
+    void                    onRecordFinished();
     #endif
     cv::VideoCapture        *cap;
     cv::VideoWriter         outputVideo;

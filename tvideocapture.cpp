@@ -29,7 +29,6 @@ TVideoCapture::TVideoCapture(QObject *parent)
 {
     cap = new cv::VideoCapture;
     connect(this,&TVideoCapture::startCapture,this,&TVideoCapture::capture);
-//    this->getCameraMatrix();
     readCameraMatrix(intrinsics_matrix,distortion_coeff);
 
 }
@@ -176,11 +175,13 @@ void TVideoCapture::capture(){
                 while(running_flag){
                     if(tque.size()==0){
                         continue;
-                    }
-                    this->tque.get(frameInfo);
+                    }      
                     showtime = clock();
                     time2show = (40<(showtime-this->t_show));
+
                     if(time2show){
+                        this->t_show=showtime;
+                        this->tque.get(frameInfo);
                         if (gvspPixelMono8 == frameInfo.m_ePixelType){ //黑白相机暂不支持拍照和校正等功能，没有黑白相机验证。
                             image = QImage(frameInfo.m_pImageBuf, (int)frameInfo.m_nWidth, (int)frameInfo.m_nHeight, QImage::Format_Grayscale8);
                             tmp = QImage2Mat(image);
@@ -259,6 +260,9 @@ void TVideoCapture::capture(){
                             }
                         }// end 转码 else
                     }// end if time2show
+                    else{
+                        cv::waitKey(5);
+                    }
                 } //end while
             }// end if
             this->running_flag=true;
@@ -370,9 +374,11 @@ void TVideoCapture::startRecord(QString path){
 
             // 打开录像句柄
             // open the record handle
-            IMV_OpenRecord(this->m_devHandle, &stRecordParam);
             record_flag=true;
-
+//            qDebug()<<m_devHandle;
+            this->record_thread = new recordThread(this->m_devHandle,&this->stRecordParam,&this->recordQue,NULL);
+            connect(this->record_thread,&recordThread::recordFinished,this,&TVideoCapture::onRecordFinished);
+            this->record_thread->start();
             break;
         #endif
     }
@@ -385,10 +391,15 @@ void TVideoCapture::stopRecord(){
             outputVideo.release();
         #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
         case workPowerCam:
-            IMV_CloseRecord(this->m_devHandle);
             record_flag = false;
+            record_thread->stopRecord();
         #endif
     }
+}
+
+void TVideoCapture::onRecordFinished(){
+    qDebug()<<"get finished!";
+    delete this->record_thread;
 }
 
 
@@ -741,6 +752,7 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     tvd->fps_count+=1;
 //    printf("Get frame blockId = %llu\n", pFrame->frameInfo.blockId);
     CFrameInfo frameInfo;
+    CFrameInfo recordFrameInfo;
     frameInfo.m_nWidth = (int)pFrame->frameInfo.width;
     frameInfo.m_nHeight = (int)pFrame->frameInfo.height;
     frameInfo.m_nBufferSize = (int)pFrame->frameInfo.size;
@@ -750,6 +762,20 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_pImageBuf = (unsigned char *)malloc(sizeof(unsigned char) * frameInfo.m_nBufferSize);
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
+
+    if(tvd->record_flag){
+        recordFrameInfo.m_nWidth = (int)pFrame->frameInfo.width;
+        recordFrameInfo.m_nHeight = (int)pFrame->frameInfo.height;
+        recordFrameInfo.m_nBufferSize = (int)pFrame->frameInfo.size;
+        recordFrameInfo.m_nPaddingX = (int)pFrame->frameInfo.paddingX;
+        recordFrameInfo.m_nPaddingY = (int)pFrame->frameInfo.paddingY;
+        recordFrameInfo.m_ePixelType = pFrame->frameInfo.pixelFormat;
+        recordFrameInfo.m_pImageBuf = (unsigned char *)malloc(sizeof(unsigned char) * recordFrameInfo.m_nBufferSize);
+        recordFrameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
+        memcpy(recordFrameInfo.m_pImageBuf, pFrame->pData, recordFrameInfo.m_nBufferSize);
+        tvd->recordQue.push_back(frameInfo);
+    }
+
     tvd->tque.push_back(frameInfo);
     if (tvd->tque.size() > 16)
     {
@@ -905,6 +931,86 @@ bool TVideoCapture::initUndistort(cv::MatSize size){
     return true;
 
 }
+
+
+#ifdef Q_OS_WINDOWS
+recordThread::recordThread(IMV_HANDLE m_dev,IMV_RecordParam *st,TMessageQue<CFrameInfo> *q,QObject *parent):
+    QThread(parent)
+{
+    this->m_devHandle = m_dev;
+    this->que = q;
+    this->stRecordParam=st;
+}
+
+void recordThread::run(){
+    IMV_RecordFrameInfoParam stRecordFrameInfoParam;
+    int count=0;
+    qDebug()<<stRecordParam->nQuality;
+    int ret = IMV_OpenRecord(m_devHandle, stRecordParam);
+    qDebug()<<"start run record"<<ret;
+    while (runFlag){
+        CFrameInfo frameInfo;
+        if(que->size()==0){
+            continue;
+        }
+        count+=1;
+        if(count%100==0){
+            qDebug()<<count;
+        }
+        qDebug()<<"test1";
+        this->que->get(frameInfo);
+        qDebug()<<"test2";
+        memset(&stRecordFrameInfoParam, 0, sizeof(stRecordFrameInfoParam));
+        stRecordFrameInfoParam.pData = frameInfo.m_pImageBuf;
+        stRecordFrameInfoParam.nDataLen = frameInfo.m_nBufferSize;
+        stRecordFrameInfoParam.nPaddingX = frameInfo.m_nPaddingX;
+        stRecordFrameInfoParam.nPaddingY = frameInfo.m_nPaddingY;
+        stRecordFrameInfoParam.ePixelFormat = frameInfo.m_ePixelType;
+        qDebug()<<"test3";
+        int ret = IMV_InputOneFrame(m_devHandle, &stRecordFrameInfoParam);
+        qDebug()<<"test4";
+        if(ret==IMV_OK){
+            free(frameInfo.m_pImageBuf);
+        }
+        else{
+            qDebug()<<"write failed:"<<ret;
+            return;
+        }
+
+    }
+    runFlag = true;
+
+    //是否丢弃未写入的内容
+    if(this->forceQuit){
+        qDebug()<<"结束录像";
+        IMV_CloseRecord(this->m_devHandle);
+        emit recordFinished();
+        return ;
+    }
+
+    //如果列表没清空则清空再退出
+    while (que->size()>0)
+    {
+        count+=1;
+        qDebug()<<count;
+        CFrameInfo frameInfo;
+        this->que->get(frameInfo);
+        memset(&stRecordFrameInfoParam, 0, sizeof(stRecordFrameInfoParam));
+        stRecordFrameInfoParam.pData = frameInfo.m_pImageBuf;
+        stRecordFrameInfoParam.nDataLen = frameInfo.m_nBufferSize;
+        stRecordFrameInfoParam.nPaddingX = frameInfo.m_nPaddingX;
+        stRecordFrameInfoParam.nPaddingY = frameInfo.m_nPaddingY;
+        stRecordFrameInfoParam.ePixelFormat = frameInfo.m_ePixelType;
+        IMV_InputOneFrame(m_devHandle, &stRecordFrameInfoParam);
+        free(frameInfo.m_pImageBuf);
+    }
+    qDebug()<<"完成录像";
+    IMV_CloseRecord(this->m_devHandle);
+    emit recordFinished();
+    return ;
+}
+
+#endif
 
 
 

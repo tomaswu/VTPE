@@ -734,17 +734,45 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
 
-    if(tvd->record_flag){
-        recordFrameInfo.m_nWidth = (int)pFrame->frameInfo.width;
-        recordFrameInfo.m_nHeight = (int)pFrame->frameInfo.height;
-        recordFrameInfo.m_nBufferSize = (int)pFrame->frameInfo.size;
-        recordFrameInfo.m_nPaddingX = (int)pFrame->frameInfo.paddingX;
-        recordFrameInfo.m_nPaddingY = (int)pFrame->frameInfo.paddingY;
-        recordFrameInfo.m_ePixelType = pFrame->frameInfo.pixelFormat;
-        recordFrameInfo.m_pImageBuf = (unsigned char *)malloc(sizeof(unsigned char) * recordFrameInfo.m_nBufferSize);
-        recordFrameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
-        memcpy(recordFrameInfo.m_pImageBuf, pFrame->pData, recordFrameInfo.m_nBufferSize);
-        tvd->recordQue.push_back(frameInfo);
+    if(tvd->record_flag){    
+        QImage image;
+        IMV_PixelConvertParam stPixelConvertParam;
+        unsigned char* pRGBbuffer = NULL;
+        int nRgbBufferSize = 0;
+        nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
+        pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
+        if (pRGBbuffer == NULL)
+        {
+            // 释放内存
+            // release memory
+            free(frameInfo.m_pImageBuf);
+            printf("RGBbuffer malloc failed.\n");
+            return;
+        }
+        stPixelConvertParam.nWidth = frameInfo.m_nWidth;
+        stPixelConvertParam.nHeight = frameInfo.m_nHeight;
+        stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
+        stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
+        stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
+        stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
+        stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
+        stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
+        stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
+        stPixelConvertParam.pDstBuf = pRGBbuffer;
+        stPixelConvertParam.nDstBufSize = nRgbBufferSize;
+        int ret = IMV_PixelConvert(tvd->m_devHandle, &stPixelConvertParam);
+        if (IMV_OK != ret)
+        {
+            // 释放内存
+            // release memory
+            printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
+            free(frameInfo.m_pImageBuf);
+            free(pRGBbuffer);
+            return;
+        }
+
+        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+        tvd->recordQue.enqueue(image);
     }
 
     tvd->tque.push_back(frameInfo);
@@ -905,7 +933,7 @@ bool TVideoCapture::initUndistort(cv::MatSize size){
 
 
 #ifdef Q_OS_WINDOWS
-recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size size,TMessageQue<CFrameInfo> *que,QObject *parent):
+recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size size,QQueue<QImage> *que,QObject *parent):
     QThread(parent)
 {
     this->que = que;
@@ -916,52 +944,24 @@ recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size 
 void recordThread::run(){
     int count=0;
     QImage image;
-    cv::Mat mat;
+    cv::Mat mat,tmp;
     while (runFlag){
-        CFrameInfo frameInfo;
-        if(que->size()==0){
-            continue;
+        if(que->size()>0){
+            image = this->que->dequeue();
+            count+=1;
+            if(count%100==0){
+                qDebug()<<count<<que->size();
+            }
+            mat=TVideoCapture::QImage2Mat(image);
+//            tmp.copyTo(mat);
+//            outputVideo.write(mat);
+            free(image.bits());
         }
-        // 转码
-        this->que->get(frameInfo);
-        unsigned char* pRGBbuffer = NULL;
-        int nRgbBufferSize = 0;
-        nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
-        pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
-        if (pRGBbuffer == NULL)
-        {
-            // 释放内存
-            // release memory
-            free(frameInfo.m_pImageBuf);
-            printf("RGBbuffer malloc failed.\n");
-            continue;
+        if(que->size()>300){
+            qDebug()<<"mem error";
+            return;
         }
-        IMV_PixelConvertParam stPixelConvertParam;
-        stPixelConvertParam.nWidth = frameInfo.m_nWidth;
-        stPixelConvertParam.nHeight = frameInfo.m_nHeight;
-        stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
-        stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
-        stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
-        stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
-        stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
-        stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
-        stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
-        stPixelConvertParam.pDstBuf = pRGBbuffer;
-        stPixelConvertParam.nDstBufSize = nRgbBufferSize;
-        int ret = IMV_PixelConvert(dev, &stPixelConvertParam);
-        if (IMV_OK != ret)
-        {
-            // 释放内存
-            // release memory
-            printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
-            free(frameInfo.m_pImageBuf);
-            free(pRGBbuffer);
-            continue;
-        }
-        free(frameInfo.m_pImageBuf);
-        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
-        outputVideo.write(TVideoCapture::QImage2Mat(image));
-        free(image.bits());
+
     }
     runFlag = true;
 
@@ -976,12 +976,8 @@ void recordThread::run(){
     //如果列表没清空则清空再退出
     while (que->size()>0)
     {
-        count+=1;
-        qDebug()<<count;
-        CFrameInfo frameInfo;
-        this->que->get(frameInfo);
+        break;
 
-        free(frameInfo.m_pImageBuf);
     }
     qDebug()<<"完成录像";
     outputVideo.release();

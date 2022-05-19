@@ -15,6 +15,7 @@
 #include <IMVAPI/IMVApi.h>
 #include <IMVAPI/IMVDefines.h>
 #include <cameraMessageQue.h>
+#include <QQueue>
 #endif // 华谷动力相机仅支持windows
 
 enum CameraType{
@@ -59,12 +60,12 @@ class recordThread: public QThread
 {
     Q_OBJECT
 public:
-    explicit recordThread(IMV_HANDLE m_dev,QString filePath,double fps,cv::Size size,TMessageQue<CFrameInfo> *que,QObject *parent);
+    explicit recordThread(IMV_HANDLE m_dev,QString filePath,double fps,cv::Size size,QQueue<QImage>  *que,QObject *parent);
     bool runFlag = true;
     bool forceQuit = false;
     void run();
     IMV_HANDLE dev;
-    TMessageQue<CFrameInfo> * que = NULL;
+    QQueue<QImage>   * que = NULL;
     cv::VideoWriter         outputVideo;
     void stopRecord(bool forceQuit=false){this->runFlag=true;this->forceQuit=forceQuit;};
 
@@ -99,7 +100,7 @@ public:
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     IMV_RecordParam         stRecordParam; //录像参数
     TMessageQue<CFrameInfo> tque;
-    TMessageQue<CFrameInfo> recordQue;
+    QQueue<QImage>          recordQue;
     recordThread            *record_thread;
     void                    onRecordFinished();
     #endif

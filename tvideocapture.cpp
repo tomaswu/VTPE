@@ -346,37 +346,8 @@ void TVideoCapture::startRecord(QString path){
             break;
         #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
         case workPowerCam:
-            memset(&stRecordParam, 0, sizeof(stRecordParam));
-
-            // 视频图像宽
-            // video image width
-            stRecordParam.nWidth = (unsigned int)size.width;
-
-            // 视频图像高
-            // video image height
-            stRecordParam.nHeight = (unsigned int)size.height;
-
-            // 帧率(大于0)。请设置成实际取流帧率。
-            // frame rate(greater than 0). Please set to the actual streaming frame rate.
-            stRecordParam.fFameRate = fps;
-
-            // 视频质量(1-100)。参数越大，视频越清晰，但体积也越大。
-            // video quality(1-100). The larger the parameter, the clearer the video, but the larger the volume.
-            stRecordParam.nQuality = 75;
-
-            // 视频格式
-            // video format
-            stRecordParam.recordFormat = typeVideoFormatAVI;
-
-            // 如果是绝对路径，例如"D:/Test/Record.avi"，请确保路径确实存在。
-            // if it is a full path like "D:/Test/Record.avi", please make sure that the path does exist.
-            stRecordParam.pRecordFilePath = path.toStdString().c_str();
-
-            // 打开录像句柄
-            // open the record handle
             record_flag=true;
-//            qDebug()<<m_devHandle;
-            this->record_thread = new recordThread(this->m_devHandle,&this->stRecordParam,&this->recordQue,NULL);
+            this->record_thread = new recordThread(this->m_devHandle,path,this->fps,size,&this->recordQue,NULL);
             connect(this->record_thread,&recordThread::recordFinished,this,&TVideoCapture::onRecordFinished);
             this->record_thread->start();
             break;
@@ -934,56 +905,70 @@ bool TVideoCapture::initUndistort(cv::MatSize size){
 
 
 #ifdef Q_OS_WINDOWS
-recordThread::recordThread(IMV_HANDLE m_dev,IMV_RecordParam *st,TMessageQue<CFrameInfo> *q,QObject *parent):
+recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size size,TMessageQue<CFrameInfo> *que,QObject *parent):
     QThread(parent)
 {
-    this->m_devHandle = m_dev;
-    this->que = q;
-    this->stRecordParam=st;
+    this->que = que;
+    this->dev = mdev;
+    outputVideo.open(filePath.toStdString(),cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),fps,size,true);
 }
 
 void recordThread::run(){
-    IMV_RecordFrameInfoParam stRecordFrameInfoParam;
     int count=0;
-    qDebug()<<stRecordParam->nQuality;
-    int ret = IMV_OpenRecord(m_devHandle, stRecordParam);
-    qDebug()<<"start run record"<<ret;
+    QImage image;
+    cv::Mat mat;
     while (runFlag){
         CFrameInfo frameInfo;
         if(que->size()==0){
             continue;
         }
-        count+=1;
-        if(count%100==0){
-            qDebug()<<count;
-        }
-        qDebug()<<"test1";
+        // 转码
         this->que->get(frameInfo);
-        qDebug()<<"test2";
-        memset(&stRecordFrameInfoParam, 0, sizeof(stRecordFrameInfoParam));
-        stRecordFrameInfoParam.pData = frameInfo.m_pImageBuf;
-        stRecordFrameInfoParam.nDataLen = frameInfo.m_nBufferSize;
-        stRecordFrameInfoParam.nPaddingX = frameInfo.m_nPaddingX;
-        stRecordFrameInfoParam.nPaddingY = frameInfo.m_nPaddingY;
-        stRecordFrameInfoParam.ePixelFormat = frameInfo.m_ePixelType;
-        qDebug()<<"test3";
-        int ret = IMV_InputOneFrame(m_devHandle, &stRecordFrameInfoParam);
-        qDebug()<<"test4";
-        if(ret==IMV_OK){
+        unsigned char* pRGBbuffer = NULL;
+        int nRgbBufferSize = 0;
+        nRgbBufferSize = frameInfo.m_nWidth * frameInfo.m_nHeight * 3;
+        pRGBbuffer = (unsigned char*)malloc(nRgbBufferSize);
+        if (pRGBbuffer == NULL)
+        {
+            // 释放内存
+            // release memory
             free(frameInfo.m_pImageBuf);
+            printf("RGBbuffer malloc failed.\n");
+            continue;
         }
-        else{
-            qDebug()<<"write failed:"<<ret;
-            return;
+        IMV_PixelConvertParam stPixelConvertParam;
+        stPixelConvertParam.nWidth = frameInfo.m_nWidth;
+        stPixelConvertParam.nHeight = frameInfo.m_nHeight;
+        stPixelConvertParam.ePixelFormat = frameInfo.m_ePixelType;
+        stPixelConvertParam.pSrcData = frameInfo.m_pImageBuf;
+        stPixelConvertParam.nSrcDataLen = frameInfo.m_nBufferSize;
+        stPixelConvertParam.nPaddingX = frameInfo.m_nPaddingX;
+        stPixelConvertParam.nPaddingY = frameInfo.m_nPaddingY;
+        stPixelConvertParam.eBayerDemosaic = demosaicNearestNeighbor;
+        stPixelConvertParam.eDstPixelFormat = gvspPixelRGB8;
+        stPixelConvertParam.pDstBuf = pRGBbuffer;
+        stPixelConvertParam.nDstBufSize = nRgbBufferSize;
+        int ret = IMV_PixelConvert(dev, &stPixelConvertParam);
+        if (IMV_OK != ret)
+        {
+            // 释放内存
+            // release memory
+            printf("image convert to RGB failed! ErrorCode[%d]\n", ret);
+            free(frameInfo.m_pImageBuf);
+            free(pRGBbuffer);
+            continue;
         }
-
+        free(frameInfo.m_pImageBuf);
+        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+        outputVideo.write(TVideoCapture::QImage2Mat(image));
+        free(image.bits());
     }
     runFlag = true;
 
     //是否丢弃未写入的内容
     if(this->forceQuit){
         qDebug()<<"结束录像";
-        IMV_CloseRecord(this->m_devHandle);
+        outputVideo.release();
         emit recordFinished();
         return ;
     }
@@ -995,17 +980,11 @@ void recordThread::run(){
         qDebug()<<count;
         CFrameInfo frameInfo;
         this->que->get(frameInfo);
-        memset(&stRecordFrameInfoParam, 0, sizeof(stRecordFrameInfoParam));
-        stRecordFrameInfoParam.pData = frameInfo.m_pImageBuf;
-        stRecordFrameInfoParam.nDataLen = frameInfo.m_nBufferSize;
-        stRecordFrameInfoParam.nPaddingX = frameInfo.m_nPaddingX;
-        stRecordFrameInfoParam.nPaddingY = frameInfo.m_nPaddingY;
-        stRecordFrameInfoParam.ePixelFormat = frameInfo.m_ePixelType;
-        IMV_InputOneFrame(m_devHandle, &stRecordFrameInfoParam);
+
         free(frameInfo.m_pImageBuf);
     }
     qDebug()<<"完成录像";
-    IMV_CloseRecord(this->m_devHandle);
+    outputVideo.release();
     emit recordFinished();
     return ;
 }

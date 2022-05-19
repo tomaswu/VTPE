@@ -59,14 +59,14 @@ class recordThread: public QThread
 {
     Q_OBJECT
 public:
-    explicit recordThread(IMV_HANDLE m_devHandle,IMV_RecordParam *st,TMessageQue<CFrameInfo> *que,QObject *parent = NULL);
+    explicit recordThread(IMV_HANDLE m_dev,QString filePath,double fps,cv::Size size,TMessageQue<CFrameInfo> *que,QObject *parent);
     bool runFlag = true;
     bool forceQuit = false;
-    IMV_RecordParam *stRecordParam;
     void run();
-    IMV_HANDLE m_devHandle;
+    IMV_HANDLE dev;
     TMessageQue<CFrameInfo> * que = NULL;
-    void stopRecord(bool forceQuit=false){this->runFlag=false;this->forceQuit=forceQuit;};
+    cv::VideoWriter         outputVideo;
+    void stopRecord(bool forceQuit=false){this->runFlag=true;this->forceQuit=forceQuit;};
 
 signals:
     void recordFinished();
@@ -128,8 +128,8 @@ public:
     void                startRecord(QString path);
     void                stopRecord();
     void                openSettings();
-    QImage              Mat2QImage(cv::Mat const &mat);
-    cv::Mat             QImage2Mat(QImage const &image);
+    static QImage       Mat2QImage(cv::Mat const &mat);
+    static cv::Mat      QImage2Mat(QImage const &image);
     void                getSupportedResolutions(int index);
     void                getCameraMatrix();
     void                getFiles(std::string path, std::vector<std::string> *files);

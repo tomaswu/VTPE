@@ -60,14 +60,14 @@ class recordThread: public QThread
 {
     Q_OBJECT
 public:
-    explicit recordThread(IMV_HANDLE m_dev,QString filePath,double fps,cv::Size size,QQueue<QImage>  *que,QObject *parent);
+    explicit recordThread(IMV_HANDLE m_dev,QString filePath,double fps,cv::Size size,QQueue<cv::Mat> *que,QObject *parent);
     bool runFlag = true;
     bool forceQuit = false;
     void run();
     IMV_HANDLE dev;
-    QQueue<QImage>   * que = NULL;
+    QQueue<cv::Mat>   * que = NULL;
     cv::VideoWriter         outputVideo;
-    void stopRecord(bool forceQuit=false){this->runFlag=true;this->forceQuit=forceQuit;};
+    void stopRecord(bool forceQuit=false){this->runFlag=false;this->forceQuit=forceQuit;};
 
 signals:
     void recordFinished();
@@ -100,7 +100,7 @@ public:
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     IMV_RecordParam         stRecordParam; //录像参数
     TMessageQue<CFrameInfo> tque;
-    QQueue<QImage>          recordQue;
+    QQueue<cv::Mat>         recordQue;
     recordThread            *record_thread;
     void                    onRecordFinished();
     #endif

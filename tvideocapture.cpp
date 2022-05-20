@@ -734,8 +734,8 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
 
-    if(tvd->record_flag){    
-        QImage image;
+    if(tvd->record_flag && tvd->recordQue.size()<250){
+        cv::Mat image;
         IMV_PixelConvertParam stPixelConvertParam;
         unsigned char* pRGBbuffer = NULL;
         int nRgbBufferSize = 0;
@@ -771,7 +771,8 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
             return;
         }
 
-        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+//        image=QImage(pRGBbuffer, (int)stPixelConvertParam.nWidth, (int)stPixelConvertParam.nHeight,QImage::Format_RGB888);
+        image = cv::Mat((int)stPixelConvertParam.nHeight,(int)stPixelConvertParam.nWidth,CV_8UC3,pRGBbuffer);
         tvd->recordQue.enqueue(image);
     }
 
@@ -933,12 +934,12 @@ bool TVideoCapture::initUndistort(cv::MatSize size){
 
 
 #ifdef Q_OS_WINDOWS
-recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size size,QQueue<QImage> *que,QObject *parent):
+recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size size,QQueue<cv::Mat> *que,QObject *parent):
     QThread(parent)
 {
     this->que = que;
     this->dev = mdev;
-    outputVideo.open(filePath.toStdString(),cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),fps,size,true);
+    outputVideo.open(filePath.toStdString(),cv::VideoWriter::fourcc('H', '2', '6', '4'),fps,size,true);
 }
 
 void recordThread::run(){
@@ -947,21 +948,19 @@ void recordThread::run(){
     cv::Mat mat,tmp;
     while (runFlag){
         if(que->size()>0){
-            image = this->que->dequeue();
+            mat = this->que->dequeue();
             count+=1;
             if(count%100==0){
                 qDebug()<<count<<que->size();
             }
-            mat=TVideoCapture::QImage2Mat(image);
+//            mat=TVideoCapture::QImage2Mat(image);
 //            tmp.copyTo(mat);
-//            outputVideo.write(mat);
-            free(image.bits());
-        }
-        if(que->size()>300){
-            qDebug()<<"mem error";
-            return;
-        }
+            cv::cvtColor(mat,tmp,cv::COLOR_RGB2BGR);
+            outputVideo<<tmp;
+            free(mat.data);
 
+//            free(image.bits());
+        }
     }
     runFlag = true;
 

@@ -76,6 +76,7 @@ DISTFILES += \
     SToolButton2.qml \
     SelectScale4Image.qml \
     TCheckBox.qml \
+    TRecPara.qml \
     ToolbarVSplit.qml \
     TriSlider.qml \
     Ttable.qml \

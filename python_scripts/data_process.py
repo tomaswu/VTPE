@@ -14,5 +14,18 @@ def pyHello():
     print(a)
     print("hello world! python")
 
+def list2csv(l,filepath):
+    try:
+        with open(filepath,"w") as t:
+            t.write("frame,x1,y1,x2,y2\n")
+            for i in l:
+                s = ','.join([str(k) for k in i])
+                t.write(s+"\n")
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
 if __name__ == "__main__":
-   pyHello()
+   test = [[1,2,3,4,5],[4,5,6,7,8]]
+   list2csv(test,'a.csv')

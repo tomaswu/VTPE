@@ -942,6 +942,13 @@ Window {
             id:video_widget
             title: "video"
 
+            Ttable{
+                id: data_table
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: video_status_bar.top
+            }
+
             Rectangle{
                 id:video_widget_bg
                 anchors.fill:parent
@@ -950,7 +957,10 @@ Window {
 
             Image{
                 id:video_img
-                anchors.fill: parent
+                anchors.left: data_table.right
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: video_status_bar.top
                 fillMode: Image.PreserveAspectFit
                 source:""
                 cache: false
@@ -995,6 +1005,8 @@ Window {
                             id: slider
                             width:parent.width-2*parent.padding
                             height: 30
+                            onValue0Changed: mvid.setBeginPos(value0)
+                            onValue2Changed: mvid.setEndPos(value2)
                             onSetValue1:mvid.setPos(value1)
                             Connections{
                                 target: mvid

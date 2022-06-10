@@ -12,6 +12,7 @@ HEADERS += \
     commandLineTools.h \
     include/IMVAPI/IMVApi.h \
     include/IMVAPI/IMVDefines.h \
+    pmb0100rec.h \
     pmc0100_com.h \
     tcamera.h \
     tpycom.h \
@@ -21,6 +22,7 @@ HEADERS += \
 SOURCES += \
         commandLineTools.cpp \
         main.cpp \
+    pmb0100rec.cpp \
         pmc0100_com.cpp \
         tcamera.cpp \
         tpycom.cpp \
@@ -39,7 +41,8 @@ resources.files = main.qml \
                   DeviceList.qml\
                   CameraSettingsDialog.qml\
                   SelectScale4Image.qml \
-                  CameraMoreSettingsWindow.qml
+                  CameraMoreSettingsWindow.qml \
+                  Ttable.qml
 
 
 resources.prefix = /$${TARGET}
@@ -75,6 +78,7 @@ DISTFILES += \
     TCheckBox.qml \
     ToolbarVSplit.qml \
     TriSlider.qml \
+    Ttable.qml \
     deviceList.qml \
     maskImage.qml \
     python_scripts/data_process.py \

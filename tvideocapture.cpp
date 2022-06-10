@@ -734,7 +734,7 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
 
-    if(tvd->record_flag && tvd->recordQue.size()<250){
+    if(tvd->record_flag && tvd->recordQue.size()<150){
         cv::Mat image;
         IMV_PixelConvertParam stPixelConvertParam;
         unsigned char* pRGBbuffer = NULL;
@@ -939,13 +939,12 @@ recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size 
 {
     this->que = que;
     this->dev = mdev;
-    outputVideo.open(filePath.toStdString(),cv::VideoWriter::fourcc('H', '2', '6', '4'),fps,size,true);
+    outputVideo.open(filePath.toStdString(),cv::CAP_MSMF,cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),30,size,true);
 }
 
 void recordThread::run(){
     int count=0;
-    QImage image;
-    cv::Mat mat,tmp;
+    cv::Mat mat,tmp,tmp2;
     while (runFlag){
         if(que->size()>0){
             mat = this->que->dequeue();
@@ -953,11 +952,11 @@ void recordThread::run(){
             if(count%100==0){
                 qDebug()<<count<<que->size();
             }
-//            mat=TVideoCapture::QImage2Mat(image);
-//            tmp.copyTo(mat);
-            cv::cvtColor(mat,tmp,cv::COLOR_RGB2BGR);
-            outputVideo<<tmp;
+            mat.copyTo(tmp);
             free(mat.data);
+            cv::cvtColor(tmp,tmp2,cv::COLOR_RGB2BGR);
+            outputVideo<<tmp2;
+//            free(mat.data);
 
 //            free(image.bits());
         }

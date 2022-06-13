@@ -133,8 +133,8 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para){
     recResult res;
     cv::Mat gray_img;
     cv::cvtColor(img,gray_img,cv::COLOR_BGR2GRAY);
-    for(int row=0;row<gray_img.rows;row++){
-        for(int col=0;col<gray_img.cols;col++){
+    for(int row=para.row1;row<para.row2;row++){
+        for(int col=para.col1;col<para.col2;col++){
             if(gray_img.at<uchar>(row,col)>=para.threshold){
                 points.push_back(cv::Point(col,row));
             }

@@ -1,4 +1,4 @@
-import QtQuick
+ import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
@@ -105,6 +105,7 @@ Window {
                                 mcap.startCapture()
                                 var rlist = mcap.getSupportedResolutions()
                                 camera_settings_dialog.refreshResolutions(rlist)
+                                centerWidget.currentIndex = 0
                             }
                         }
                         else{
@@ -385,6 +386,14 @@ Window {
                                 console.log(fileName)
                             }//end switch
                             mvid.open(fileName)
+                            if(mvid.isOpened()){
+                                var fps = mvid.getFps().toFixed(2)
+                                video_fps_text.text = `视频帧率: ${fps}`
+                                mvid.setPlaySpeed(play_speed.currentText)
+                            }
+                            else{
+                                dia.showInfo("未能打开视频！")
+                            }
                         }
                     }
                 }
@@ -442,7 +451,21 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("set analysis paras\n设置分析参数",video_analysis_para)
-                    onClicked: console.log("para settings")
+                    onClicked: {
+                        if(mvid.isOpened()){
+                            switch (rec_method.currentIndex){
+                                case 0:
+                                    centerWidget.currentIndex = 1
+                                    pmb0100_para_window.show()
+                                    break
+                                default:
+                                    dia.showInfo("暂不支持的方法")
+                            }
+                        }
+                        else{
+                            dia.showInfo("需要先打开视频！")
+                        }
+                    }
                 }
 
 
@@ -455,8 +478,18 @@ Window {
                     btnName: ""
                     width: 24
                     height: 24
+                    checkable: true
                     onHoveredChanged: tbntip("open tables\n打开表格窗口",video_table)
-                    onClicked: console.log("data tables")
+                    onCheckedChanged: {
+                        if(checked){
+                            console.log("open table")
+                            animation_show_table.start()
+                        }
+                        else{
+                            animation_hide_table.start()
+                        }
+
+                    }
                 }
 
                 SToolButton{
@@ -470,6 +503,33 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("open figures\n打开绘图窗口",video_fig)
                     onClicked: console.log("data figures")
+                }
+
+                Text{
+                    text: "播放速度:"
+                    color:global_color.primary
+                    Layout.row: 2
+                    Layout.column: 0
+                    Layout.columnSpan: 2
+                }
+
+                ComboBox{
+                    id:play_speed
+                    implicitWidth: 48
+                    Layout.columnSpan: 3
+                    valueRole:"name"
+                    currentIndex:2
+                    model: ListModel{
+                        ListElement{name:"0.25"}
+                        ListElement{name:"0.5"}
+                        ListElement{name:"1.0"}
+                        ListElement{name:"1.5"}
+                    }
+                    onCurrentTextChanged:{
+                        if(mvid.isOpened()){
+                            mvid.setPlaySpeed(currentText)
+                        }
+                    }
                 }
 
                 SToolButton{
@@ -944,7 +1004,8 @@ Window {
 
             Ttable{
                 id: data_table
-                anchors.left: parent.left
+                x:-width
+                visible: false
                 anchors.top: parent.top
                 anchors.bottom: video_status_bar.top
             }
@@ -1110,9 +1171,10 @@ Window {
         }
 
         onPositionChanged: {
+            var w,h
             if(measurement_select.checked){
-                var w = mouseX-x0
-                var h = mouseY-y0
+                w = mouseX-x0
+                h = mouseY-y0
                 s4i.visible = true
                 if (w>0){
                     s4i.width = w
@@ -1135,8 +1197,59 @@ Window {
         } //end onPositionChanged
     } // end mouse area
 
+    MouseArea{
+        id: mouseArea_select_analysis
+        x:centerWidget.x
+        y:centerWidget.y
+        width:centerWidget.width
+        height: camera_widget_bg.height
+        z:mscale-1
+        enabled: pmb0100_para_window.select
+        property double x0: 0
+        property double y0: 0
+        onPressed: {
+            x0 = mouseX
+            y0 = mouseY
+        }
+
+        onPositionChanged: {
+            var w,h
+            if(pmb0100_para_window.select){
+                w = mouseX-x0
+                h = mouseY-y0
+                s4a.visible = true
+                if (w>0){
+                    s4a.width = w
+                    s4a.x = x0+centerWidget.x
+                }
+                else{
+                    s4a.width = -w
+                    s4a.x = mouseX+centerWidget.x
+                }
+
+                if (h>=0){
+                    s4a.height = h
+                    s4a.y = y0+centerWidget.y
+                }
+                else{
+                    s4a.height = -h
+                    s4a.y = mouseY+centerWidget.y
+                }
+                s4a.setScale()
+            }
+
+        } //end onPositionChanged
+    } // end mouse area
+
+
     SelectScale4Image{
         id:s4i
+        y:centerWidget.y
+        visible: false
+    }
+
+    SelectScale4Analysis{
+        id:s4a
         y:centerWidget.y
         visible: false
     }
@@ -1205,6 +1318,54 @@ Window {
     CameraMoreSettingsWindow{
         id : camera_settings_widnow
     }
+
+    // analysis para dialog
+    TRecPara{
+        id : pmb0100_para_window
+    }
+
+    //data table window animation
+    ParallelAnimation{
+        id: animation_show_table
+        NumberAnimation{
+            target: data_table
+            properties: "x"
+            from:data_table.x
+            to: 0
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        NumberAnimation{
+            target: data_table
+            properties: "opacity"
+            from: 0.2
+            to: 1
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        onStarted: data_table.visible=true
+    }
+    ParallelAnimation{
+        id: animation_hide_table
+        NumberAnimation{
+            target: data_table
+            properties: "x"
+            from:data_table.x
+            to: -data_table.width
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        NumberAnimation{
+            target: data_table
+            properties: "opacity"
+            from: 1
+            to: 0.2
+            duration: 250;
+            easing.type: Easing.Linear
+        }
+        onFinished: data_table.visible=false
+    }
+
 
 
     // -------------------- setting ------------------------

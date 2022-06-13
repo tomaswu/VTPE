@@ -42,7 +42,9 @@ resources.files = main.qml \
                   CameraSettingsDialog.qml\
                   SelectScale4Image.qml \
                   CameraMoreSettingsWindow.qml \
-                  Ttable.qml
+                  Ttable.qml \
+                  TRecPara.qml \
+                  SelectScale4Analysis.qml
 
 
 resources.prefix = /$${TARGET}
@@ -74,6 +76,7 @@ DISTFILES += \
     README.md \
     SToolButton.qml \
     SToolButton2.qml \
+    SelectScale4Analysis.qml \
     SelectScale4Image.qml \
     TCheckBox.qml \
     TRecPara.qml \

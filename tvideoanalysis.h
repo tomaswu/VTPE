@@ -8,6 +8,7 @@
 #include <tcamera.h>
 #include <string>
 #include <vector>
+#include <pmb0100rec.h>
 
 enum _recType{
     PMB0100,
@@ -30,13 +31,17 @@ public:
     int                                 pos;
     int                                 beginPos;
     int                                 endPos;
+    double                              play_speed;
+    bool                                recFlag=false;
     imgProvider                         *ipdr;
     QTimer                              *play_timer;
     std::string                          testfile="C:\\Users\\Tomas Wu\\Videos\\202203151103光镊演示.mp4";
+    pmb0100rec::Para                    pmb0100rec_para;
 
     //method
     cv::Mat                             QImage2Mat(QImage const& image);
     QImage                              Mat2QImage(cv::Mat const& mat);
+    Q_INVOKABLE double                  getFps();
     Q_INVOKABLE int                     getPos();
     Q_INVOKABLE bool                    setPos(int i);
     Q_INVOKABLE int                     getBeginPos();
@@ -47,8 +52,11 @@ public:
     Q_INVOKABLE void                    open(QString path);
     Q_INVOKABLE bool                    isOpened();
     void                                getFrame();
-    void                                setPlaySpeed(double speed);
+    Q_INVOKABLE void                    setPlaySpeed(double speed);
     Q_INVOKABLE void                    play_pause();
+    Q_INVOKABLE void                    startRecognize(int threshold,int pixel,int millimeter,int pointNum=60,int method=0,int c1=0,int c2=640,int r1=0,int r2=480);
+    Q_INVOKABLE void                    stopRecognize();
+    Q_INVOKABLE QList<int>              getImageSize();
 
     // qml read
     Q_PROPERTY(int pos MEMBER pos NOTIFY posChanged);
@@ -58,6 +66,8 @@ signals:
     void imageRefreshed();
     void posChanged();
     void alreadyOpened();
+    void recognizedOneFrame(QVariantList rec);
+    void finishedRec();
 
 };
 

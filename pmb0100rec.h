@@ -16,6 +16,10 @@ using recResult = vector<ctr>;
 typedef struct _recPara{
     int threshold;
     int pointNum;
+    int col1;
+    int col2;
+    int row1;
+    int row2;
 }Para;
 
 
@@ -24,6 +28,7 @@ void colorDraw(cv::Mat &img,Points points,RGB rgb);
 ctr center(Points points,int maxR=35,int minR=5);
 ctr centerBlue(Points points,Points pointsBlue,int maxR=35,int minR=5);
 recResult recBall(cv::Mat img,Para para);
+cv::Mat preThreshold(cv::Mat img,int threshold);
 
 }
 #endif // PMB0100REC_H

@@ -5,6 +5,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <tcamera.h>
+#include <pmb0100rec.h>
 
 
 using namespace std;
@@ -95,13 +96,59 @@ void TVideoAnalysis::getFrame(){
     }
     ipdr->img = Mat2QImage(img);
     emit imageRefreshed();
+
+    if(recFlag){
+        qDebug()<<"hello";
+        pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para);
+
+        QList<double> res;
+        res.append(pos);
+        for(auto &i:r){
+            res.append(i.x);
+            res.append(i.y);
+        }
+        qDebug()<<res;
+
+    }
+
     getPos();
     if(pos==endPos){
         setPos(beginPos);
+        if(recFlag){
+            recFlag=false;
+            emit finishedRec();
+        }
     }
 }
 
+void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int pointNum,int method,int c1,int c2,int r1,int r2){
+    qDebug()<<method;
+    switch(method){
+    case 0:
+        pmb0100rec_para.threshold=threshold;
+        pmb0100rec_para.pointNum=pointNum;
+        pmb0100rec_para.col1=c1;
+        pmb0100rec_para.col2=c2;
+        pmb0100rec_para.row1=r1;
+        pmb0100rec_para.row2=r2;
+        recFlag=true;
+        break;
+    }
+    if(play_timer->isActive()){
+        play_timer->stop();
+    }
+    play_timer->setInterval(1);
+    setPos(beginPos);
+    play_timer->start();
+}
+
+void TVideoAnalysis::stopRecognize(){
+    recFlag=false;
+    setPlaySpeed(play_speed);
+}
+
 void TVideoAnalysis::setPlaySpeed(double speed){
+    play_speed = speed;
     int fps = video_reader->get(cv::CAP_PROP_FPS);
     double itv = 1000/(fps*speed);
     int new_time = itv;
@@ -115,6 +162,17 @@ void TVideoAnalysis::play_pause(){
     else{
         play_timer->start();
     }
+}
+
+double TVideoAnalysis::getFps(){
+   return video_reader->get(cv::CAP_PROP_FPS);
+}
+
+QList<int> TVideoAnalysis::getImageSize(){
+    QList<int> size;
+    size.append(img.size().width);
+    size.append(img.size().height);
+    return size;
 }
 
 

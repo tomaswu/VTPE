@@ -12,6 +12,7 @@ Window {
     title: "PMB0100分析参数"
     property real rowSpacing : 20
     property bool select: btn_scale.checked
+    onVisibleChanged: if(visible)mvid.preThreshold(threshold_slider.value)
 
     Text {
         id: threshold_text
@@ -29,7 +30,7 @@ Window {
         x:80
         value: 60
         anchors.verticalCenter: threshold_text.verticalCenter
-        onValueChanged: console.log("threshold changed")
+        onValueChanged: mvid.preThreshold(value)
     }
     TextField{
         id:threshold_input
@@ -216,6 +217,7 @@ Window {
             width:60
             text:"确定"
             onClicked: {
+                btn_scale.checked=false
                 mvid.startRecognize(threshold_slider.value,pixel_input.text,mm_input,60,0,xmin_input.text,xmax_input.text,ymin_input.text,ymax_input.text)
             }
         }

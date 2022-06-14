@@ -1,6 +1,7 @@
 #include "pmb0100rec.h"
 #include <opencv2/imgproc.hpp>
 #include <cmath>
+#include <iostream>
 
 using namespace pmb0100rec;
 using namespace std;
@@ -59,19 +60,19 @@ ctr pmb0100rec::center(Points points,int maxR,int minR){
         for(int i=0;i<points.size();i++){
            d=sqrt(pow(points[i].x-ip.x,2)+pow(points[i].y-ip.y,2));
            ds.push_back(d);
-           for(int ir = minR;ir<=r;ir++){
-               count = 0;
-               for(auto &d:ds){
-                   if(d<=ir)count++;
-               }
-               tmp=count/ir;
-               if(tmp>s){
-                   s=tmp;
-                   ct.x=ip.x;
-                   ct.y=ip.y;
-                   ct.z=ir;
-               }
-           }
+        }
+        for(int ir = minR;ir<=r;ir++){
+            count = 0;
+            for(auto &d:ds){
+                if(d<=ir)count++;
+            }
+            tmp=count/ir;
+            if(tmp>s){
+                s=tmp;
+                ct.x=(float)ip.x;
+                ct.y=(float)ip.y;
+                ct.z=(float)ir;
+            }
         }
     }
     return ct;
@@ -100,27 +101,27 @@ ctr pmb0100rec::centerBlue(Points points,Points pointsBlue,int maxR,int minR){
     r = r1>r2 ? r1:r2;
     r = r<maxR ? r:maxR;
     cv::Point2i ip;
-    for(int x=r1_min;x<=r1_max;x++){
-        for(int y=r2_min;y<r2_max;y++){
+    for(int x=(int)r1_min;x<=r1_max;x++){
+        for(int y=(int)r2_min;y<r2_max;y++){
             ip.x=x;
             ip.y=y;
             ds.clear();
             for(int i=0;i<points.size();i++){
                d=sqrt(pow(points[i].x-ip.x,2)+pow(points[i].y-ip.y,2));
                ds.push_back(d);
-               for(int ir = minR;ir<=r;ir++){
-                   count = 0;
-                   for(auto &d:ds){
-                       if(d<=ir)count++;
-                   }
-                   tmp=count/ir;
-                   if(tmp>s){
-                       s=tmp;
-                       ct.x=ip.x;
-                       ct.y=ip.y;
-                       ct.z=ir;
-                   }
-               }
+            }
+            for(int ir = minR;ir<=r;ir++){
+                count = 0;
+                for(auto &d:ds){
+                    if(d<=ir)count++;
+                }
+                tmp=count/ir;
+                if(tmp>s){
+                    s=tmp;
+                    ct.x=(float)ip.x;
+                    ct.y=(float)ip.y;
+                    ct.z=(float)ir;
+                }
             }
         }
 
@@ -140,13 +141,16 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para){
             }
         }
     }
+
     Points whitePoints,bluePoints;
     ctr whiteBall(-1,-1,-1);
     ctr blueBall(-1,-1,-1);
     dsColor(img,points,&bluePoints,&whitePoints);
+
     if(whitePoints.size()>=para.pointNum){
         whiteBall = center(whitePoints);
     }
+
     if(bluePoints.size()>=para.pointNum){
         blueBall = center(bluePoints);
     }
@@ -155,6 +159,26 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para){
     return res;
 }
 
+
+cv::Mat pmb0100rec::preThreshold(cv::Mat img,int threshold){
+    cv::Vec3b color(0,0,255);
+    cv::Mat gray,new_img;
+    if(img.channels()==1){
+        cv::cvtColor(img,new_img,cv::COLOR_GRAY2BGR);
+    }
+    else{
+        img.copyTo(new_img);
+    }
+    cv::cvtColor(img,gray,cv::COLOR_BGR2GRAY);
+    for(int i=0;i<img.size().height;i++){
+        for(int j=0;j<img.size().width;j++){
+            if(gray.at<uchar>(i,j)>threshold){
+                new_img.at<cv::Vec3b>(i,j)=color;
+            }
+        }
+    }
+    return new_img;
+}
 
 
 

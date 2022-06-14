@@ -288,7 +288,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("cut image\n裁剪",measurement_cut)
-                    onClicked: console.log("camera open")
+                    onClicked: dia.showInfo("暂不支持的功能！")
                 }
 
                 SToolButton{
@@ -301,7 +301,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("gray curve\n灰度曲线测量",measurement_gray_curve)
-                    onCheckedChanged: console.log("curve measurement")
+                    onCheckedChanged: dia.showInfo("暂不支持的功能！")
                 }
 
                 SToolButton{
@@ -314,7 +314,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("put text\n添加文字",measurement_putText)
-                    onClicked: console.log("camera open")
+                    onClicked: dia.showInfo("暂不支持的功能！")
                 }
 
 
@@ -482,7 +482,7 @@ Window {
                     onHoveredChanged: tbntip("open tables\n打开表格窗口",video_table)
                     onCheckedChanged: {
                         if(checked){
-                            console.log("open table")
+                            centerWidget.currentIndex=1
                             animation_show_table.start()
                         }
                         else{

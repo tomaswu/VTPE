@@ -98,17 +98,14 @@ void TVideoAnalysis::getFrame(){
     emit imageRefreshed();
 
     if(recFlag){
-        qDebug()<<"hello";
         pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para);
-
         QList<double> res;
         res.append(pos);
         for(auto &i:r){
             res.append(i.x);
             res.append(i.y);
         }
-        qDebug()<<res;
-
+        emit recognizedOneFrame(res);
     }
 
     getPos();
@@ -116,13 +113,22 @@ void TVideoAnalysis::getFrame(){
         setPos(beginPos);
         if(recFlag){
             recFlag=false;
+            play_timer->stop();
             emit finishedRec();
         }
     }
 }
 
+void TVideoAnalysis::preThreshold(int threshold){
+    if(play_timer->isActive()){
+        this->play_pause();
+    }
+    cv::Mat img = pmb0100rec::preThreshold(this->img,threshold);
+    ipdr->img = Mat2QImage(img);
+    emit imageRefreshed();
+}
+
 void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int pointNum,int method,int c1,int c2,int r1,int r2){
-    qDebug()<<method;
     switch(method){
     case 0:
         pmb0100rec_para.threshold=threshold;
@@ -174,7 +180,6 @@ QList<int> TVideoAnalysis::getImageSize(){
     size.append(img.size().height);
     return size;
 }
-
 
 QImage TVideoAnalysis::Mat2QImage(cv::Mat const& mat)
 {

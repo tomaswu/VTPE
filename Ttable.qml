@@ -65,9 +65,10 @@ Rectangle {
         boundsBehavior: Flickable.OvershootBounds
 
         ScrollBar.vertical: ScrollBar {
+            id:sclbar
             anchors.right:parent.right
             anchors.rightMargin: 0
-            visible: tableModel.rowCount > 5
+            visible: tableModel.rowCount > 15
             background: Rectangle{
                 color:"#666666"
             }
@@ -148,6 +149,7 @@ Rectangle {
         addRowByList([11,66,55,67,88])
         addRowByList([12,66,55,67,88])
         export2csv()
+        tableModel.clear();
     }
     function addRowByList(s){
         tableModel.appendRow({"frame":s[0],"x1":s[1],"y1":s[2],"x2":s[3],"y2":s[4]})
@@ -161,6 +163,14 @@ Rectangle {
             ml.push([ob.frame,ob.x1,ob.y1,ob.x2,ob.y2])
         }
         console.log(ml)
+    }
+
+    Connections{
+        target:mvid
+        function onRecognizedOneFrame(res){
+            addRowByList(res)
+            sclbar.position=1-sclbar.size
+        }
     }
 
 }

@@ -57,6 +57,7 @@ public:
     Q_INVOKABLE void                    startRecognize(int threshold,int pixel,int millimeter,int pointNum=60,int method=0,int c1=0,int c2=640,int r1=0,int r2=480);
     Q_INVOKABLE void                    stopRecognize();
     Q_INVOKABLE QList<int>              getImageSize();
+    Q_INVOKABLE void                    preThreshold(int threshold);
 
     // qml read
     Q_PROPERTY(int pos MEMBER pos NOTIFY posChanged);
@@ -66,9 +67,8 @@ signals:
     void imageRefreshed();
     void posChanged();
     void alreadyOpened();
-    void recognizedOneFrame(QVariantList rec);
+    void recognizedOneFrame(QList<double> rec);
     void finishedRec();
-
 };
 
 #endif // TVIDEOANALYSIS_H

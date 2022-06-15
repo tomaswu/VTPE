@@ -132,7 +132,7 @@ public:
     static QImage       Mat2QImage(cv::Mat const &mat);
     static cv::Mat      QImage2Mat(QImage const &image);
     void                getSupportedResolutions(int index);
-    void                getCameraMatrix();
+    QString             getCameraMatrix(QString fd);
     void                getFiles(std::string path, std::vector<std::string> *files);
     bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
     bool                initUndistort(cv::MatSize size);

@@ -22,7 +22,7 @@ Dialog {
             padding:10
             spacing: 10
             Text {
-                text: qsTr("连拍模式:")
+                text: qsTr("自动命名拍照:")
                 anchors.verticalCenter: parent.verticalCenter
             }
             CheckBox{
@@ -30,6 +30,17 @@ Dialog {
                 id:photomode_checkbox
                 checked: camera_settings_dialog.photoMode
                 onCheckedChanged: camera_settings_dialog.photoMode = checked
+            }
+
+            Button{
+                id:camera_setFolder
+                text: "照片保存位置"
+                onClicked:{
+                    var s = shell.getExistingFolder("保存",folder_recording.photoFolder)
+                    if (s!==""){
+                        folder_recording.photoFolder = s
+                    }
+                }// end clicked
             }
         }
 
@@ -70,10 +81,6 @@ Dialog {
                     else{
                         camera_settings_widnow.show()
                     }
-
-
-
-//
                 }
             }
         }

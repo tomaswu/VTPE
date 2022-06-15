@@ -87,6 +87,7 @@ public:
     Q_INVOKABLE bool                setBalanceR(double r){return cap->setBalanceR(r);};
     Q_INVOKABLE bool                setBalanceG(double g){return cap->setBalanceG(g);};
     Q_INVOKABLE bool                setBalanceB(double b){return cap->setBalanceB(b);};
+    Q_INVOKABLE QString             calibration(QString folder){return cap->getCameraMatrix(folder);};
 
 signals:
     void cameraListRefreshed();

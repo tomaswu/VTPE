@@ -136,33 +136,43 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        addRowByList([1,44,55,67,88])
-        addRowByList([2,48,55,67,88])
-        addRowByList([3,51,55,67,88])
-        addRowByList([4,66,55,67,88])
-        addRowByList([5,66,55,67,88])
-        addRowByList([6,66,55,67,88])
-        addRowByList([7,66,55,67,88])
-        addRowByList([8,66,55,67,88])
-        addRowByList([9,66,55,67,88.54])
-        addRowByList([10,66,55,67,88])
-        addRowByList([11,66,55,67,88])
-        addRowByList([12,66,55,67,88])
-        export2csv()
+
         tableModel.clear();
+        addRowByList([1,2,3,4,5])
+        addRowByList([6,7,8,9,0])
     }
+
     function addRowByList(s){
         tableModel.appendRow({"frame":s[0],"x1":s[1],"y1":s[2],"x2":s[3],"y2":s[4]})
     }
 
     function export2csv(){
         var ml = []
-        console.log(tableModel.rowCount)
+
         for(var i=0;i<tableModel.rowCount;i++){
             var ob = tableModel.rows[i];
             ml.push([ob.frame,ob.x1,ob.y1,ob.x2,ob.y2])
         }
-        console.log(ml)
+        var path = shell.getSaveFileName("导出数据",folder_recording.lastSaveFolder,"csv(*.csv)")
+        dia.showInfo("导出数据成功！")
+        if(path){
+            shell.list2csv(ml,path)
+            var cmd
+            switch(Qt.platform.os){
+               case "windows":
+                   path = path.replace(new RegExp("/", "g"),"\\")
+                   cmd = `explorer /select, ${path}`
+                   shell.system(cmd)
+                   break
+               case "osx":
+                   cmd = `open -R /${path}`
+                   shell.system(cmd)
+                   break
+               default:
+                   dia.showInfo("本系统暂不支持在文件系统\n中显示该文件")
+                   break
+            }//end switch
+        }
     }
 
     Connections{

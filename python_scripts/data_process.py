@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 import numpy as np
-import sys
+import sys,os
 import time
 
 def print(obj,end='\n'):
@@ -26,6 +26,10 @@ def list2csv(l,filepath):
         print(e)
         return False
 
+def getNewNameByTime(dic:str='./',tail:str='.png') -> str:
+    a=time.strftime(r"%Y%m%d_%H%M%S",time.localtime())
+    fn=a+tail
+    return os.path.abspath(os.path.join(dic,fn))
+
 if __name__ == "__main__":
-   test = [[1,2,3,4,5],[4,5,6,7,8]]
-   list2csv(test,'a.csv')
+    print(getNewNameByTime())

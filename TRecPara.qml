@@ -133,7 +133,7 @@ Window {
         width: 60
         x:110
         anchors.verticalCenter: x_text.verticalCenter
-        text: "40"
+        text: "0"
         onAccepted: {
             focus = false
         }
@@ -154,7 +154,7 @@ Window {
         width: 60
         x:210
         anchors.verticalCenter: x_text.verticalCenter
-        text: "40"
+        text: "640"
         onAccepted: {
             focus = false
         }
@@ -179,7 +179,7 @@ Window {
         width: 60
         x:110
         anchors.verticalCenter: y_text.verticalCenter
-        text: "40"
+        text: "0"
         onAccepted: {
             focus = false
         }
@@ -200,7 +200,7 @@ Window {
         width: 60
         x:210
         anchors.verticalCenter: y_text.verticalCenter
-        text: "40"
+        text: "360"
         onAccepted: {
             focus = false
         }

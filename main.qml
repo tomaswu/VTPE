@@ -147,7 +147,18 @@ Window {
                     onClicked: {
                         if (mcap.isOpened()){
                             mcap.needPhoto()
-                            fileSave_dialog.open()
+                            if(camera_settings_dialog.photoMode){
+                                var fn = shell.getNewNameByTime(folder_recording.photoFolder,".png")
+                                console.log(fn)
+                                var ret = mcap.savePhoto(fn)
+                                if(ret){
+                                    var s = `图片已保存 file:\\\\\\${fn}`
+                                    camera_saveinfo.camera_saveinfoShow(s)
+                                }
+                            }
+                            else{
+                                fileSave_dialog.open()
+                            }
                         }
                     }
                 }
@@ -204,7 +215,15 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("Calculate camera \nmatrix\n计算相机矩阵",camera_matrix)
-                    onClicked: shell.pyScriptTest()
+                    onClicked: {
+                        shell.pyScriptTest()
+                        var fd = shell.getExistingFolder("选择校正图片所在文件夹",folder_recording.lastOPenedFolder)
+                        if(fd){
+                            folder_recording.lastOPenedFolder=fd
+                            var s = mcap.calibration(fd)
+                            dia.showInfo(s)
+                        }
+                    }
                 }
 
                 Text{
@@ -390,6 +409,7 @@ Window {
                                 var fps = mvid.getFps().toFixed(2)
                                 video_fps_text.text = `视频帧率: ${fps}`
                                 mvid.setPlaySpeed(play_speed.currentText)
+                                video_player.checked=true
                             }
                             else{
                                 dia.showInfo("未能打开视频！")
@@ -515,8 +535,8 @@ Window {
 
                 ComboBox{
                     id:play_speed
-                    implicitWidth: 48
-                    Layout.columnSpan: 3
+                    implicitWidth: 64
+                    Layout.columnSpan: 4
                     valueRole:"name"
                     currentIndex:2
                     model: ListModel{
@@ -542,7 +562,9 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("export data\n导出数据",video_export)
-                    onClicked: console.log("data export")
+                    onClicked: {
+                        data_table.export2csv()
+                    }
                 }
 
                 Text{
@@ -1384,6 +1406,7 @@ Window {
         property string lastSaveFolder: ""
         property string recordPath: ""
         property string lastOPenedFolder:""
+        property string photoFolder:""
     }
 
     function backDefaultGlobalSettings(){

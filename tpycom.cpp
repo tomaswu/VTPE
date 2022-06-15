@@ -65,6 +65,34 @@ bool TPyCom::sendEmail(QString content,QString subject,QString to,QString from, 
     return ret;
 }
 
+void TPyCom::list2csv(QList<QList<double>> l,QString path){
+    if(!Py_IsInitialized()){
+        Py_Initialize();
+    }
+    bpy::object m = bpy::import("data_process");
+    bpy::list li;
+    bpy::list row_li;
+    for(auto &i : l){
+        row_li={};
+        for(auto &j : i){
+            row_li.append(j);
+        }
+        li.append(row_li);
+    }
+    m.attr("list2csv")(li,path.toStdString());
+}
+
+
+QString TPyCom::getNewNameByTime(QString dic,QString tail){
+    if(!Py_IsInitialized()){
+        Py_Initialize();
+    }
+    bpy::object m = bpy::import("data_process");
+    bpy::object fn = m.attr("getNewNameByTime")(dic.toStdString(),tail.toStdString());
+    std::string s = bpy::extract<std::string>(fn);
+    return QString::fromStdString(s);
+}
+
 // 边写边学，获取返回的string
 //    char *bytes = PyBytes_AsString(res);
 //    PyObject *str = PyUnicode_AsEncodedString(res, "utf-8", "~E~");

@@ -22,7 +22,6 @@ typedef struct _recPara{
     int row2;
 }Para;
 
-
 void dsColor(cv::Mat &img,Points points,Points *bluePoint,Points *whitePoint);
 void colorDraw(cv::Mat &img,Points points,RGB rgb);
 ctr center(Points points,int maxR=35,int minR=5);

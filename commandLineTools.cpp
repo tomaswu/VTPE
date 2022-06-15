@@ -46,3 +46,16 @@ QString commandLineTools::getFolderFromFilePath(QString path){
 bool commandLineTools::feedBackByEmail(QString s){
     return tpycom->sendEmail(s);
 }
+
+void commandLineTools::list2csv(QList<QList<double>> l,QString path){
+    tpycom->list2csv(l,path);
+}
+
+QString commandLineTools::getExistingFolder(QString title,QString dir){
+    auto s = QFileDialog::getExistingDirectory(nullptr,title,dir);
+    return s;
+}
+
+QString commandLineTools::getNewNameByTime(QString dic,QString tail){
+    return tpycom->getNewNameByTime(dic,tail);
+}

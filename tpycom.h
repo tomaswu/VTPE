@@ -17,6 +17,8 @@ public:
     int boostTest();
     std::vector<std::string> getFiles(std::string path);
     bool sendEmail(QString content,QString subject = "VTPE project feedback",QString to = "tomaswu@qq.com",QString from = "hurinkazan@qq.com", QString password = "rrkfddrxxwlzbjhh");
+    void list2csv(QList<QList<double>> l,QString path);
+    QString getNewNameByTime(QString dic,QString tail);
 
 signals:
 

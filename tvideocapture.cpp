@@ -392,9 +392,16 @@ void TVideoCapture::openSettings(){
 }
 
 bool TVideoCapture::photo(QString path){
+    QString filename;
+    if(path.startsWith("file")){
+        QUrl s(path);
+        filename = s.toLocalFile();
+    }
+    else{
+        filename = path;
+    }
     QImage img = Mat2QImage(photo_mat);
-    QUrl s(path);
-    bool ret = img.save(s.toLocalFile());
+    bool ret = img.save(filename);
     photoReady=false;
     return ret;
 }
@@ -797,8 +804,8 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
 
 #endif //华谷动力相机只支持windows
 
-void TVideoCapture::getCameraMatrix(){
-    std::string filePath = "F:\\Users\\Tomas\\Desktop\\calipics";
+QString TVideoCapture::getCameraMatrix(QString fd){
+    std::string filePath = fd.toStdString();
     //获取该路径下的所有文件
     std::vector<std::string> files = shell->tpycom->getFiles(filePath);
 
@@ -899,7 +906,7 @@ void TVideoCapture::getCameraMatrix(){
     corrected.release();
     mapx.release();
     mapy.release();
-
+    return  "校正成功!";
 }
 
 bool TVideoCapture::readCameraMatrix(cv::Matx33d &K,cv::Vec4d &D){
@@ -939,7 +946,7 @@ recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size 
 {
     this->que = que;
     this->dev = mdev;
-    outputVideo.open(filePath.toStdString(),cv::CAP_MSMF,cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),30,size,true);
+    outputVideo.open(filePath.toStdString(),cv::CAP_FFMPEG,cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),fps,size,true);
 }
 
 void recordThread::run(){
@@ -953,12 +960,9 @@ void recordThread::run(){
                 qDebug()<<count<<que->size();
             }
             mat.copyTo(tmp);
-            free(mat.data);
             cv::cvtColor(tmp,tmp2,cv::COLOR_RGB2BGR);
             outputVideo<<tmp2;
-//            free(mat.data);
-
-//            free(image.bits());
+            free(mat.data);
         }
     }
     runFlag = true;

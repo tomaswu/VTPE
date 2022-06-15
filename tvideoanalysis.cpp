@@ -94,8 +94,6 @@ void TVideoAnalysis::getFrame(){
     if(!ret){
         return;
     }
-    ipdr->img = Mat2QImage(img);
-    emit imageRefreshed();
 
     if(recFlag){
         pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para);
@@ -104,10 +102,14 @@ void TVideoAnalysis::getFrame(){
         for(auto &i:r){
             res.append(i.x);
             res.append(i.y);
+            if(i.x>0&&i.y>0&&i.z>0){
+                cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,255,0),img.size().width/640);
+            }
         }
         emit recognizedOneFrame(res);
     }
-
+    ipdr->img = Mat2QImage(img);
+    emit imageRefreshed();
     getPos();
     if(pos==endPos){
         setPos(beginPos);
@@ -149,6 +151,9 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
 }
 
 void TVideoAnalysis::stopRecognize(){
+    if(play_timer->isActive()){
+        play_timer->stop();
+    }
     recFlag=false;
     setPlaySpeed(play_speed);
 }

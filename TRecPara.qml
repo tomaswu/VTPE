@@ -12,6 +12,7 @@ Window {
     title: "PMB0100分析参数"
     property real rowSpacing : 20
     property bool select: btn_scale.checked
+    property bool standardUint: unit.checked
     onVisibleChanged: if(visible)mvid.preThreshold(threshold_slider.value)
 
     Text {
@@ -64,7 +65,7 @@ Window {
         validator: RegularExpressionValidator {
             regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}|[0-9][0-9]{0,2}|1000/
         }
-        width: 60
+        width: 40
         x:140
         anchors.verticalCenter: ratio_text.verticalCenter
         text: "15"
@@ -76,7 +77,7 @@ Window {
     Text {
         id: ratio_ab_text
         text: qsTr(":")
-        x:210
+        x:190
         anchors.verticalCenter: ratio_text.verticalCenter
     }
 
@@ -86,13 +87,22 @@ Window {
         validator: RegularExpressionValidator {
             regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}|[0-9][0-9]{0,2}|1000/
         }
-        width: 60
-        x:225
+        width: 40
+        x:205
         anchors.verticalCenter: ratio_text.verticalCenter
         text: "40"
         onAccepted: {
             focus = false
         }
+    }
+
+    CheckBox{
+        id:unit
+        checked: false
+        visible: false
+        text:"标准单位"
+        x:265
+        anchors.verticalCenter: ratio_text.verticalCenter
     }
 
     Text {
@@ -101,6 +111,7 @@ Window {
         x:threshold_text.x
         y:ratio_text.y+threshold_text.height+para_window.rowSpacing
     }
+
 
     Button{
         id:btn_scale
@@ -214,28 +225,31 @@ Window {
 
         Button{
             id:confirm
-            width:60
-            text:"确定"
+            width:120
+            text:"开始识别"
             onClicked: {
-                btn_scale.checked=false
-                mvid.startRecognize(threshold_slider.value,pixel_input.text,mm_input,60,0,xmin_input.text,xmax_input.text,ymin_input.text,ymax_input.text)
-            }
-        }
-        Button{
-            id:cancel
-            width:60
-            text:"取消"
-            onClicked: {
-                mvid.stopRecognize()
+                if(text==="开始识别"){
+                    text="取消"
+                    data_table.clear()
+                    btn_scale.checked=false
+                    var ratio = parseFloat(mm_input.text)/parseFloat(pixel_input.text)/1000
+                    mvid.startRecognize(threshold_slider.value,pixel_input.text,mm_input,60,0,xmin_input.text,xmax_input.text,ymin_input.text,ymax_input.text,unit.checked,ratio)
+                }
+                else{
+                    text="开始识别"
+                    mvid.stopRecognize()
+                    dia.showInfo("分析结束！")
+                }
             }
         }
 
-        Button{
-            id:apply
-            width:60
-            text:"应用"
-            onClicked:{}
+        Connections{
+            target: mvid
+            function onFinishedRec(){
+                confirm.text="开始识别"
+            }
         }
+
     }// end row
 
     function setScale(col1,col2,row1,row2){

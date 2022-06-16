@@ -83,6 +83,7 @@ DISTFILES += \
     ToolbarVSplit.qml \
     TriSlider.qml \
     Ttable.qml \
+    dataProcessPara.qml \
     deviceList.qml \
     maskImage.qml \
     python_scripts/data_process.py \

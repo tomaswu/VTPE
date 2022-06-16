@@ -100,8 +100,14 @@ void TVideoAnalysis::getFrame(){
         QList<double> res;
         res.append(pos);
         for(auto &i:r){
-            res.append(i.x);
-            res.append(i.y);
+            if(pmb0100rec_para.standardUint){
+                res.append(i.x*pmb0100rec_para.ratio);
+                res.append(i.y*pmb0100rec_para.ratio);
+            }
+            else{
+                res.append(i.x);
+                res.append(i.y);
+            }
             if(i.x>0&&i.y>0&&i.z>0){
                 cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,255,0),img.size().width/640);
             }
@@ -130,7 +136,7 @@ void TVideoAnalysis::preThreshold(int threshold){
     emit imageRefreshed();
 }
 
-void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int pointNum,int method,int c1,int c2,int r1,int r2){
+void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int pointNum,int method,int c1,int c2,int r1,int r2,bool standardUint,double ratio){
     switch(method){
     case 0:
         pmb0100rec_para.threshold=threshold;
@@ -139,6 +145,8 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
         pmb0100rec_para.col2=c2;
         pmb0100rec_para.row1=r1;
         pmb0100rec_para.row2=r2;
+        pmb0100rec_para.standardUint = standardUint;
+        pmb0100rec_para.ratio = ratio;
         recFlag=true;
         break;
     }

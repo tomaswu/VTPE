@@ -54,7 +54,7 @@ public:
     void                                getFrame();
     Q_INVOKABLE void                    setPlaySpeed(double speed);
     Q_INVOKABLE void                    play_pause();
-    Q_INVOKABLE void                    startRecognize(int threshold,int pixel,int millimeter,int pointNum=60,int method=0,int c1=0,int c2=640,int r1=0,int r2=480);
+    Q_INVOKABLE void                    startRecognize(int threshold,int pixel,int millimeter,int pointNum=60,int method=0,int c1=0,int c2=640,int r1=0,int r2=480,bool standardUint=false,double raito=1.0);
     Q_INVOKABLE void                    stopRecognize();
     Q_INVOKABLE QList<int>              getImageSize();
     Q_INVOKABLE void                    preThreshold(int threshold);

@@ -521,8 +521,15 @@ Window {
                     btnName: ""
                     width: 24
                     height: 24
-                    onHoveredChanged: tbntip("open figures\n打开绘图窗口",video_fig)
-                    onClicked: console.log("data figures")
+                    onHoveredChanged: tbntip("process and figure\n数据处理与绘图",video_fig)
+                    onClicked: {
+                        if(data_table.isEmpty()){
+                            dia.showInfo("没有可处理的数据")
+                        }
+                        else{
+
+                        }
+                    }
                 }
 
                 Text{
@@ -1262,7 +1269,6 @@ Window {
 
         } //end onPositionChanged
     } // end mouse area
-
 
     SelectScale4Image{
         id:s4i

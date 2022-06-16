@@ -3,6 +3,10 @@ import numpy as np
 import sys,os
 import time
 
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+
 def print(obj,end='\n'):
     s=obj.__str__()
     sys.stdout.write(s+end)
@@ -31,5 +35,12 @@ def getNewNameByTime(dic:str='./',tail:str='.png') -> str:
     fn=a+tail
     return os.path.abspath(os.path.join(dic,fn))
 
+
+def pmb0100_process(data,title:str="数据处理与绘图"):
+    data = np.array(data).reshape(-1,5)
+    ax=plt.subplot()
+    ax.plot(data[:,0],data[:,2],marker='o')
+    plt.show()
+
 if __name__ == "__main__":
-    print(getNewNameByTime())
+    pmb0100_process([1,2,3,4,5,6,7,8,9,10])

@@ -21,7 +21,7 @@ Item {
         if(mvid.isOpened()){
             if(video_img.paintedWidth>0){
                 var row1,row2,col1,col2,x0,y0
-                x0 = video_img.width/2
+                x0 = video_img.width/2+(data_table.width+data_table.x)
                 y0 = video_img.height/2
                 col1 = (select_scale.x-x0)/(video_img.paintedWidth)
                 col2 = (select_scale.x+select_scale.width-x0)/(video_img.paintedWidth)

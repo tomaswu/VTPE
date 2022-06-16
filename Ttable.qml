@@ -126,7 +126,7 @@ Rectangle {
             }
 
             Text {
-                text: display
+                text: pmb0100_para_window.standardUint? display.toLocaleString(Qt.locale("en-US"),"e",2): display
                 anchors.centerIn: parent
                 font.pointSize: 8
                 color: "black"
@@ -137,13 +137,24 @@ Rectangle {
 
     Component.onCompleted: {
 
+//        addRowByList([1,2,3,4,5])
+//        addRowByList([6,7,8,9,0])
         tableModel.clear();
-        addRowByList([1,2,3,4,5])
-        addRowByList([6,7,8,9,0])
+    }
+
+    function isEmpty(){
+        if(tableModel.rowCount>0){
+            return false
+        }
+        return true
     }
 
     function addRowByList(s){
         tableModel.appendRow({"frame":s[0],"x1":s[1],"y1":s[2],"x2":s[3],"y2":s[4]})
+    }
+
+    function clear(){
+        tableModel.clear()
     }
 
     function export2csv(){

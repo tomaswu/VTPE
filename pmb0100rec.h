@@ -20,6 +20,8 @@ typedef struct _recPara{
     int col2;
     int row1;
     int row2;
+    bool  standardUint;
+    double ratio;
 }Para;
 
 void dsColor(cv::Mat &img,Points points,Points *bluePoint,Points *whitePoint);
@@ -28,6 +30,7 @@ ctr center(Points points,int maxR=35,int minR=5);
 ctr centerBlue(Points points,Points pointsBlue,int maxR=35,int minR=5);
 recResult recBall(cv::Mat img,Para para);
 cv::Mat preThreshold(cv::Mat img,int threshold);
+void convertStandardUint(ctr* p, double ratio);
 
 }
 #endif // PMB0100REC_H

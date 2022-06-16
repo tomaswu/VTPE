@@ -146,7 +146,6 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para){
     ctr whiteBall(-1,-1,-1);
     ctr blueBall(-1,-1,-1);
     dsColor(img,points,&bluePoints,&whitePoints);
-
     if(whitePoints.size()>=para.pointNum){
         whiteBall = center(whitePoints);
     }
@@ -180,6 +179,12 @@ cv::Mat pmb0100rec::preThreshold(cv::Mat img,int threshold){
     return new_img;
 }
 
+
+void pmb0100rec::convertStandardUint(ctr* p,double ratio){
+    p->x *= ratio;
+    p->y *= ratio;
+    p->z *= ratio;
+}
 
 
 

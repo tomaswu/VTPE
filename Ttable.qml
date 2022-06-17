@@ -15,6 +15,7 @@ Rectangle {
             spacing: 0
 
             Repeater{
+                id:header_re
                 model: ["Frame","x1","y1","x2","y2"]
                 Rectangle{
                     width: header.width/5
@@ -157,13 +158,17 @@ Rectangle {
         tableModel.clear()
     }
 
-    function export2csv(){
+    function getDataList(){
         var ml = []
-
         for(var i=0;i<tableModel.rowCount;i++){
             var ob = tableModel.rows[i];
             ml.push([ob.frame,ob.x1,ob.y1,ob.x2,ob.y2])
         }
+        return ml
+    }
+
+    function export2csv(){
+        var ml = getDataList()
         var path = shell.getSaveFileName("导出数据",folder_recording.lastSaveFolder,"csv(*.csv)")
         dia.showInfo("导出数据成功！")
         if(path){
@@ -192,6 +197,10 @@ Rectangle {
             addRowByList(res)
             sclbar.position=1-sclbar.size
         }
+    }
+
+    function getHeaderName(){
+        return header_re.model
     }
 
 }

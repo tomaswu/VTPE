@@ -59,6 +59,7 @@ Dialog {
                 }
             }
         }
+
         Row{
             anchors.horizontalCenter: parent.horizontalCenter
             Button{

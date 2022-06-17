@@ -525,9 +525,12 @@ Window {
                     onClicked: {
                         if(data_table.isEmpty()){
                             dia.showInfo("没有可处理的数据")
+
                         }
                         else{
-
+                            data_process_firgure.show()
+                            var r = data_table.getHeaderName()
+                            data_process_firgure.setCombox(r,r)
                         }
                     }
                 }
@@ -1350,6 +1353,11 @@ Window {
     // analysis para dialog
     TRecPara{
         id : pmb0100_para_window
+    }
+
+    // data process and figure dialog
+    DataProcessPara{
+        id:data_process_firgure
     }
 
     //data table window animation

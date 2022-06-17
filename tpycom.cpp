@@ -93,6 +93,35 @@ QString TPyCom::getNewNameByTime(QString dic,QString tail){
     return QString::fromStdString(s);
 }
 
+void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter){
+    std::cout<<"hello data process"<<std::endl;
+    if(!Py_IsInitialized()){
+        Py_Initialize();
+    }
+    bpy::object m = bpy::import("data_process");
+    bpy::list dl,hl,p,ft,tmp;
+    ft.append(filter[0]);
+    ft.append(filter[1]);
+    for(auto &i : data){
+        tmp={};
+        for(auto &j : i){
+            tmp.append(j);
+        }
+        dl.append(tmp);
+    }
+    for (auto &i:header){
+        hl.append(i.toStdString());
+    }
+    for(auto &i:para){
+        tmp={};
+        for(auto &j : i){
+            tmp.append(j.toStdString());
+        }
+        p.append(tmp);
+    }
+    m.attr("pmb0100_process")(dl,hl,p,ft);
+}
+
 // 边写边学，获取返回的string
 //    char *bytes = PyBytes_AsString(res);
 //    PyObject *str = PyUnicode_AsEncodedString(res, "utf-8", "~E~");

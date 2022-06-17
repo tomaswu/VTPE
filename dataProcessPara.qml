@@ -3,7 +3,7 @@ import QtQuick.Controls
 
 Window {
     width:300
-    height: 260
+    height: 280
     maximumWidth: width
     minimumWidth: width
     maximumHeight: height
@@ -102,11 +102,36 @@ Window {
             Button{
                 id:add_line
                 text: "添加曲线"
+                onClicked: {
+                    dialog.show()
+                }
+            }
+
+            Button{
+                id:del_line
+                text: "删除曲线"
+                onClicked: {
+                    if(list_model.count>0){
+                        list_model.remove(list_model.currentIndex)
+                    }
+                }
             }
 
             Button{
                 id:figure
+                width:48
                 text: "绘制"
+                onClicked: {
+                    var data = data_table.getDataList();
+                    var filter = [filter_low_input.text,filter_high_input.text]
+                    var para = []
+                    for(var i =0;i<list_model.count;i++){
+                       para.push([list_model.get(i).label,list_model.get(i).x_axis,list_model.get(i).y_axis])
+                    }
+                    var header = data_table.getHeaderName()
+                    shell.data_process(data,header,para,filter)
+
+                }
             }
 
         }
@@ -125,53 +150,29 @@ Window {
                 snapMode:ListView.SnapPosition
                 displayMarginBeginning:-15
                 displayMarginEnd:-15
+                property real historty_index: -1
 
 //                highlightRangeMode:ListView.StrictlyEnforceRange
 
 
                 model: ListModel {
-                    ListElement {
-                        label: "小球1 x方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
-                    ListElement {
-                        label: "小球1 y方向速度"
-                    }
+                    id:list_model
 
                 }
 
                 delegate:Component {
                     id: contactDelegate
                     Item {
-                        width: parent.width; height: 24
+                        width: curve_list.width; height: 24
                         Column {
                             padding:5
-                            Text { text: label }
+                            Text { text: `${label} ${x_axis}-${y_axis}`}
                         }
                     }//end ItemD
                 }// end component
 
                 highlight: Rectangle {
+                    id: high_light_rect
                     color: "lightsteelblue"
                     radius: 3
                 }
@@ -181,7 +182,7 @@ Window {
                     onClicked: {
                         var y = scrollBar.position*curve_list.contentHeight+mouseY
                         curve_list.currentIndex=curve_list.indexAt(mouseX,y)
-//                        console.log(y,curve_list.currentIndex)
+                        curve_list.historty_index=-1
                     }
                 }
 
@@ -191,30 +192,53 @@ Window {
                             active = true;
                         }
                         Component.onCompleted: {
-                            scrollBar.handle.color = "red";
-                            scrollBar.active = true;
-                            scrollBar.handle.width = 20;
-                            scrollBar.handle.height = 100;
+//                            scrollBar.handle.color = "red";
+//                            scrollBar.active = true;
+//                            scrollBar.handle.width = 20;
+//                            scrollBar.handle.height = 100;
                         }
                         onPositionChanged: {
-
+                            curve_list.isCurrentItemHide()
                         }
                     }
 
                 function isCurrentItemHide(){
                     var y = scrollBar.position*curve_list.contentHeight
-                    if (curve_list.currentIndex*24>y&&curve_list.currentIndex*24<current)
+
+                    if (curve_list.currentIndex*24<y&&curve_list.currentIndex!==-1){
+                        curve_list.historty_index=curve_list.currentIndex
+                        curve_list.currentIndex=-1
+                    }
+                    if(curve_list.currentIndex*24>y+curve_list.height){
+                        curve_list.historty_index=curve_list.currentIndex
+                        curve_list.currentIndex=-1
+                    }
+                    if(curve_list.historty_index*24>y&&curve_list.historty_index*24<y+curve_list.height&&curve_list.historty_index!=-1){
+                        curve_list.currentIndex=curve_list.historty_index
+                        curve_list.historty_index=-1
+                    }
+
                 }
 
-            }
+                Connections{
+                    target: dialog
+                    function onConfirmed( label, x, y){
+                        var s = label? label:"未命名"
+                        list_model.append({"label":s,"x_axis":x,"y_axis":y})
+                    }
+                }
 
-
+            }// end list view
 
         }
-
-
     }
 
+    AddCurveDialog{
+        id:dialog
+    }
 
+    function setCombox(r1,r2){
+        dialog.setCombox(r1,r2)
+    }
 
 }

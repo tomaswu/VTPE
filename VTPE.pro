@@ -44,7 +44,10 @@ resources.files = main.qml \
                   CameraMoreSettingsWindow.qml \
                   Ttable.qml \
                   TRecPara.qml \
-                  SelectScale4Analysis.qml
+                  SelectScale4Analysis.qml \
+                  AddCurveDialog.qml \
+                  DataProcessPara.qml
+
 
 
 resources.prefix = /$${TARGET}
@@ -69,6 +72,7 @@ DISTFILES += \
     ColorSelector.qml \
     CutScale.qml \
     DESIGN.md \
+    DataProcessPara.qml \
     Depends/workPower/win32/vs2013shared/MVSDKmd.lib \
     Depends/workPower/x64/vs2013shared/MVSDKmd.lib \
     EmailFeedback.qml \
@@ -83,7 +87,7 @@ DISTFILES += \
     ToolbarVSplit.qml \
     TriSlider.qml \
     Ttable.qml \
-    dataProcessPara.qml \
+    AddCurveDialog.qml \
     deviceList.qml \
     maskImage.qml \
     python_scripts/data_process.py \
@@ -122,7 +126,6 @@ windows{
 
 macx{
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 12.0
-
     INCLUDEPATH += \#/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include \
                    /opt/homebrew/Cellar/opencv/4.5.5/include/opencv4 \
                    /Library/Frameworks/Python.framework/Versions/3.10/include/python3.10 \

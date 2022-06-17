@@ -36,11 +36,16 @@ def getNewNameByTime(dic:str='./',tail:str='.png') -> str:
     return os.path.abspath(os.path.join(dic,fn))
 
 
-def pmb0100_process(data,title:str="数据处理与绘图"):
-    data = np.array(data).reshape(-1,5)
+def pmb0100_process(dl:list,hl:list,p:list,ft:list):
+    cols=len(hl)
+    data = np.array(dl).reshape(-1,cols)
+    fig = plt.figure()
+    fig.canvas.set_window_title('绘图')
     ax=plt.subplot()
-    ax.plot(data[:,0],data[:,2],marker='o')
+    for i in p:
+        label = i[0]
+        x_axis = hl.index(i[1])
+        y_axis = hl.index(i[2])
+        ax.plot(data[:,x_axis],data[:,y_axis],label=label)
+    plt.legend()
     plt.show()
-
-if __name__ == "__main__":
-    pmb0100_process([1,2,3,4,5,6,7,8,9,10])

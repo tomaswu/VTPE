@@ -408,6 +408,7 @@ Window {
                             if(mvid.isOpened()){
                                 var fps = mvid.getFps().toFixed(2)
                                 video_fps_text.text = `视频帧率: ${fps}`
+                                data_process_firgure.setFps(fps)
                                 mvid.setPlaySpeed(play_speed.currentText)
                                 video_player.checked=true
                             }

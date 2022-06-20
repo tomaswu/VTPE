@@ -93,7 +93,7 @@ QString TPyCom::getNewNameByTime(QString dic,QString tail){
     return QString::fromStdString(s);
 }
 
-void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter){
+void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps){
     std::cout<<"hello data process"<<std::endl;
     if(!Py_IsInitialized()){
         Py_Initialize();
@@ -119,7 +119,7 @@ void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<
         }
         p.append(tmp);
     }
-    m.attr("pmb0100_process")(dl,hl,p,ft);
+    m.attr("pmb0100_process")(dl,hl,p,ft,fps);
 }
 
 // 边写边学，获取返回的string

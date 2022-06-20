@@ -2,6 +2,7 @@
 import numpy as np
 import sys,os
 import time
+import scipy.signal
 
 import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
@@ -36,16 +37,42 @@ def getNewNameByTime(dic:str='./',tail:str='.png') -> str:
     return os.path.abspath(os.path.join(dic,fn))
 
 
-def pmb0100_process(dl:list,hl:list,p:list,ft:list):
-    cols=len(hl)
-    data = np.array(dl).reshape(-1,cols)
-    fig = plt.figure()
-    fig.canvas.set_window_title('绘图')
-    ax=plt.subplot()
-    for i in p:
-        label = i[0]
-        x_axis = hl.index(i[1])
-        y_axis = hl.index(i[2])
-        ax.plot(data[:,x_axis],data[:,y_axis],label=label)
-    plt.legend()
-    plt.show()
+def pmb0100_process(dl:list,hl:list,p:list,ft:list,fps:float):
+    try:
+        cols=len(hl)
+        data = np.array(dl).reshape(-1,cols)         
+        fig = plt.figure()
+        fig.canvas.set_window_title('绘图')
+        ax=plt.subplot()
+        for i in p:
+            label = i[0]
+            x_axis = hl.index(i[1])
+            y_axis = hl.index(i[2])
+            xx,yy=data[:,x_axis],data[:,y_axis]
+            yy = smooth(yy,ft,fps)
+            ax.plot(xx,yy,label=label)
+        plt.legend()
+        plt.show()
+    except Exception as e:
+        print(e)
+
+def smooth(data,band,sampling=1e4):
+    if band==[0,5000] or band[0]>=band[1]:
+        return data
+    N=1
+    band=[2*band[0]/sampling,2*band[1]/sampling]
+    if band[0]==0:
+        sty='lowpass'
+        b, a = scipy.signal.butter(N, band[1], sty)
+    elif band[1]==1:
+        sty='highpass'
+        b, a = scipy.signal.butter(N, band[0], sty)
+    elif 0<band[0]<band[1]<1:
+        sty='bandpass'
+        b, a = scipy.signal.butter(N, band, sty)
+    elif 0<band[1]<band[0]<1:
+        sty='bandstop'
+        b, a = scipy.signal.butter(N, [band[1],band[0]], sty)
+       #配置滤波器 8 表示滤波器的阶数
+    filtedData = scipy.signal.filtfilt(b, a, data)  #data为要过滤的信号
+    return filtedData

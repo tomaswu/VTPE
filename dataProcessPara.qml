@@ -8,7 +8,7 @@ Window {
     minimumWidth: width
     maximumHeight: height
     minimumHeight: height
-    title: "数据处理与绘图"
+    title: "PMB0100数据处理"
 
     Column{
         spacing: 15
@@ -39,7 +39,7 @@ Window {
                     regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}|[0-9][0-9]{0,2}|1000/
                 }
                 width: 40
-                text: "15"
+                text: "0"
                 onAccepted: {
                     focus = false
                 }
@@ -60,7 +60,7 @@ Window {
                     regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}|[0-9][0-9]{0,2}|1000/
                 }
                 width: 40
-                text: "40"
+                text: "5"
                 onAccepted: {
                     focus = false
                 }
@@ -82,7 +82,7 @@ Window {
                 validator: RegularExpressionValidator {
                     regularExpression: /1000.00|[0-9][0-9]{0,2}[\.][0-9]{1,2}|[0-9][0-9]{0,2}|1000/
                 }
-                width: 40
+                width: 64
                 text: "40"
                 onAccepted: {
                     focus = false
@@ -112,7 +112,7 @@ Window {
                 text: "删除曲线"
                 onClicked: {
                     if(list_model.count>0){
-                        list_model.remove(list_model.currentIndex)
+                        list_model.remove(curve_list.currentIndex)
                     }
                 }
             }
@@ -123,13 +123,16 @@ Window {
                 text: "绘制"
                 onClicked: {
                     var data = data_table.getDataList();
-                    var filter = [filter_low_input.text,filter_high_input.text]
+                    var filter =[0,0]
                     var para = []
                     for(var i =0;i<list_model.count;i++){
                        para.push([list_model.get(i).label,list_model.get(i).x_axis,list_model.get(i).y_axis])
                     }
                     var header = data_table.getHeaderName()
-                    shell.data_process(data,header,para,filter)
+                    if(filter_cbx.checked){
+                        filter = [filter_low_input.text,filter_high_input.text]
+                    }
+                    shell.data_process(data,header,para,filter,process_fps.text)
 
                 }
             }
@@ -239,6 +242,10 @@ Window {
 
     function setCombox(r1,r2){
         dialog.setCombox(r1,r2)
+    }
+
+    function setFps(fps){
+        process_fps.text = fps
     }
 
 }

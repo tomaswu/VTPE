@@ -60,6 +60,6 @@ QString commandLineTools::getNewNameByTime(QString dic,QString tail){
     return tpycom->getNewNameByTime(dic,tail);
 }
 
-void commandLineTools::data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter){
-    tpycom->data_process(data,header,para,filter);
+void commandLineTools::data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter,double fps){
+    tpycom->data_process(data,header,para,filter,fps);
 }

@@ -28,7 +28,7 @@ public:
     Q_INVOKABLE bool feedBackByEmail(QString s);
     Q_INVOKABLE void list2csv(QList<QList<double>> l,QString path);
     Q_INVOKABLE QString getNewNameByTime(QString dic,QString tail);
-    Q_INVOKABLE void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter);
+    Q_INVOKABLE void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps);
 
 
 signals:

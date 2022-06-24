@@ -74,5 +74,7 @@ def smooth(data,band,sampling=1e4):
         sty='bandstop'
         b, a = scipy.signal.butter(N, [band[1],band[0]], sty)
        #配置滤波器 8 表示滤波器的阶数
+    else:
+        return data
     filtedData = scipy.signal.filtfilt(b, a, data)  #data为要过滤的信号
     return filtedData

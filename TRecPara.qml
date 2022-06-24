@@ -259,4 +259,9 @@ Window {
         ymax_input.text = row2
     }
 
+    function setRatio(mm,pix){
+        mm_input.text = mm
+        pixel_input.text =pix
+    }
+
 }

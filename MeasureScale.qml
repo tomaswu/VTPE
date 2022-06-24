@@ -243,6 +243,7 @@ Item {
     }//end popup
 
     function cali(s){
+        pmb0100_para_window.setRatio(s,Math.round(cvs.pixLength,1))
         measureScale.ratio=s/cvs.pixLength
         var judge=1
         while (judge/measureScale.ratio<=50){

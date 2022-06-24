@@ -63,6 +63,7 @@ public:
     void                            alreadyStopped(){emit stopped();}
     void                            setTimerFresh(){time_to_refresh=true;};
     void                            refreshFps(double f);
+    void                            onRecordFpsChanged(double rfps);
     Q_INVOKABLE void                setCaliFlag(bool flag);
     Q_INVOKABLE void                startRecord(QString path){cap->startRecord(path);};
     Q_INVOKABLE void                stopRecord(){cap->stopRecord();};
@@ -96,6 +97,7 @@ signals:
     void stopped();
     void fpsChanged();
     void openedChanged();
+    void recordFpsChanged(double rfps);
 };
 
 #endif // TCAMERA_H

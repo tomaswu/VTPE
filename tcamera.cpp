@@ -51,6 +51,7 @@ TCamera::TCamera(QObject *parent)
     connect(timer_refresh,&QTimer::timeout,this,&TCamera::setTimerFresh);
     timer_refresh->start();
     connect(cap,&TVideoCapture::newfps,this,&TCamera::refreshFps);
+    connect(cap,&TVideoCapture::rfpsChanged,this,&TCamera::onRecordFpsChanged);
 }
 
 TCamera::~TCamera(){
@@ -115,6 +116,7 @@ bool TCamera::isOpened(){
 
 void TCamera::release(){
     cap->uninit();
+    timer->start();
 }
 
 void TCamera::printCameralist(){
@@ -125,7 +127,12 @@ void TCamera::printCameralist(){
 }
 
 bool TCamera::open(int index){
+    this->fps=0;
     bool ret = cap->init(index);
+    if(ret){
+        this->opened=true;
+        timer->stop();
+    }
     return ret;
 }
 
@@ -222,6 +229,10 @@ int TCamera::getCameraType(){
 
 void TCamera::setCaliFlag(bool flag){
     this->cap->cali_flag=flag;
+}
+
+void TCamera::onRecordFpsChanged(double rfps){
+    emit recordFpsChanged(rfps);
 }
 
 

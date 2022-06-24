@@ -153,7 +153,9 @@ void TVideoCapture::capture(){
                        fps = 100000/(t1-t0);
             #endif
                        emit newfps(fps);
-            //               qDebug()<<"camera fps:"<<fps; //打印一下帧率
+                       if(record_flag){
+                           emit rfpsChanged(fps);
+                       }
                        t0=t1;
                        fps_count=0;
                    }
@@ -335,10 +337,10 @@ void TVideoCapture::stopCapture(){
 }
 
 void TVideoCapture::startRecord(QString path){
+    emit rfpsChanged(0);
     cv::Size size=getCurrentResolution();
     switch (this->CamType){
         case cvCam:
-            qDebug()<<"qdebug:"<<size.width<<"  "<<size.height;
             outputVideo.open(path.toStdString(),cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),this->fps,size,true);
             if(outputVideo.isOpened()){
                 record_flag=true;
@@ -349,6 +351,7 @@ void TVideoCapture::startRecord(QString path){
             record_flag=true;
             this->record_thread = new recordThread(this->m_devHandle,path,this->fps,size,&this->recordQue,NULL);
             connect(this->record_thread,&recordThread::recordFinished,this,&TVideoCapture::onRecordFinished);
+            connect(this->record_thread,&recordThread::recordFpsChanged,this,&TVideoCapture::onRfpsChanged);
             this->record_thread->start();
             break;
         #endif
@@ -360,6 +363,7 @@ void TVideoCapture::stopRecord(){
         case cvCam:
             record_flag = false;
             outputVideo.release();
+            emit rfpsChanged(-1);
         #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
         case workPowerCam:
             record_flag = false;
@@ -368,8 +372,12 @@ void TVideoCapture::stopRecord(){
     }
 }
 
+void TVideoCapture::onRfpsChanged(double rfps){
+    emit this->rfpsChanged(rfps);
+}
+
 void TVideoCapture::onRecordFinished(){
-    qDebug()<<"get finished!";
+    record_thread->wait();
     delete this->record_thread;
 }
 
@@ -952,12 +960,18 @@ recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size 
 void recordThread::run(){
     int count=0;
     cv::Mat mat,tmp,tmp2;
+    recordFps=0;
+    clock_t t0,t1;
+    t0 = clock();
     while (runFlag){
         if(que->size()>0){
             mat = this->que->dequeue();
             count+=1;
             if(count%100==0){
-                qDebug()<<count<<que->size();
+                t1 = clock();
+                recordFps = 100000/(t1-t0);
+                t0=t1;
+                emit recordFpsChanged(recordFps);
             }
             mat.copyTo(tmp);
             cv::cvtColor(tmp,tmp2,cv::COLOR_RGB2BGR);
@@ -969,21 +983,36 @@ void recordThread::run(){
 
     //是否丢弃未写入的内容
     if(this->forceQuit){
-        qDebug()<<"结束录像";
         outputVideo.release();
         emit recordFinished();
+        //如果列表没清空则清空再退出，防止下次再录时有上一段视频的结尾
+        while (que->size()>0)
+        {
+            mat = que->dequeue();
+            free(mat.data);
+        }
         return ;
     }
 
-    //如果列表没清空则清空再退出
-    while (que->size()>0)
-    {
-        break;
-
+    //非强制退出则把没写完的写完
+    while (que->size()>0){
+        mat = this->que->dequeue();
+        count+=1;
+        if(count%100==0){
+            t1 = clock();
+            recordFps = 100000/(t1-t0);
+            t0=t1;
+            emit recordFpsChanged(recordFps);
+        }
+        mat.copyTo(tmp);
+        cv::cvtColor(tmp,tmp2,cv::COLOR_RGB2BGR);
+        outputVideo<<tmp2;
+        free(mat.data);
     }
-    qDebug()<<"完成录像";
+
     outputVideo.release();
     emit recordFinished();
+    emit recordFpsChanged(-1);
     return ;
 }
 

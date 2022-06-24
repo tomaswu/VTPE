@@ -68,9 +68,11 @@ public:
     QQueue<cv::Mat>   * que = NULL;
     cv::VideoWriter         outputVideo;
     void stopRecord(bool forceQuit=false){this->runFlag=false;this->forceQuit=forceQuit;};
+    double recordFps=0;
 
 signals:
     void recordFinished();
+    void recordFpsChanged(double fps);
 
 };
 
@@ -137,6 +139,7 @@ public:
     bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
     bool                initUndistort(cv::MatSize size);
     cv::Size            getCurrentResolution();
+    void                onRfpsChanged(double rfps);
     //相机设置
     void                setResolution(QString s);
     bool                setExposureTime(double minisecond); //曝光时间
@@ -161,6 +164,7 @@ signals:
     void imgReady(QImage img);
     void startCapture();
     void newfps(double fps);
+    void rfpsChanged(double rfps);
 };
 
 #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows 图像处理回调函数

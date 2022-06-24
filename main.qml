@@ -134,6 +134,9 @@ Window {
                         if(mcap.isOpened()){
                             camera_settings_dialog.open()
                         }
+                        else{
+                            dia.showInfo("请先打开相机！")
+                        }
                     }
                 }
 
@@ -160,6 +163,9 @@ Window {
                                 fileSave_dialog.open()
                             }
                         }
+                        else{
+                            dia.showInfo("请先打开相机！")
+                        }
                     }
                 }
 
@@ -173,14 +179,18 @@ Window {
                     onClicked: {
                         if(mcap.isOpened()){
                             if(!mcap.isRecord()){
-                                console.log("start")
                                 mcap.startRecord(folder_recording.recordPath)
+                                record_led_blink_timer.start()
                             }
                             else{
-                                console.log("stop");
                                 mcap.stopRecord();
-                                camera_saveinfo.camera_saveinfoShow(folder_recording.recordPath)
+                                record_led_blink_timer.stop()
+                                record_led.color = "darkgray"
+                                camera_saveinfo.camera_saveinfoShow("视频已保存 file:\\\\\\"+folder_recording.recordPath)
                             }
+                        }
+                        else{
+                            dia.showInfo("请先打开相机！")
                         }
                     }
                 }
@@ -216,7 +226,6 @@ Window {
                     height: 24
                     onHoveredChanged: tbntip("Calculate camera \nmatrix\n计算相机矩阵",camera_matrix)
                     onClicked: {
-                        shell.pyScriptTest()
                         var fd = shell.getExistingFolder("选择校正图片所在文件夹",folder_recording.lastOPenedFolder)
                         if(fd){
                             folder_recording.lastOPenedFolder=fd
@@ -982,7 +991,61 @@ Window {
                         id: camera_fps_text
                         text: mcap.opened ? "相机帧率: " + mcap.fps.toString() : "相机帧率: 未打开"
                         color: "#ffffff"//"#3c3c3c"
+                        Connections{
+                            target: mcap
+                            function onFpsChanged(fps){
+                                camera_fps_text.text = "相机帧率: " + mcap.fps.toString()
+                            }
+                        }
+                        Connections{
+                            target: mcap
+                            function onOpenedChanged(){
+                                if(!mcap.opened)camera_fps_text.text = "相机帧率: 未打开"
+                            }
+                        }
                     }
+                    Rectangle{
+                        id: record_led
+                        width: 12
+                        height: width
+                        radius: width/2
+                        anchors.verticalCenter: parent.verticalCenter
+                        color:"darkgray"
+                        property bool light: false
+                        Timer{
+                            id:record_led_blink_timer
+                            interval:800
+                            repeat: true
+                            onTriggered: {
+                                if(record_led.light){
+                                    record_led.color="darkgray"
+                                }
+                                else{
+                                    record_led.color="red"
+                                }
+                                record_led.light=!record_led.light
+                            }
+
+
+                        }
+                    }
+                    Text {
+                        id: record_fps_text
+                        text: "录像帧率: "
+                        color: "#ffffff"//"#3c3c3c"
+                        Connections{
+                            target: mcap
+                            function onRecordFpsChanged(rfps){
+                                if(rfps>=0){
+                                    record_fps_text.text = "录像帧率: "+rfps.toString()
+                                }
+                                else{
+                                    record_fps_text.text = "录像帧率: "
+                                }
+                            }
+                        }
+                    }
+
                     Text {
                         id: camera_saveinfo
                         text: ""
@@ -1026,6 +1089,7 @@ Window {
                     }
 
                 }//end row
+
             }// end status bar
 
 

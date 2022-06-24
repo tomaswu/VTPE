@@ -1169,7 +1169,9 @@ Window {
                             Connections{
                                 target: mvid
                                 function onPosChanged(){
-                                    slider.value1 = mvid.pos
+                                    if(!slider.mouseControled){
+                                        slider.value1 = mvid.pos
+                                    }
                                 }
                             }
                             Connections{
@@ -1195,7 +1197,12 @@ Window {
                                 btnName: ""
                                 width: 24
                                 height: 24
-                                onClicked: if (slider.value1>slider.value0)slider.value1-=1
+                                onClicked: {
+                                    if (slider.value1>slider.value0){
+                                        slider.value1-=1
+                                        slider.setValue1()
+                                    }
+                                }
 
                             }
                             SToolButton{
@@ -1206,7 +1213,14 @@ Window {
                                 height: 24
                                 onClicked: {
                                     if (mvid.isOpened()){
+
                                         mvid.play_pause()
+                                        if(mvid.isPlaying()){
+                                            imgSrc = "qrc:/imgs/ico/pause.png"
+                                        }
+                                        else{
+                                            imgSrc = "qrc:/imgs/ico/play.png"
+                                        }
                                     }
                                     else{
                                         dia.showInfo("请先打开视频！")
@@ -1219,7 +1233,12 @@ Window {
                                 btnName: ""
                                 width: 24
                                 height: 24
-                                onClicked: if (slider.value1<slider.value2)slider.value1+=1
+                                onClicked: {
+                                    if (slider.value1<slider.value2){
+                                        slider.value1+=1
+                                        slider.setValue1()
+                                    }
+                                }
                             }
                         }// end buttons row
 

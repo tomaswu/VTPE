@@ -15,6 +15,7 @@ Item{
         property string scolor0: "green"
         property string scolor1: "blue"
         property string scolor2: "red"
+        property bool mouseControled: false
         signal setValue1();
         width: 60
         height: 20
@@ -115,7 +116,12 @@ Item{
                     label.focus=false
                     setValue1()
                 }
+                onPressAndHold: {
+                   triSlider.mouseControled = true
+                }
+
                 onReleased: {
+                    triSlider.mouseControled = false
                     label.delay_hide(800)
                 }
                 onDoubleClicked: {
@@ -183,6 +189,7 @@ Item{
                     if (val<triSlider.value0)val=triSlider.value0
                     if (val>triSlider.value2)val=triSlider.value2
                     triSlider.value1=val
+                    setValue1()
                     break
                 case 2:
                     if (val<triSlider.value1)val=triSlider.value1

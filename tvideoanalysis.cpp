@@ -56,7 +56,10 @@ int TVideoAnalysis::getPos(){
 }
 
 bool TVideoAnalysis::setPos(int i){
-    bool ret = video_reader->set(cv::CAP_PROP_POS_FRAMES,i);
+    bool ret;
+    video_reader->set(cv::CAP_PROP_POS_FRAMES,i);
+    this->getFrame();
+    ret = video_reader->set(cv::CAP_PROP_POS_FRAMES,i);
     if (ret){
         pos=i;
         emit posChanged();

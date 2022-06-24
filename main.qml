@@ -1205,7 +1205,7 @@ Window {
                                 }
 
                             }
-                            SToolButton{
+                            SToolButton2{
                                 id:play
                                 imgSrc: "qrc:/imgs/ico/play.png"
                                 btnName: ""
@@ -1213,7 +1213,6 @@ Window {
                                 height: 24
                                 onClicked: {
                                     if (mvid.isOpened()){
-
                                         mvid.play_pause()
                                         if(mvid.isPlaying()){
                                             imgSrc = "qrc:/imgs/ico/pause.png"

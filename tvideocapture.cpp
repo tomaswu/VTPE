@@ -954,7 +954,7 @@ recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size 
 {
     this->que = que;
     this->dev = mdev;
-    outputVideo.open(filePath.toStdString(),cv::CAP_MSMF,cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),fps,size,true);
+    outputVideo.open(filePath.toStdString(),cv::CAP_FFMPEG,cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),fps,size,true);
 }
 
 void recordThread::run(){

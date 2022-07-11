@@ -88,6 +88,7 @@ DISTFILES += \
     TriSlider.qml \
     Ttable.qml \
     AddCurveDialog.qml \
+    ZoomRect.qml \
     deviceList.qml \
     maskImage.qml \
     python_scripts/data_process.py \

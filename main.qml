@@ -97,6 +97,11 @@ Window {
                     onHoveredChanged: tbntip("open/close camera\n打开/关闭相机",camera_open)
                     onClicked: {
                         if(!mcap.isOpened()){
+                            if(camera_list.count<=0){
+                                dia.showInfo("没有找到可打开的相机！")
+                                return
+                            }
+
                             var ret = mcap.open(camera_list.currentIndex)
                             if (!ret){
                                 dia.showInfo("未能打开该相机！")
@@ -1271,12 +1276,53 @@ Window {
     }// end swipe  centerWidget
 
     MouseArea{
+        id: mouseArea_zoom
+        x:centerWidget.x
+        y:centerWidget.y
+        width:centerWidget.width
+        height: camera_widget_bg.height
+        z:mscale.z-1
+        enabled: true
+        onWheel: {
+            if(wheel.modifiers & Qt.ControlModifier){
+                var a = wheel.angleDelta.y
+                var m;
+                if(centerWidget.currentIndex===0){
+                    m = camera_img.scale
+                }
+                else{
+                    m = video_img.scale
+                }
+
+
+                if (a>0){
+                   m+=0.1
+                   m = m>4? 4:m
+                }
+                else{
+                    m-=0.1
+                    m = m<0.2? 0.2:m
+                }
+
+                if(centerWidget.currentIndex===0){
+                    camera_img.scale=m
+                }
+                else{
+                    video_img.scale=m
+                }
+
+            }
+        }
+
+    } // end mouse area
+
+    MouseArea{
         id: mouseArea_select
         x:centerWidget.x
         y:centerWidget.y
         width:centerWidget.width
         height: camera_widget_bg.height
-        z:mscale-1
+        z:mscale.z-1
         enabled: measurement_select.checked
         property double x0: 0
         property double y0: 0
@@ -1318,7 +1364,7 @@ Window {
         y:centerWidget.y
         width:centerWidget.width
         height: camera_widget_bg.height
-        z:mscale-1
+        z:mscale.z-1
         enabled: pmb0100_para_window.select
         property double x0: 0
         property double y0: 0

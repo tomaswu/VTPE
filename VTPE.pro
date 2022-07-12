@@ -46,7 +46,8 @@ resources.files = main.qml \
                   TRecPara.qml \
                   SelectScale4Analysis.qml \
                   AddCurveDialog.qml \
-                  DataProcessPara.qml
+                  DataProcessPara.qml \
+                  ZoomRect.qml
 
 
 

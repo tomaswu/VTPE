@@ -851,7 +851,11 @@ Window {
                 color: "#f3f3f3"//Qt.rgba(0,0.6,0.6,0.2)
                 Image {
                     id:camera_img
-                    anchors.fill: parent
+//                    anchors.fill: parent
+                    property real timgWidth: 0
+                    property real timgHeight:0
+                    x:(centerWidget.width-timgWidth)/2
+                    y:(centerWidget.height-timgHeight)/2
                     fillMode: Image.PreserveAspectFit
                     source:""
                     cache: false
@@ -861,12 +865,14 @@ Window {
                             if(mcap.isOpened()){
                             camera_img.source=""
                             camera_img.source="image://cameraImage"
+                            camera_img.timgWidth=camera_img.width
+                            camera_img.timgHeight=camera_img.height
                             }else{
                                 camera_img.source=""
                             }
-
                         }
                     }//end Connections
+
                 } // end image
             } // end rect
 
@@ -1275,6 +1281,15 @@ Window {
 
     }// end swipe  centerWidget
 
+    ZoomRect{
+        id:zoom_label
+        anchors.horizontalCenter:centerWidget.horizontalCenter
+        height: 36
+        y:centerWidget.y+50
+        visible: false
+        z:mouseArea_zoom.z+1
+    }
+
     MouseArea{
         id: mouseArea_zoom
         x:centerWidget.x
@@ -1283,7 +1298,14 @@ Window {
         height: camera_widget_bg.height
         z:mscale.z-1
         enabled: true
-        onWheel: {
+
+        drag.target: camera_img
+        drag.axis: Drag.XAndYAxis
+        drag.minimumX: 20 - camera_img.width
+        drag.maximumX: centerWidget.width - 20
+        drag.minimumY: 20 - camera_img.height
+        drag.maximumY: centerWidget.height - 20
+        onWheel: function (wheel){
             if(wheel.modifiers & Qt.ControlModifier){
                 var a = wheel.angleDelta.y
                 var m;
@@ -1304,12 +1326,20 @@ Window {
                     m = m<0.2? 0.2:m
                 }
 
+                zoom_label.show()
                 if(centerWidget.currentIndex===0){
-                    camera_img.scale=m
+                    if(mcap.isOpened()){
+                        camera_img.scale=m
+                        zoom_label.setValue(m)
+                    }
                 }
                 else{
-                    video_img.scale=m
+                    if(video_img.visible){
+                        video_img.scale=m
+                        zoom_label.setValue(m)
+                    }
                 }
+                zoom_label.delay_hide(3000)
 
             }
         }

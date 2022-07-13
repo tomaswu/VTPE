@@ -102,24 +102,24 @@ CONFIG += debug_and_release
 windows{
 
     INCLUDEPATH += \
-        E:\Tomas_temp\opencv\op4\opencv\build\include \
+        E:\Tomas_temp\opencv\opencv460\opencv\build\include \
         ./include \
         "C:\Users\Tomas Wu\AppData\Local\Programs\Python\Python310\include" \
         "E:\boost_1_79_0\boost_1_79_0"
 
-    LIBS += -LE:\Tomas_temp\opencv\op4\opencv\build\x64\vc15\lib \
+    LIBS += -LE:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\lib \
             -LE:\private\TomasWu\CPP_programs\VTPE\Depends\workPower\x64\vs2013shared \
             -L"C:\Users\Tomas Wu\AppData\Local\Programs\Python\Python310\libs" \
             -L"E:\boost_1_79_0\boost_1_79_0\stage\lib"
 
     CONFIG(debug,debug|release){
-        LIBS += -lopencv_world455d -lMVSDKmd -lpython310 -l_tkinter \ #这里如果使用python3_d则会在import numpy等三方库时出错
+        LIBS += -lopencv_world460d -lMVSDKmd -lpython310 -l_tkinter \ #这里如果使用python3_d则会在import numpy等三方库时出错
                 -lboost_python310-vc142-mt-x64-1_79
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
                            copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
     }
     CONFIG(release,debug|release){
-        LIBS += -lopencv_world455 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc142-mt-x64-1_79
+        LIBS += -lopencv_world460 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc142-mt-x64-1_79
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
                            copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
     }

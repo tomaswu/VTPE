@@ -748,6 +748,7 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_pImageBuf = (unsigned char *)malloc(sizeof(unsigned char) * frameInfo.m_nBufferSize);
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
+    qDebug()<<frameInfo.m_nBufferSize;
 
     if(tvd->record_flag && tvd->recordQue.size()<150){
         cv::Mat image;
@@ -954,7 +955,7 @@ recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size 
 {
     this->que = que;
     this->dev = mdev;
-    outputVideo.open(filePath.toStdString(),cv::CAP_FFMPEG,cv::VideoWriter::fourcc('X', 'V', 'I', 'D'),fps,size,true);
+    outputVideo.open(filePath.toStdString(),cv::CAP_FFMPEG,cv::VideoWriter::fourcc('I', '4', '2', '0'),fps,size,true);
 }
 
 void recordThread::run(){

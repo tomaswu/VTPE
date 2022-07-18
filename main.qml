@@ -1292,10 +1292,10 @@ Window {
 
     MouseArea{
         id: mouseArea_zoom
-        x:centerWidget.x
-        y:centerWidget.y
-        width:centerWidget.width
-        height: camera_widget_bg.height
+        x:centerWidget.x+15
+        y:centerWidget.y+15
+        width:centerWidget.width-30
+        height: camera_widget_bg.height-30
         z:mscale.z-1
         enabled: true
 

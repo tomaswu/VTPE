@@ -408,7 +408,7 @@ bool TVideoCapture::photo(QString path){
     else{
         filename = path;
     }
-    QImage img = Mat2QImage(photo_mat);
+    QImage img = Mat2QImage(mat);
     bool ret = img.save(filename);
     photoReady=false;
     return ret;
@@ -748,7 +748,7 @@ static void onGetFrame(IMV_Frame* pFrame, void* pUser)
     frameInfo.m_pImageBuf = (unsigned char *)malloc(sizeof(unsigned char) * frameInfo.m_nBufferSize);
     frameInfo.m_nTimeStamp = pFrame->frameInfo.timeStamp;
     memcpy(frameInfo.m_pImageBuf, pFrame->pData, frameInfo.m_nBufferSize);
-    qDebug()<<frameInfo.m_nBufferSize;
+
 
     if(tvd->record_flag && tvd->recordQue.size()<150){
         cv::Mat image;

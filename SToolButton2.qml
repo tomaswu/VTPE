@@ -38,6 +38,7 @@ Rectangle{
 
     MouseArea{
         id:ma
+        z:background.z
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
@@ -72,7 +73,6 @@ Rectangle{
         onClicked: {
             if (mouseX>0 && mouseX<parent.width && mouseY>0 && mouseY<parent.height)
                 if (!parent.checkable){
-
                     parent.clicked()
                 }
                 else

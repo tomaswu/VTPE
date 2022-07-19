@@ -14,13 +14,17 @@ Window {
     title: qsTr("摄影物理实验工具")
     color:"#e1e1e1"
 
+    Component.onCompleted: {
+        var s=shell.getNewNameByTime(folder_recording.photoFolder,".png")
+    }
+
     ToolBar{
         id:toolbar
         width:parent.width-16
         height: 120
         y:0
         z:5
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenter: parent.horizontalCenter       
         background: Rectangle{
             anchors.fill: parent;
             color:"white"
@@ -157,7 +161,6 @@ Window {
                             mcap.needPhoto()
                             if(camera_settings_dialog.photoMode){
                                 var fn = shell.getNewNameByTime(folder_recording.photoFolder,".png")
-                                console.log(fn)
                                 var ret = mcap.savePhoto(fn)
                                 if(ret){
                                     var s = `图片已保存 file:\\\\\\${fn}`
@@ -761,6 +764,17 @@ Window {
 
     }// end toolbar
 
+    Rectangle{
+        id:toolbar_bg //用来挡一下图像移动位置时从工具栏缝里露出来的
+        x:0
+        y:toolbar.y
+        z:toolbar.z-1
+        width:root.width
+        height: toolbar.height
+        color:root.color
+
+    }
+
     SToolButton{
         //隐藏工具栏后的呼出热键
         id:toolbar_show
@@ -771,7 +785,7 @@ Window {
         radius: 4
         x:toolbar_hide.x+4
         y:height/2
-        z:101
+        z:5
         visible: false
         onClicked: animation_showToolbar.start()
     }
@@ -796,6 +810,7 @@ Window {
         anchors.centerIn: parent
         width: 300
         height: 120
+        z:5
         background: Rectangle{
             id:dia_bg
             anchors.fill: parent
@@ -842,6 +857,7 @@ Window {
 
         Page{
             id:camera_widget
+            z:1
             title: "camera"
             Rectangle{
                 id:camera_widget_bg
@@ -849,6 +865,7 @@ Window {
                 width: parent.width
                 height: parent.height-camera_status_bar.height
                 color: "#f3f3f3"//Qt.rgba(0,0.6,0.6,0.2)
+                z:1
                 Image {
                     id:camera_img
 //                    anchors.fill: parent
@@ -856,6 +873,7 @@ Window {
                     property real timgHeight:0
                     x:(centerWidget.width-timgWidth)/2
                     y:(centerWidget.height-timgHeight)/2
+                    z:2
                     fillMode: Image.PreserveAspectFit
                     source:""
                     cache: false
@@ -884,6 +902,7 @@ Window {
                 backgroundColor: Qt.rgba(1,1,1,0)
                 x:(camera_img.width-camera_img.paintedWidth)/2
                 y:(camera_img.height-camera_img.paintedHeight)/2
+                z:3
                 antialiasing: true
                 visible: false
 
@@ -891,6 +910,7 @@ Window {
                     id:pmc0100_chart_value_text
                     x:parent.width-width-80
                     y:110
+                    z:3
                     text: "当前值:0"
                     color: "red"
                 }
@@ -945,6 +965,7 @@ Window {
                     height: 22
                     x:parent.width-width-20
                     y:20
+                    z:3
                     imgSrc: "qrc:/imgs/ico/close.png"
                     btnName: ""
                     icoColor: hovered ? "red": "lightgreen"
@@ -961,6 +982,7 @@ Window {
                     height: 22
                     x: btn_close_pmc0100.x-width-20
                     y:20
+                    z:3
                     property bool flag: true
                     imgSrc: flag ?"qrc:/imgs/ico/pause.png" : "qrc:/imgs/ico/play.png"
                     btnName: ""
@@ -991,6 +1013,7 @@ Window {
                 id: camera_status_bar
                 width: parent.width
                 height: 24
+                z:4
                 color:"#007acc"
                 anchors.bottom: parent.bottom
 
@@ -1000,6 +1023,7 @@ Window {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         id: camera_fps_text
+                        z:4
                         text: mcap.opened ? "相机帧率: " + mcap.fps.toString() : "相机帧率: 未打开"
                         color: "#ffffff"//"#3c3c3c"
                         Connections{
@@ -1017,6 +1041,7 @@ Window {
                     }
                     Rectangle{
                         id: record_led
+                        z:4
                         width: 12
                         height: width
                         radius: width/2
@@ -1042,6 +1067,7 @@ Window {
                     }
                     Text {
                         id: record_fps_text
+                        z:4
                         text: "录像帧率: "
                         color: "#ffffff"//"#3c3c3c"
                         Connections{
@@ -1059,6 +1085,7 @@ Window {
 
                     Text {
                         id: camera_saveinfo
+                        z:4
                         text: ""
                         color:"#ffffff"
                         font.underline: true
@@ -1109,10 +1136,12 @@ Window {
         Page{
             id:video_widget
             title: "video"
+            z:1
 
             Ttable{
                 id: data_table
                 x:-width
+                z:3
                 visible: false
                 anchors.top: parent.top
                 anchors.bottom: video_status_bar.top
@@ -1120,16 +1149,22 @@ Window {
 
             Rectangle{
                 id:video_widget_bg
+                z:1
                 anchors.fill:parent
                 color: Qt.rgba(0.6,0.6,0,0.2)
             }
 
             Image{
                 id:video_img
-                anchors.left: data_table.right
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: video_status_bar.top
+                z:2
+//                anchors.left: data_table.right
+//                anchors.right: parent.right
+//                anchors.top: parent.top
+//                anchors.bottom: video_status_bar.top
+                property real timgWidth: 0
+                property real timgHeight:0
+                x:(centerWidget.width-timgWidth)/2
+                y:(centerWidget.height-timgHeight)/2
                 fillMode: Image.PreserveAspectFit
                 source:""
                 cache: false
@@ -1139,6 +1174,8 @@ Window {
                         if(mvid.isOpened()){
                         video_img.source=""
                         video_img.source="image://videoImage"
+                        video_img.timgWidth=video_img.width
+                        video_img.timgHeight=video_img.height
                         }else{
                             camera_img.source=""
                         }
@@ -1154,10 +1191,10 @@ Window {
                 height: 120
                 color:Qt.rgba(1,1,1,0.25)
                 x:toolbar.x
+                z:3
                 radius:8
                 y:parent.height-height-35
                 visible: video_player.checked
-                z:video_widget.z+1
 
                     Column{
                         anchors.fill: parent
@@ -1166,12 +1203,14 @@ Window {
 
                         Text {
                             id: video_fileName
+                            z:3
                             width: 20
                             text: qsTr("C:/Users/tomas wu/videos/test.avi")
                         }
 
                         TriSlider{
                             id: slider
+                            z:3
                             width:parent.width-2*parent.padding
                             height: 30
                             onValue0Changed: mvid.setBeginPos(value0)
@@ -1204,6 +1243,7 @@ Window {
 
                             SToolButton2{
                                 id:backward
+                                z:3
                                 imgSrc: "qrc:/imgs/ico/backward.png"
                                 btnName: ""
                                 width: 24
@@ -1218,6 +1258,7 @@ Window {
                             }
                             SToolButton2{
                                 id:play
+                                z:3
                                 imgSrc: "qrc:/imgs/ico/play.png"
                                 btnName: ""
                                 width: 24
@@ -1239,6 +1280,7 @@ Window {
                             }
                             SToolButton2{
                                 id:forward
+                                z:3
                                 imgSrc: "qrc:/imgs/ico/forward.png"
                                 btnName: ""
                                 width: 24
@@ -1259,6 +1301,7 @@ Window {
             // camera stauts bar
             Rectangle{
                 id: video_status_bar
+                z:3
                 width: parent.width
                 height: 24
                 color:"#68217a"
@@ -1270,6 +1313,7 @@ Window {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         id: video_fps_text
+                        z:3
                         text: "视频帧率: 未打开"
                         color: "#ffffff"//"#3c3c3c"
                     }
@@ -1287,7 +1331,7 @@ Window {
         height: 36
         y:centerWidget.y+50
         visible: false
-        z:mouseArea_zoom.z+1
+        z:3
     }
 
     MouseArea{
@@ -1296,15 +1340,16 @@ Window {
         y:centerWidget.y+15
         width:centerWidget.width-30
         height: camera_widget_bg.height-30
-        z:mscale.z-1
+        z:4
         enabled: true
 
         drag.target: camera_img
         drag.axis: Drag.XAndYAxis
-        drag.minimumX: 20 - camera_img.width
+        drag.minimumX: 20 - drag.target.width
         drag.maximumX: centerWidget.width - 20
-        drag.minimumY: 20 - camera_img.height
+        drag.minimumY: 20 - drag.target.height
         drag.maximumY: centerWidget.height - 20
+        propagateComposedEvents: true
         onWheel: function (wheel){
             if(wheel.modifiers & Qt.ControlModifier){
                 var a = wheel.angleDelta.y
@@ -1343,7 +1388,21 @@ Window {
 
             }
         }
-
+        Connections{
+            target: centerWidget
+            function onCurrentIndexChanged(){
+                switch (centerWidget.currentIndex){
+                    case 0:
+                        mouseArea_zoom.drag.target=camera_img
+                        break
+                    case 1:
+                        mouseArea_zoom.drag.target=video_img
+                        break
+                    default:
+                        break
+                }
+            }
+        }
     } // end mouse area
 
     MouseArea{
@@ -1352,7 +1411,7 @@ Window {
         y:centerWidget.y
         width:centerWidget.width
         height: camera_widget_bg.height
-        z:mscale.z-1
+        z:4
         enabled: measurement_select.checked
         property double x0: 0
         property double y0: 0
@@ -1394,7 +1453,7 @@ Window {
         y:centerWidget.y
         width:centerWidget.width
         height: camera_widget_bg.height
-        z:mscale.z-1
+        z:4
         enabled: pmb0100_para_window.select
         property double x0: 0
         property double y0: 0
@@ -1469,7 +1528,7 @@ Window {
         id : mscale
         x:toolbar.x
         y:centerWidget.y
-        z:2
+        z:4
         width: centerWidget.width
         height: camera_widget_bg.height
         visible: measurement_mark.checked

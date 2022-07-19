@@ -229,10 +229,17 @@ Window {
             text:"开始识别"
             onClicked: {
                 if(text==="开始识别"){
-                    text="取消"
                     data_table.clear()
                     btn_scale.checked=false
                     var ratio = parseFloat(mm_input.text)/parseFloat(pixel_input.text)/1000
+                    var dx=-parseInt(xmin_input.text)+parseInt(xmax_input.text)
+                    var dy=-parseInt(ymin_input.text)+parseInt(ymax_input.text)
+//                    console.log((dx<=0)||(dy<=0))
+                    if(dx<=0||dy<=0){
+                        dia.showInfo("请选择有效分析范围！")
+                        return
+                    }
+                    text="取消"
                     mvid.startRecognize(threshold_slider.value,pixel_input.text,mm_input,60,0,xmin_input.text,xmax_input.text,ymin_input.text,ymax_input.text,unit.checked,ratio)
                 }
                 else{

@@ -52,13 +52,15 @@ Item {
         onTriggered: {
             if(mcap.isOpened()){
                 if(camera_img.paintedWidth>0){
-                    var row1,row2,col1,col2,x0,y0
-                    x0 = camera_img.width/2
-                    y0 = camera_img.height/2
-                    col1 = (select_scale.x-x0)/(camera_img.paintedWidth)
-                    col2 = (select_scale.x+select_scale.width-x0)/(camera_img.paintedWidth)
-                    row1 = (select_scale.y-toolbar.height-y0)/(camera_img.paintedHeight)
-                    row2 = (select_scale.y-toolbar.height+select_scale.height-y0)/(camera_img.paintedHeight)
+                    var row1,row2,col1,col2,x0,y0,cw,ch
+                    x0 = camera_img.width/2+camera_img.x
+                    y0 = camera_img.height/2+camera_img.y
+                    cw=camera_img.paintedWidth*camera_img.scale
+                    ch=camera_img.paintedHeight*camera_img.scale
+                    col1 = (select_scale.x-x0)/cw
+                    col2 = (select_scale.x+select_scale.width-x0)/cw
+                    row1 = (select_scale.y-toolbar.height-y0)/ch
+                    row2 = (select_scale.y-toolbar.height+select_scale.height-y0)/ch
                     var r = mcap.calSelectScale(row1,row2,col1,col2)
                     parent.maxgray = r[0]
                     parent.mingray = r[1]

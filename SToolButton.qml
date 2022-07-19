@@ -52,6 +52,7 @@ Rectangle{
         id:ma
         anchors.fill: parent
         hoverEnabled: true
+        z:background.z
         onEntered: {
             if (!parent.checked){
                 background.color = Qt.rgba(0.75,0.75,0.75,0.4)

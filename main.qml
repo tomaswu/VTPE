@@ -1391,6 +1391,12 @@ Window {
         Connections{
             target: centerWidget
             function onCurrentIndexChanged(){
+                if(centerWidget.currentIndex===1 && video_player.checked){
+                    mouseArea_zoom.height=camera_widget_bg.height-30-playerbar.height-20
+                }
+                else{
+                    mouseArea_zoom.height=camera_widget_bg.height-30
+                }
                 switch (centerWidget.currentIndex){
                     case 0:
                         mouseArea_zoom.drag.target=camera_img
@@ -1400,6 +1406,17 @@ Window {
                         break
                     default:
                         break
+                }
+            }
+        }
+        Connections{
+            target:video_player
+            function onCheckedChanged(){
+                if(centerWidget.currentIndex===1 && video_player.checked){
+                    mouseArea_zoom.height=camera_widget_bg.height-30-playerbar.height-20
+                }
+                else{
+                    mouseArea_zoom.height=camera_widget_bg.height-30
                 }
             }
         }

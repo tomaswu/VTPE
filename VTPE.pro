@@ -5,7 +5,9 @@ QT += quick \
       charts\
       widgets\
 
-CONFIG += c++17
+CONFIG += c++17 console
+
+RC_FILE += logo.rc
 
 HEADERS += \
     cameraMessageQue.h \
@@ -50,7 +52,6 @@ resources.files = main.qml \
                   ZoomRect.qml
 
 
-
 resources.prefix = /$${TARGET}
 
 RESOURCES += resources qtquickcontrols2.conf \
@@ -90,7 +91,9 @@ DISTFILES += \
     Ttable.qml \
     AddCurveDialog.qml \
     ZoomRect.qml \
+    deploy.py \
     deviceList.qml \
+    logo.rc \
     maskImage.qml \
     python_scripts/data_process.py \
     python_scripts/temail.py \

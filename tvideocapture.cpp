@@ -18,6 +18,7 @@
 #include <vector>
 #include <string>
 #include <commandLineTools.h>
+#include <fstream>
 
 #ifdef Q_OS_WINDOWS
 #include <IMVAPI/IMVApi.h>
@@ -852,7 +853,16 @@ QString TVideoCapture::getCameraMatrix(QString fd){
     int num = 0;
     while (num < files.size())
     {
-        image = cv::imread(files[num]);
+        //----解决一下中文路径问题----
+        FILE* f = fopen(files[num].c_str(), "rb");
+        fseek(f, 0, SEEK_END); // seek to end of file
+        size_t buffer_size = ftell(f); // get current file pointer
+        fseek(f, 0, SEEK_SET); // seek back to beginning of file
+        std::vector<char> buffer(buffer_size);
+        fread(&buffer[0], sizeof(char), buffer_size, f);
+        fclose(f);
+        //------------------------
+        image = cv::imdecode(buffer,cv::IMREAD_COLOR);
         if (image.empty())
             break;
 

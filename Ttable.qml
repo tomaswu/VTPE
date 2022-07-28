@@ -159,6 +159,7 @@ Rectangle {
         anchors.fill: parent
         z:parent.z
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        propagateComposedEvents: true
         onClicked: function (mouse){
             if(mouse.button===Qt.RightButton){
                 menu.popup()

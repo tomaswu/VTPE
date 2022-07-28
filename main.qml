@@ -536,9 +536,13 @@ Window {
                         if(checked){
                             centerWidget.currentIndex=1
                             animation_show_table.start()
+                            mouseArea_zoom.x=data_table.width
+                            mouseArea_zoom.width=centerWidget.width-15-data_table.width
                         }
                         else{
                             animation_hide_table.start()
+                            mouseArea_zoom.x=centerWidget.x+15
+                            mouseArea_zoom.width=centerWidget.width-30
                         }
 
                     }

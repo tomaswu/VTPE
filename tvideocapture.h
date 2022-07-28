@@ -107,8 +107,8 @@ public:
     TMessageQue<CFrameInfo> tque;
     QQueue<cv::Mat>         recordQue;
     recordThread            *record_thread;
-    void                    onRecordFinished();
     #endif
+    void                    onRecordFinished();
     cv::VideoCapture        *cap;
     cv::VideoWriter         outputVideo;
     bool                    record_flag = false;

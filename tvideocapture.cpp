@@ -379,9 +379,11 @@ void TVideoCapture::onRfpsChanged(double rfps){
 }
 
 void TVideoCapture::onRecordFinished(){
+#ifdef Q_OS_WINDOWS
     record_thread->wait();
     delete this->record_thread;
     emit recordFinished("内存满了自动停止");
+#endif
 }
 
 

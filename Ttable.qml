@@ -136,6 +136,36 @@ Rectangle {
 
     }
 
+    Menu{
+        id: menu
+        width:120
+
+        MenuItem{
+            id:unit_convert
+            text:"转换为标准单位"
+            onTriggered: {
+                if(text==="转换为标准单位"){
+                    text="转换为像素单位"
+                }
+                else{
+                    text="转换为标准单位"
+                }
+            }
+        }
+    }
+
+    MouseArea{
+        id:ma
+        anchors.fill: parent
+        z:parent.z
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: function (mouse){
+            if(mouse.button===Qt.RightButton){
+                menu.popup()
+            }
+        }
+    }
+
     Component.onCompleted: {
 
 //        addRowByList([1,2,3,4,5])

@@ -201,6 +201,20 @@ Window {
                             dia.showInfo("请先打开相机！")
                         }
                     }
+                    Connections {
+                        target:mcap
+                        function onRecordFinished(info){
+                            if (info==="mem stop"){
+                                dia.showInfo("因CPU性能不足导致内存已满,\n已自动停止录像！\n请耐心等待程序编码内存中的内容！")
+                            }
+                            else{
+                                dia.close()
+                                record_led_blink_timer.stop()
+                                record_led.color = "darkgray"
+                                camera_saveinfo.camera_saveinfoShow("视频已保存 file:\\\\\\"+folder_recording.recordPath)
+                            }
+                        }
+                    }
                 }
 
                 SToolButton{

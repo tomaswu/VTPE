@@ -52,6 +52,7 @@ TCamera::TCamera(QObject *parent)
     timer_refresh->start();
     connect(cap,&TVideoCapture::newfps,this,&TCamera::refreshFps);
     connect(cap,&TVideoCapture::rfpsChanged,this,&TCamera::onRecordFpsChanged);
+    connect(cap,&TVideoCapture::recordFinished,this,&TCamera::recordFinished);
 }
 
 TCamera::~TCamera(){

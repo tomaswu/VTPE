@@ -24,6 +24,9 @@ enum CameraType{
 };
 
 #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+
+quint32 getMemSize();
+
 class CFrameInfo //华谷动力相机帧信息
 {
 public:
@@ -165,6 +168,7 @@ signals:
     void startCapture();
     void newfps(double fps);
     void rfpsChanged(double rfps);
+    void recordFinished(QString info);
 };
 
 #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows 图像处理回调函数

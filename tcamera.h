@@ -98,6 +98,7 @@ signals:
     void fpsChanged();
     void openedChanged();
     void recordFpsChanged(double rfps);
+    void recordFinished(QString info);
 };
 
 #endif // TCAMERA_H

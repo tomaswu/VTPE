@@ -150,7 +150,7 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
         pmb0100rec_para.row2=r2;
         pmb0100rec_para.standardUint = standardUint;
         pmb0100rec_para.ratio = ratio;
-        recFlag=true;
+
         break;
     }
     if(play_timer->isActive()){
@@ -158,6 +158,7 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
     }
     play_timer->setInterval(1);
     setPos(beginPos);
+    recFlag=true;
     play_timer->start();
 }
 

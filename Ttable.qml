@@ -163,7 +163,10 @@ Rectangle {
 
     MouseArea{
         id:ma
-        anchors.fill: parent
+        x:0
+        y:0
+        height: root.height
+        width: root.width-20
         z:parent.z
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         propagateComposedEvents: true

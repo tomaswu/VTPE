@@ -1250,7 +1250,7 @@ Window {
                                     slider.from = 0
                                     slider.to = mvid.getFrameCount()
                                     slider.value2 = slider.to
-                                    slider.value1=1
+                                    slider.value1=0
                                     console.log("test")
                                 }
                             }

@@ -269,6 +269,13 @@ Window {
     function setRatio(mm,pix){
         mm_input.text = mm
         pixel_input.text =pix
+        data_table.unitRatio=mm/pix
+    }
+
+    function getRatio(){
+        var mm = parseFloat(mm_input.text)
+        var pix = parseFloat(pixel_input.text)
+        return mm/pix
     }
 
 }

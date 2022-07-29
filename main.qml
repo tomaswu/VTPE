@@ -442,6 +442,7 @@ Window {
                                 data_process_firgure.setFps(fps)
                                 mvid.setPlaySpeed(play_speed.currentText)
                                 video_player.checked=true
+                                data_table.fps=fps
                             }
                             else{
                                 dia.showInfo("未能打开视频！")
@@ -509,6 +510,7 @@ Window {
                                 case 0:
                                     centerWidget.currentIndex = 1
                                     pmb0100_para_window.show()
+                                    data_table.unitRatio=pmb0100_para_window.getRatio()
                                     break
                                 default:
                                     dia.showInfo("暂不支持的方法")

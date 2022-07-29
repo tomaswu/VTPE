@@ -3,8 +3,14 @@ import QtQuick.Controls
 import Qt.labs.qmlmodels
 
 Rectangle {
-    width:260
+
+    id:root
+    width:280
     height: 480
+    property bool standardUnit: true
+    property real unitRatio: 1
+    property real fps:100
+    property var  dataList: []
 
     Rectangle{
         id:header
@@ -16,7 +22,7 @@ Rectangle {
 
             Repeater{
                 id:header_re
-                model: ["Frame","x1","y1","x2","y2"]
+                model:root.standardUnit? ["time(s)","x1(mm)","y1(mm)","x2(mm)","y2(mm)"]:["Frame","x1(pixel)","y1(pixel)","x2(pixel)","y2(pixel)"]
                 Rectangle{
                     width: header.width/5
                     height: header.height
@@ -142,14 +148,15 @@ Rectangle {
 
         MenuItem{
             id:unit_convert
-            text:"转换为标准单位"
+            text:root.standardUnit? "转换为像素单位":"转换为标准单位"
             onTriggered: {
-                if(text==="转换为标准单位"){
-                    text="转换为像素单位"
+                root.standardUnit=!root.standardUnit
+                tableModel.clear()
+                console.log(root.dataList.length)
+                for(var i=0;i<root.dataList.length;i++){
+                    addRowByList(root.dataList[i],false)
                 }
-                else{
-                    text="转换为标准单位"
-                }
+
             }
         }
     }
@@ -181,12 +188,21 @@ Rectangle {
         return true
     }
 
-    function addRowByList(s){
-        tableModel.appendRow({"frame":s[0],"x1":s[1],"y1":s[2],"x2":s[3],"y2":s[4]})
+    function addRowByList(s,saveFlag=true){
+        if(saveFlag){
+            root.dataList.push(s)
+        }
+        if(!root.standardUnit){
+            tableModel.appendRow({"frame":s[0],"x1":s[1],"y1":s[2],"x2":s[3],"y2":s[4]})
+        }
+        else{
+            tableModel.appendRow({"frame":s[0]/root.fps,"x1":s[1]*root.unitRatio,"y1":s[2]*root.unitRatio,"x2":s[3]*root.unitRatio,"y2":s[4]*root.unitRatio})
+        }
     }
 
     function clear(){
         tableModel.clear()
+        root.dataList=[]
     }
 
     function getDataList(){

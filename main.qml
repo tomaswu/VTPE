@@ -573,6 +573,26 @@ Window {
                     }
                 }
 
+                SToolButton{
+                    id:stroboscopic_map
+                    Layout.row: 1
+                    Layout.column: 4
+                    Layout.alignment: Qt.AlignLeft
+                    imgSrc: "qrc:/imgs/ico/frequency.png"
+                    btnName: ""
+                    width: 24
+                    height: 24
+                    onHoveredChanged: tbntip("stroboscopic map\n频闪图",stroboscopic_map)
+                    onClicked: {
+                        if(!mvid.isOpened()){
+                            dia.showInfo("没有打开视频！")
+                        }
+                        else{
+                            mvid.showFrequencyImage(0,5,10)
+                        }
+                    }
+                }
+
                 Text{
                     text: "播放速度:"
                     color:global_color.primary

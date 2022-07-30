@@ -6,6 +6,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <tcamera.h>
 #include <pmb0100rec.h>
+#include <commandLineTools.h>
 
 
 using namespace std;
@@ -197,6 +198,14 @@ QList<int> TVideoAnalysis::getImageSize(){
     size.append(img.size().height);
     return size;
 }
+
+
+void TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
+    qDebug()<<"频闪图测试";
+    shell->showFrequencyImage(QImage2Mat(ipdr->img));
+
+}
+
 
 QImage TVideoAnalysis::Mat2QImage(cv::Mat const& mat)
 {

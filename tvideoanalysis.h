@@ -59,6 +59,7 @@ public:
     Q_INVOKABLE void                    stopRecognize();
     Q_INVOKABLE QList<int>              getImageSize();
     Q_INVOKABLE void                    preThreshold(int threshold);
+    Q_INVOKABLE void                    showFrequencyImage(int start,int number,int interval);
 
     // qml read
     Q_PROPERTY(int pos MEMBER pos NOTIFY posChanged);

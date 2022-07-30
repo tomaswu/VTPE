@@ -7,6 +7,7 @@
 #include <QObject>
 #include <vector>
 #include <string>
+#include <opencv2/core.hpp>
 
 class TPyCom: public QObject
 {
@@ -20,6 +21,7 @@ public:
     void list2csv(QList<QList<double>> l,QString path);
     QString getNewNameByTime(QString dic,QString tail);
     void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps);
+    void showFrequencyImage(cv::Mat mat);
 
 signals:
 

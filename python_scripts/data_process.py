@@ -3,6 +3,7 @@ import numpy as np
 import sys,os
 import time
 import scipy.signal
+import cv2
 
 import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
@@ -78,3 +79,8 @@ def smooth(data,band,sampling=1e4):
         return data
     filtedData = scipy.signal.filtfilt(b, a, data)  #data为要过滤的信号
     return filtedData
+
+def stroboscopic_map(img:np.ndarray):
+    print("pyhton stroboscopic_map")
+    cv2.imshow('test',img)
+    cv2.waitKey(0)

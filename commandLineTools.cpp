@@ -63,3 +63,7 @@ QString commandLineTools::getNewNameByTime(QString dic,QString tail){
 void commandLineTools::data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter,double fps){
     tpycom->data_process(data,header,para,filter,fps);
 }
+
+void commandLineTools::showFrequencyImage(cv::Mat mat){
+    tpycom->showFrequencyImage(mat);
+}

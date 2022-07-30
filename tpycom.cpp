@@ -2,10 +2,12 @@
 #include <iostream>
 #include <QtGlobal>
 #include <boost/python.hpp>
+#include <boost/python/numpy.hpp>
 #include <Python.h>
 
 using namespace std;
 namespace bpy = boost::python;
+namespace np  = boost::python::numpy;
 
 TPyCom::TPyCom(QObject *parent):
     QObject{parent}
@@ -121,6 +123,23 @@ void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<
     }
     m.attr("pmb0100_process")(dl,hl,p,ft,fps);
 }
+
+void TPyCom::showFrequencyImage(cv::Mat mat){
+    cout<<"call python:"<<"mat size: "<<mat.size<<endl;
+    if(!Py_IsInitialized()){
+        Py_Initialize();
+    }
+    np::initialize();
+    bpy::tuple shape = bpy::make_tuple(mat.rows,mat.cols,3);
+    bpy::tuple stride = bpy::make_tuple(mat.cols*3,mat.cols,1);
+    bpy::object own;
+    np::dtype dt = np::dtype::get_builtin<uchar>();
+    np::ndarray array = np::from_data(mat.data,dt,shape,stride,own);
+    bpy::object m = bpy::import("data_process");
+    m.attr("stroboscopic_map")(array);
+
+}
+
 
 // 边写边学，获取返回的string
 //    char *bytes = PyBytes_AsString(res);

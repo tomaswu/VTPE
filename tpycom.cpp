@@ -131,7 +131,7 @@ void TPyCom::showFrequencyImage(cv::Mat mat){
     }
     np::initialize();
     bpy::tuple shape = bpy::make_tuple(mat.rows,mat.cols,3);
-    bpy::tuple stride = bpy::make_tuple(mat.cols*3,mat.cols,1);
+    bpy::tuple stride = bpy::make_tuple(mat.cols*3,3,1);
     bpy::object own;
     np::dtype dt = np::dtype::get_builtin<uchar>();
     np::ndarray array = np::from_data(mat.data,dt,shape,stride,own);

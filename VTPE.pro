@@ -138,7 +138,7 @@ macx{
 
     LIBS += -L/opt/homebrew/Cellar/opencv/4.5.5/lib -lopencv_core -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_calib3d
     LIBS += -L/Library/Frameworks/Python.framework/Versions/3.10/lib -lpython3.10
-    LIBS += -L/Users/tomaswu/usr/boost_1_79_0/stage/lib -lboost_python310
+    LIBS += -L/Users/tomaswu/usr/boost_1_79_0/stage/lib -lboost_python310 -lboost_numpy310
     QMAKE_POST_LINK += cp $$PWD/python_scripts/data_process.py $$OUT_PWD/data_process.py
 
 }

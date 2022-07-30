@@ -83,6 +83,8 @@ def stroboscopic_map(img:np.ndarray):
     print("pyhton stroboscopic_map")
     nimg = img.copy()
     plt.figure()
-    plt.imshow(nimg)
+    ax=plt.subplot()
+    ax.imshow(nimg)
+    plt.ion()
     plt.show()
 

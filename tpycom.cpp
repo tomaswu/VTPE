@@ -125,7 +125,7 @@ void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<
 }
 
 void TPyCom::showFrequencyImage(cv::Mat mat){
-    cout<<"call python:"<<"mat size: "<<mat.size<<endl;
+//    cout<<"call python:"<<"mat size: "<<mat.size<<endl;
     if(!Py_IsInitialized()){
         Py_Initialize();
     }
@@ -137,7 +137,6 @@ void TPyCom::showFrequencyImage(cv::Mat mat){
     np::ndarray array = np::from_data(mat.data,dt,shape,stride,own);
     bpy::object m = bpy::import("data_process");
     m.attr("stroboscopic_map")(array);
-
 }
 
 

@@ -11,9 +11,15 @@ using namespace std;
 using Points = vector<cv::Point2i>;
 using RGB = uint8_t[3];
 using ctr = cv::Point3f;
-using recResult = vector<ctr>;
+
+typedef struct __recResult{
+    int pos=0;
+    vector<ctr> data;
+
+}recResult;
 
 typedef struct _recPara{
+    int pos;
     int threshold;
     int pointNum;
     int col1;

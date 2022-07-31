@@ -37,6 +37,7 @@ public:
     QTimer                              *play_timer;
     std::string                          testfile="C:\\Users\\Tomas Wu\\Videos\\202203151103光镊演示.mp4";
     pmb0100rec::Para                    pmb0100rec_para;
+    std::vector<pmb0100rec::recResult>  recResult;
 
     //method
     cv::Mat                             QImage2Mat(QImage const& image);
@@ -60,6 +61,7 @@ public:
     Q_INVOKABLE QList<int>              getImageSize();
     Q_INVOKABLE void                    preThreshold(int threshold);
     Q_INVOKABLE void                    showFrequencyImage(int start,int number,int interval);
+
 
     // qml read
     Q_PROPERTY(int pos MEMBER pos NOTIFY posChanged);

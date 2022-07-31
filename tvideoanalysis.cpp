@@ -98,12 +98,13 @@ void TVideoAnalysis::getFrame(){
     if(!ret){
         return;
     }
-
     if(recFlag){
+        pmb0100rec_para.pos=this->pos;
         pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para);
         QList<double> res;
         res.append(pos);
-        for(auto &i:r){
+        recResult.push_back(r);
+        for(auto &i:r.data){
             if(pmb0100rec_para.standardUint){
                 res.append(i.x*pmb0100rec_para.ratio);
                 res.append(i.y*pmb0100rec_para.ratio);
@@ -151,7 +152,7 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
         pmb0100rec_para.row2=r2;
         pmb0100rec_para.standardUint = standardUint;
         pmb0100rec_para.ratio = ratio;
-
+        this->recResult.clear();
         break;
     }
     if(play_timer->isActive()){
@@ -202,8 +203,41 @@ QList<int> TVideoAnalysis::getImageSize(){
 
 void TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
     qDebug()<<"频闪图测试";
-    shell->showFrequencyImage(QImage2Mat(ipdr->img));
+    uint i;
+    for (i=0;i<recResult.size();i++){
+        if(recResult[i].pos==start){
+            break;
+        }
+    }
+    if(i==recResult.size()){
+        qDebug()<<"错误的参数";
+        return;
+    }
+    else{
+        int count=0;
+        cv::Mat stro;
+        for(uint j=i;j<recResult.size();j+=interval){
+            int n=recResult[j].pos;
+            this->setPos(n);
+            cv::Mat fimg,mask;
+            video_reader->read(fimg);
+            if(stro.empty()){
+                fimg.copyTo(stro);
+                continue;
+            }
+            mask=cv::Mat::zeros(fimg.size(),CV_8UC1);
+            cv::circle(mask,cv::Point(recResult[j].data[0].x,recResult[j].data[0].y),recResult[j].data[0].z,cv::Scalar(255),-1);
+            fimg.copyTo(stro,mask);
 
+            count+=1;
+            if(count>=number){
+                break;
+            }
+        }
+        shell->showFrequencyImage(stro);
+    }
+
+//    shell->showFrequencyImage(QImage2Mat(ipdr->img));
 }
 
 

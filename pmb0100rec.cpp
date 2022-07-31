@@ -132,6 +132,7 @@ ctr pmb0100rec::centerBlue(Points points,Points pointsBlue,int maxR,int minR){
 recResult pmb0100rec::recBall(cv::Mat img,Para para){
     Points points;
     recResult res;
+    res.pos=para.pos;
     cv::Mat gray_img;
     cv::cvtColor(img,gray_img,cv::COLOR_BGR2GRAY);
     for(int row=para.row1;row<para.row2;row++){
@@ -153,8 +154,8 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para){
     if(bluePoints.size()>=para.pointNum){
         blueBall = center(bluePoints);
     }
-    res.push_back(whiteBall);
-    res.push_back(blueBall);
+    res.data.push_back(whiteBall);
+    res.data.push_back(blueBall);
     return res;
 }
 

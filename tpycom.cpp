@@ -141,6 +141,13 @@ bool TPyCom::showFrequencyImage(cv::Mat mat){
     return res;
 }
 
+QString TPyCom::getDirByFilePaht(QString filepath){
+    bpy::object m =bpy::import("os.path");
+    auto p = m.attr("split")(filepath.toStdString());
+    auto s = bpy::extract<std::string>(p[0]);
+    return QString::fromStdString(s);
+}
+
 // 边写边学，获取返回的string
 //    char *bytes = PyBytes_AsString(res);
 //    PyObject *str = PyUnicode_AsEncodedString(res, "utf-8", "~E~");

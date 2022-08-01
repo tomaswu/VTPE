@@ -30,6 +30,8 @@ public:
     Q_INVOKABLE QString getNewNameByTime(QString dic,QString tail);
     Q_INVOKABLE void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps);
     Q_INVOKABLE bool showFrequencyImage(cv::Mat mat);
+    Q_INVOKABLE QString getDirByFilePaht(QString filepath);
+    Q_INVOKABLE void openFile(QString file);
 
 signals:
 

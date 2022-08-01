@@ -22,6 +22,7 @@ public:
     QString getNewNameByTime(QString dic,QString tail);
     void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps);
     bool showFrequencyImage(cv::Mat mat);
+    QString getDirByFilePaht(QString filepath);
 
 signals:
 

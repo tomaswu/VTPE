@@ -92,6 +92,7 @@ DISTFILES += \
     TriSlider.qml \
     Ttable.qml \
     AddCurveDialog.qml \
+    ZKY-PMB0100SS.pdf \
     ZoomRect.qml \
     deploy.py \
     deviceList.qml \
@@ -100,6 +101,7 @@ DISTFILES += \
     python_scripts/data_process.py \
     python_scripts/temail.py \
     qtquickcontrols2.conf \
+    softwareManual.pdf
 
 
 CONFIG += debug_and_release
@@ -126,7 +128,9 @@ windows{
     CONFIG(release,debug|release){
         LIBS += -lopencv_world460 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc142-mt-x64-1_79
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
-                           copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
+                           copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\" && \
+                           copy \"$$PWD\\ZKY-PMB0100SS.pdf\" \"$$OUT_PWD\\release\\ZKY-PMB0100SS.pdf\" &&\
+                           copy \"$$PWD\\softwareManual.pdf\" \"$$OUT_PWD\\release\\softwareManual.pdf\"
     }
 }
 

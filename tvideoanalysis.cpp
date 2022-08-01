@@ -229,7 +229,6 @@ QList<int> TVideoAnalysis::getImageSize(){
 
 
 bool TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
-    qDebug()<<"频闪图测试";
     uint i;
     for (i=0;i<recResult.size();i++){
         if(recResult[i].pos==start){
@@ -237,7 +236,7 @@ bool TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
         }
     }
     if(i==recResult.size()){
-        qDebug()<<"错误的参数";
+//        qDebug()<<"错误的参数";
         return false;
     }
     else{

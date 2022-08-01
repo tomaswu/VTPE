@@ -4,6 +4,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <iostream>
+#include <QDesktopServices>
+#include <QUrl>
 
 commandLineTools* shell = new commandLineTools; //全局变量
 
@@ -67,3 +69,12 @@ void commandLineTools::data_process(QList<QList<double>> data,QList<QString> hea
 bool commandLineTools::showFrequencyImage(cv::Mat mat){
     return tpycom->showFrequencyImage(mat);
 }
+
+QString commandLineTools::getDirByFilePaht(QString filepath){
+    return tpycom->getDirByFilePaht(filepath);
+}
+
+void commandLineTools::openFile(QString file){
+    QDesktopServices::openUrl(QUrl::fromLocalFile(file));
+}
+

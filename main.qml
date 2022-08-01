@@ -453,7 +453,6 @@ Window {
                             centerWidget.currentIndex = 1
                             if(Qt.platform.os==="windows"){
                                 fileName = fileName.replace(new RegExp("/", "g"),"\\")
-                                console.log(fileName)
                             }//end switch
                             mvid.open(fileName)
                             if(mvid.isOpened()){
@@ -715,7 +714,10 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("help\n帮助",help)
-                    onClicked: console.log("help")
+                    onClicked:{
+                        var mf=shell.getDirByFilePaht(Qt.application.arguments[0])+"\\softwareManual.pdf"
+                        shell.openFile(mf)
+                    }
                 }
                 SToolButton{
                     id:info
@@ -728,12 +730,16 @@ Window {
                 }
 
                 SToolButton{
-                    id:experiments_mannul
+                    id:experiments_manual
                     imgSrc: "qrc:/imgs/ico/book.png"
                     btnName: ""
                     width: 24
                     height: 24
-                    onHoveredChanged: tbntip("experiment mannul\n实验手册",experiments_mannul)
+                    onHoveredChanged: tbntip("experiment mannul\n实验手册",experiments_manual)
+                    onClicked: {
+                        var mf=shell.getDirByFilePaht(Qt.application.arguments[0])+"\\ZKY-PMB0100SS.pdf"
+                        shell.openFile(mf)
+                    }
                 }
 
                 SToolButton{
@@ -1297,7 +1303,6 @@ Window {
                                     slider.to = mvid.getFrameCount()
                                     slider.value2 = slider.to
                                     slider.value1=0
-                                    console.log("test")
                                 }
                             }
                         }

@@ -139,7 +139,7 @@ public:
     void                getSupportedResolutions(int index);
     QString             getCameraMatrix(QString fd);
     void                getFiles(std::string path, std::vector<std::string> *files);
-    bool                readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
+    static bool         readCameraMatrix(cv::Matx33d &K, cv::Vec4d &D);
     bool                initUndistort(cv::MatSize size);
     cv::Size            getCurrentResolution();
     void                onRfpsChanged(double rfps);

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/calib3d.hpp>
 #include <tcamera.h>
 #include <pmb0100rec.h>
 #include <commandLineTools.h>
@@ -68,6 +69,11 @@ bool TVideoAnalysis::setPos(int i){
     return ret;
 }
 
+void TVideoAnalysis::reloadFrame(){
+    this->setBeginPos(this->pos-1);
+    this->getFrame();
+}
+
 
 int TVideoAnalysis::getBeginPos(){
     return 0;
@@ -93,10 +99,31 @@ bool TVideoAnalysis::isOpened(){
     return video_reader->isOpened();
 }
 
+
+bool TVideoAnalysis::initUndistort(cv::MatSize size){
+    this->correctSize.width=size[1];
+    this->correctSize.height=size[0];
+    TVideoCapture::readCameraMatrix(this->intrinsics_matrix,this->distortion_coeff);
+    cv::fisheye::initUndistortRectifyMap(intrinsics_matrix, distortion_coeff, cv::Matx33d::eye(), intrinsics_matrix, correctSize, CV_16SC2, mapx, mapy);
+    return true;
+
+}
+
+void TVideoAnalysis::setCaliFlag(bool flag){
+    this->cali_flag=flag;
+}
+
 void TVideoAnalysis::getFrame(){
     bool ret = video_reader->read(img);
     if(!ret){
         return;
+    }
+    if (cali_flag){
+        if(correctSize.width!=img.size[1] || correctSize.height!=img.size[0]){
+            initUndistort(img.size);
+        }
+        cv::remap(img, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+        img=correctedMat;
     }
     if(recFlag){
         pmb0100rec_para.pos=this->pos;

@@ -38,6 +38,13 @@ public:
     std::string                          testfile="C:\\Users\\Tomas Wu\\Videos\\202203151103光镊演示.mp4";
     pmb0100rec::Para                    pmb0100rec_para;
     std::vector<pmb0100rec::recResult>  recResult;
+    bool                                cali_flag;
+    cv::Size2i                          correctSize;
+    cv::Mat                             correctedMat;
+    cv::Mat                             mapx;
+    cv::Mat                             mapy;
+    cv::Matx33d                         intrinsics_matrix;
+    cv::Vec4d                           distortion_coeff;
 
     //method
     cv::Mat                             QImage2Mat(QImage const& image);
@@ -53,6 +60,7 @@ public:
     Q_INVOKABLE void                    open(QString path);
     Q_INVOKABLE bool                    isOpened();
     void                                getFrame();
+    Q_INVOKABLE void                    reloadFrame();
     Q_INVOKABLE void                    setPlaySpeed(double speed);
     Q_INVOKABLE void                    play_pause();
     Q_INVOKABLE bool                    isPlaying(){return play_timer->isActive();};
@@ -61,6 +69,8 @@ public:
     Q_INVOKABLE QList<int>              getImageSize();
     Q_INVOKABLE void                    preThreshold(int threshold);
     Q_INVOKABLE void                    showFrequencyImage(int start,int number,int interval);
+    bool                                initUndistort(cv::MatSize size);
+    Q_INVOKABLE void                    setCaliFlag(bool flag);
 
 
     // qml read

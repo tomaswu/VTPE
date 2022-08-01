@@ -237,7 +237,13 @@ Window {
                     text: "畸变校正"
                     Layout.columnSpan: 3
                     checked: false
-                    onCheckStateChanged: mcap.setCaliFlag(checked)
+                    onCheckStateChanged: {
+                        mcap.setCaliFlag(checked)
+                        mvid.setCaliFlag(checked)
+                        if(mvid.isOpened()){
+                            mvid.reloadFrame()
+                        }
+                    }
                 }
 
                 SToolButton{

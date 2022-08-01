@@ -9,6 +9,8 @@ Window {
     maximumHeight: height
     minimumHeight: height
     title: "PMB0100数据处理"
+    property int figs: 0
+    id:root
 
     Column{
         spacing: 15
@@ -132,7 +134,9 @@ Window {
                     if(filter_cbx.checked){
                         filter = [filter_low_input.text,filter_high_input.text]
                     }
-                    shell.data_process(data,header,para,filter,process_fps.text)
+                    root.figs+=1
+                    var r=shell.data_process(data,header,para,filter,process_fps.text)
+                    root.figs-=1
 
                 }
             }

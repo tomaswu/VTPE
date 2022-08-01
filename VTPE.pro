@@ -49,7 +49,8 @@ resources.files = main.qml \
                   SelectScale4Analysis.qml \
                   AddCurveDialog.qml \
                   DataProcessPara.qml \
-                  ZoomRect.qml
+                  ZoomRect.qml \
+                  StrobPara.qml
 
 
 resources.prefix = /$${TARGET}
@@ -84,6 +85,7 @@ DISTFILES += \
     SToolButton2.qml \
     SelectScale4Analysis.qml \
     SelectScale4Image.qml \
+    StrobPara.qml \
     TCheckBox.qml \
     TRecPara.qml \
     ToolbarVSplit.qml \

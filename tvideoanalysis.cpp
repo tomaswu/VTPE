@@ -228,7 +228,7 @@ QList<int> TVideoAnalysis::getImageSize(){
 }
 
 
-void TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
+bool TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
     qDebug()<<"频闪图测试";
     uint i;
     for (i=0;i<recResult.size();i++){
@@ -238,7 +238,7 @@ void TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
     }
     if(i==recResult.size()){
         qDebug()<<"错误的参数";
-        return;
+        return false;
     }
     else{
         int count=0;
@@ -261,7 +261,7 @@ void TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
                 break;
             }
         }
-        shell->showFrequencyImage(stro);
+        return shell->showFrequencyImage(stro);
     }
 
 //    shell->showFrequencyImage(QImage2Mat(ipdr->img));

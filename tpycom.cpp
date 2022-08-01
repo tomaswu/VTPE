@@ -124,7 +124,7 @@ void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<
     m.attr("pmb0100_process")(dl,hl,p,ft,fps);
 }
 
-void TPyCom::showFrequencyImage(cv::Mat mat){
+bool TPyCom::showFrequencyImage(cv::Mat mat){
 //    cout<<"call python:"<<"mat size: "<<mat.size<<endl;
     if(!Py_IsInitialized()){
         Py_Initialize();
@@ -136,9 +136,10 @@ void TPyCom::showFrequencyImage(cv::Mat mat){
     np::dtype dt = np::dtype::get_builtin<uchar>();
     np::ndarray array = np::from_data(mat.data,dt,shape,stride,own);
     bpy::object m = bpy::import("data_process");
-    m.attr("stroboscopic_map")(array);
+    bpy::object r = m.attr("stroboscopic_map")(array);
+    bool res = bpy::extract<bool>(r);
+    return res;
 }
-
 
 // 边写边学，获取返回的string
 //    char *bytes = PyBytes_AsString(res);

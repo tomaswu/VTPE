@@ -64,6 +64,6 @@ void commandLineTools::data_process(QList<QList<double>> data,QList<QString> hea
     tpycom->data_process(data,header,para,filter,fps);
 }
 
-void commandLineTools::showFrequencyImage(cv::Mat mat){
-    tpycom->showFrequencyImage(mat);
+bool commandLineTools::showFrequencyImage(cv::Mat mat){
+    return tpycom->showFrequencyImage(mat);
 }

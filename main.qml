@@ -18,6 +18,20 @@ Window {
         var s=shell.getNewNameByTime(folder_recording.photoFolder,".png")
     }
 
+    onClosing:function (close){
+        stro_para_window.close()
+        data_process_firgure.close()
+        pmb0100_para_window.close()
+        camera_settings_widnow.close()
+        feedback_dialog.visible=false
+        camera_settings_dialog.visible=false
+        if(stro_para_window.show_flag || data_process_firgure.figs>0){
+            close.accepted=false
+            dia.showInfo("需要先关闭绘图窗口！")
+        }
+    }
+
+
     ToolBar{
         id:toolbar
         width:parent.width-16
@@ -449,6 +463,7 @@ Window {
                                 mvid.setPlaySpeed(play_speed.currentText)
                                 video_player.checked=true
                                 data_table.fps=fps
+                                stro_para_window.setFrameCount(mvid.getFrameCount())
                             }
                             else{
                                 dia.showInfo("未能打开视频！")
@@ -594,7 +609,12 @@ Window {
                             dia.showInfo("没有打开视频！")
                         }
                         else{
-                            mvid.showFrequencyImage(0,5,10)
+                            if(data_table.dataList.length<=0){
+                                dia.showInfo("没有识别信息可供生成频闪图！")
+                            }
+                            else{
+                                stro_para_window.show();
+                            }
                         }
                     }
                 }
@@ -1639,6 +1659,10 @@ Window {
     // data process and figure dialog
     DataProcessPara{
         id:data_process_firgure
+    }
+
+    StrobPara{
+        id:stro_para_window
     }
 
     //data table window animation

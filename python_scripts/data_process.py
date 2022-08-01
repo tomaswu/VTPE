@@ -80,11 +80,11 @@ def smooth(data,band,sampling=1e4):
     return filtedData
 
 def stroboscopic_map(img:np.ndarray):
-    print("pyhton stroboscopic_map")
     nimg = img.copy()
-    plt.figure()
+    strob=plt.figure()
+    strob.canvas.set_window_title('频闪图')
     ax=plt.subplot()
     ax.imshow(nimg)
-    plt.ion()
+#    plt.ion() #mac需要加上这一条但win不能加
     plt.show()
-
+    return True

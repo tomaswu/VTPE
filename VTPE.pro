@@ -5,7 +5,7 @@ QT += quick \
       charts\
       widgets\
 
-CONFIG += c++17 console
+CONFIG += c++17 #console 控制台，用于调试
 
 RC_FILE += logo.rc
 

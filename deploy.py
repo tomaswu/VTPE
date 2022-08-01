@@ -5,6 +5,7 @@ import shutil
 
 class EPath():
     boost_python=r'E:\boost_1_79_0\boost_1_79_0\bin.v2\libs\python\build\msvc-14.2\release\python-3.10\threading-multi\boost_python310-vc142-mt-x64-1_79.dll'
+    boost_numpy=r'E:\boost_1_79_0\boost_1_79_0\stage\lib\boost_numpy310-vc142-mt-x64-1_79.dll'
     python_script=r'E:\private\TomasWu\CPP_programs\VTPE\python_scripts'
     qmldir=r'E:\private\TomasWu\CPP_programs\VTPE'
     pythonHome = r'F:\Users\Tomas\AppData\Local\Programs\Python\Python310'
@@ -13,6 +14,8 @@ class EPath():
     opencv_ffmpeg = r'E:\Tomas_temp\opencv\opencv460\opencv\build\bin\opencv_videoio_ffmpeg460_64.dll'
     mvsdk = r'C:\Program Files\General MVTech\MV Viewer\Runtime\x64'
     vcredist_2013 = r'E:\work\以后会用到\华谷动力MVviewer_2.3.1.GEN_Build20210929\UT and GE_DriverV2.1.6\华谷动力UT及GE系列相机软件包2018\华谷动力SDKV_2.1.6\Tools\vcredist\vcredist_2013_x64.exe'
+    softwareManual = r'E:\private\TomasWu\CPP_programs\VTPE\softwareManual.pdf'
+    ex_manual = r'E:\private\TomasWu\CPP_programs\VTPE\ZKY-PMB0100SS.pdf'
 
 def copyPython(dst):
     print('复制python310.dll')
@@ -50,6 +53,7 @@ def deployqt():
     copyPython(deployPath)
     print('复制boost库...')
     shutil.copy(EPath.boost_python,deployPath)
+    shutil.copy(EPath.boost_numpy,deployPath)
     print('复制opencv库...')
     shutil.copy(EPath.opencv_world,deployPath)
     print('复制opencv ffmpeg库...')
@@ -58,7 +62,9 @@ def deployqt():
     copyMVSDK(deployPath)
     print('复制vc发布运行库')
     shutil.copy(EPath.vcredist_2013,deployPath)
-
+    print('复制说明书')
+    shutil.copy(EPath.softwareManual,deployPath)
+    shutil.copy(EPath.ex_manual,deployPath)
     os.system(f'explorer {deployPath}')
     print('发布完成！')
     

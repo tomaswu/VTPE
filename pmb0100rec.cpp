@@ -11,9 +11,9 @@ using namespace std;
 void pmb0100rec::dsColor(cv::Mat &img,Points points,Points *bluePoint,Points *whitePoint){
     int r,g,b;
     for(auto &i:points){
-        b = img.at<cv::Vec3b>(i.x,i.y)[0];
-        g = img.at<cv::Vec3b>(i.x,i.y)[1];
-        r = img.at<cv::Vec3b>(i.x,i.y)[2];
+        b = img.at<cv::Vec3b>(i.y,i.x)[0];
+        g = img.at<cv::Vec3b>(i.y,i.x)[1];
+        r = img.at<cv::Vec3b>(i.y,i.x)[2];
         if(b-g>20&&b-r>20){
             bluePoint->push_back(i);
         }
@@ -148,19 +148,12 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para,double kr){
     ctr whiteBall(-1,-1,-1);
     ctr blueBall(-1,-1,-1);
     dsColor(img,points,&bluePoints,&whitePoints);
-    cout<<bluePoints.size()<<endl;
     if(whitePoints.size()>=para.pointNum){
         whiteBall = center(whitePoints,kr);
     }
     if(bluePoints.size()>=para.pointNum){
         blueBall = centerBlue(points,bluePoints,kr);
     }
-    RGB green = {0,255,0};
-    RGB red = {255,0,0};
-    colorDraw(img,whitePoints,green);
-    colorDraw(img,bluePoints,red);
-    cv::imshow("test",img);
-    cv::waitKey(20);
     res.data.push_back(whiteBall);
     res.data.push_back(blueBall);
     return res;

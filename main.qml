@@ -201,8 +201,13 @@ Window {
                     onClicked: {
                         if(mcap.isOpened()){
                             if(!mcap.isRecord()){
-                                mcap.startRecord(folder_recording.recordPath)
-                                record_led_blink_timer.start()
+                                if(!folder_recording.recordPath){
+                                    dia.showInfo("请先设置录像保存路径！")
+                                }
+                                else{
+                                    mcap.startRecord(folder_recording.recordPath)
+                                    record_led_blink_timer.start()
+                                }
                             }
                             else{
                                 mcap.stopRecord();

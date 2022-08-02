@@ -124,20 +124,21 @@ Window {
                 width:48
                 text: "绘制"
                 onClicked: {
-                    var data = data_table.getDataList();
-                    var filter =[0,0]
-                    var para = []
-                    for(var i =0;i<list_model.count;i++){
-                       para.push([list_model.get(i).label,list_model.get(i).x_axis,list_model.get(i).y_axis])
+                    if(root.figs==0){
+                        var data = data_table.getDataList();
+                        var filter =[0,0]
+                        var para = []
+                        for(var i =0;i<list_model.count;i++){
+                           para.push([list_model.get(i).label,list_model.get(i).x_axis,list_model.get(i).y_axis])
+                        }
+                        var header = data_table.getHeaderName()
+                        if(filter_cbx.checked){
+                            filter = [filter_low_input.text,filter_high_input.text]
+                        }
+                        root.figs+=1
+                        var r=shell.data_process(data,header,para,filter,process_fps.text)
+                        root.figs-=1
                     }
-                    var header = data_table.getHeaderName()
-                    if(filter_cbx.checked){
-                        filter = [filter_low_input.text,filter_high_input.text]
-                    }
-                    root.figs+=1
-                    var r=shell.data_process(data,header,para,filter,process_fps.text)
-                    root.figs-=1
-
                 }
             }
 

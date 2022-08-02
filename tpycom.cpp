@@ -67,7 +67,7 @@ bool TPyCom::sendEmail(QString content,QString subject,QString to,QString from, 
     return ret;
 }
 
-void TPyCom::list2csv(QList<QList<double>> l,QString path){
+void TPyCom::list2csv(QList<QList<double>> l,QString path,bool standardUnit){
     if(!Py_IsInitialized()){
         Py_Initialize();
     }
@@ -81,7 +81,7 @@ void TPyCom::list2csv(QList<QList<double>> l,QString path){
         }
         li.append(row_li);
     }
-    m.attr("list2csv")(li,path.toStdString());
+    m.attr("list2csv")(li,path.toStdString(),standardUnit);
 }
 
 

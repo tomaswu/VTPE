@@ -18,7 +18,7 @@ public:
     int boostTest();
     std::vector<std::string> getFiles(std::string path);
     bool sendEmail(QString content,QString subject = "VTPE project feedback",QString to = "tomaswu@qq.com",QString from = "hurinkazan@qq.com", QString password = "rrkfddrxxwlzbjhh");
-    void list2csv(QList<QList<double>> l,QString path);
+    void list2csv(QList<QList<double>> l,QString path,bool standardUnit);
     QString getNewNameByTime(QString dic,QString tail);
     void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps);
     bool showFrequencyImage(cv::Mat mat);

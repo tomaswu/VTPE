@@ -156,6 +156,8 @@ Rectangle {
                 for(var i=0;i<root.dataList.length;i++){
                     addRowByList(root.dataList[i],false)
                 }
+                var r = root.getHeaderName()
+                data_process_firgure.setCombox(r,r)
 
             }
         }
@@ -222,7 +224,7 @@ Rectangle {
         var path = shell.getSaveFileName("导出数据",folder_recording.lastSaveFolder,"csv(*.csv)")
         dia.showInfo("导出数据成功！")
         if(path){
-            shell.list2csv(ml,path)
+            shell.list2csv(ml,path,root.standardUnit)
             var cmd
             switch(Qt.platform.os){
                case "windows":

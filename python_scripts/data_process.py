@@ -19,10 +19,13 @@ def pyHello():
     print(a)
     print("hello world! python")
 
-def list2csv(l,filepath):
+def list2csv(l,filepath,standardUnit=False):
     try:
         with open(filepath,"w") as t:
-            t.write("frame,x1,y1,x2,y2\n")
+            if standardUnit:
+                t.write("times(s),x1(mm),y1(mm),x2(mm),y2(mm)\n")
+            else:
+                t.write("frame,x1,y1,x2,y2\n")
             for i in l:
                 s = ','.join([str(k) for k in i])
                 t.write(s+"\n")
@@ -46,6 +49,9 @@ def pmb0100_process(dl:list,hl:list,p:list,ft:list,fps:float):
         ax=plt.subplot()
         for i in p:
             label = i[0]
+            if i[1] not in hl:
+                plt.close()
+                return
             x_axis = hl.index(i[1])
             y_axis = hl.index(i[2])
             xx,yy=data[:,x_axis],data[:,y_axis]
@@ -57,27 +63,31 @@ def pmb0100_process(dl:list,hl:list,p:list,ft:list,fps:float):
         print(e)
 
 def smooth(data,band,sampling=1e4):
-    if band==[0,5000] or band[0]>=band[1]:
+    try:
+        if band==[0,5000] or band[0]>=band[1]:
+            return data
+        N=1
+        band=[2*band[0]/sampling,2*band[1]/sampling]
+        if band[0]==0:
+            sty='lowpass'
+            b, a = scipy.signal.butter(N, band[1], sty)
+        elif band[1]==1:
+            sty='highpass'
+            b, a = scipy.signal.butter(N, band[0], sty)
+        elif 0<band[0]<band[1]<1:
+            sty='bandpass'
+            b, a = scipy.signal.butter(N, band, sty)
+        elif 0<band[1]<band[0]<1:
+            sty='bandstop'
+            b, a = scipy.signal.butter(N, [band[1],band[0]], sty)
+        #配置滤波器 8 表示滤波器的阶数
+        else:
+            return data
+        filtedData = scipy.signal.filtfilt(b, a, data)  #data为要过滤的信号
+        return filtedData
+    except Exception as e:
+        print(e)
         return data
-    N=1
-    band=[2*band[0]/sampling,2*band[1]/sampling]
-    if band[0]==0:
-        sty='lowpass'
-        b, a = scipy.signal.butter(N, band[1], sty)
-    elif band[1]==1:
-        sty='highpass'
-        b, a = scipy.signal.butter(N, band[0], sty)
-    elif 0<band[0]<band[1]<1:
-        sty='bandpass'
-        b, a = scipy.signal.butter(N, band, sty)
-    elif 0<band[1]<band[0]<1:
-        sty='bandstop'
-        b, a = scipy.signal.butter(N, [band[1],band[0]], sty)
-       #配置滤波器 8 表示滤波器的阶数
-    else:
-        return data
-    filtedData = scipy.signal.filtfilt(b, a, data)  #data为要过滤的信号
-    return filtedData
 
 def stroboscopic_map(img:np.ndarray):
     nimg = img.copy()

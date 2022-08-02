@@ -26,7 +26,7 @@ public:
     Q_INVOKABLE QString getExistingFolder(QString title,QString dir);
     Q_INVOKABLE void pyScriptTest(){tpycom->boostTest();};
     Q_INVOKABLE bool feedBackByEmail(QString s);
-    Q_INVOKABLE void list2csv(QList<QList<double>> l,QString path);
+    Q_INVOKABLE void list2csv(QList<QList<double>> l,QString path,bool standardUnit);
     Q_INVOKABLE QString getNewNameByTime(QString dic,QString tail);
     Q_INVOKABLE void data_process(QList<QList<double>> data,QList<QString> header,QList<QList<QString>> para,QList<double> filter, double fps);
     Q_INVOKABLE bool showFrequencyImage(cv::Mat mat);

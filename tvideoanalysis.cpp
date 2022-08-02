@@ -157,12 +157,13 @@ void TVideoAnalysis::getFrame(){
     emit imageRefreshed();
     getPos();
     if(pos==endPos){
-        setPos(beginPos);
         if(recFlag){
             recFlag=false;
             play_timer->stop();
             emit finishedRec();
+            return;
         }
+        setPos(beginPos);
     }
 }
 

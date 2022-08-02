@@ -49,8 +49,8 @@ bool commandLineTools::feedBackByEmail(QString s){
     return tpycom->sendEmail(s);
 }
 
-void commandLineTools::list2csv(QList<QList<double>> l,QString path){
-    tpycom->list2csv(l,path);
+void commandLineTools::list2csv(QList<QList<double>> l,QString path,bool standardUnit){
+    tpycom->list2csv(l,path,standardUnit);
 }
 
 QString commandLineTools::getExistingFolder(QString title,QString dir){

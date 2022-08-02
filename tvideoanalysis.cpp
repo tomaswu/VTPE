@@ -16,8 +16,10 @@ TVideoAnalysis::TVideoAnalysis(QObject *parent)
     : QObject{parent}
 {
     ipdr = new imgProvider;
+    multiRecPool = new MultiRec;
     video_reader = new cv::VideoCapture;
     play_timer = new QTimer;
+    connect(this->multiRecPool,&MultiRec::finishedRec,this,&TVideoAnalysis::onPoolFinishedOneFrame);
     connect(this->play_timer,&QTimer::timeout,this,&TVideoAnalysis::getFrame);
     play_timer->setInterval(5);
 //    this->open(this->testfile);
@@ -28,6 +30,10 @@ TVideoAnalysis::~TVideoAnalysis(){
     delete play_timer;
     video_reader->release();
     delete video_reader;
+}
+
+void TVideoAnalysis::onPoolFinishedOneFrame(pmb0100rec::recResult res){
+    qDebug()<<"get pool res "<<res.pos<<res.data[0].x<<res.data[0].y;
 }
 
 void TVideoAnalysis::open(QString path){
@@ -135,6 +141,7 @@ void TVideoAnalysis::getFrame(){
     if(recFlag){
         pmb0100rec_para.pos=this->pos;
         pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para,kr);
+        multiRecPool->addMission(img,pmb0100rec_para,kr);
         QList<double> res;
         res.append(pos);
         recResult.push_back(r);

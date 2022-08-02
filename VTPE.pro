@@ -14,6 +14,7 @@ HEADERS += \
     commandLineTools.h \
     include/IMVAPI/IMVApi.h \
     include/IMVAPI/IMVDefines.h \
+    multirec.h \
     pmb0100rec.h \
     pmc0100_com.h \
     tcamera.h \
@@ -24,6 +25,7 @@ HEADERS += \
 SOURCES += \
         commandLineTools.cpp \
         main.cpp \
+    multirec.cpp \
     pmb0100rec.cpp \
         pmc0100_com.cpp \
         tcamera.cpp \

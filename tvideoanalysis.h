@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <pmb0100rec.h>
+#include <multirec.h>
 
 enum _recType{
     PMB0100,
@@ -24,6 +25,7 @@ public:
     ~TVideoAnalysis();
 
     //member
+    MultiRec                            *multiRecPool;
     QString                             videoName;
     int                                 rec_method;
     cv::VideoCapture                    *video_reader;
@@ -71,6 +73,7 @@ public:
     Q_INVOKABLE bool                    showFrequencyImage(int start,int number,int interval);
     bool                                initUndistort(cv::MatSize size);
     Q_INVOKABLE void                    setCaliFlag(bool flag);
+    void                                onPoolFinishedOneFrame(pmb0100rec::recResult res);
 
 
     // qml read

@@ -1,5 +1,6 @@
 #include "pmb0100rec.h"
 #include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 #include <cmath>
 #include <iostream>
 #include <exception>
@@ -13,7 +14,7 @@ void pmb0100rec::dsColor(cv::Mat &img,Points points,Points *bluePoint,Points *wh
         b = img.at<cv::Vec3b>(i.x,i.y)[0];
         g = img.at<cv::Vec3b>(i.x,i.y)[1];
         r = img.at<cv::Vec3b>(i.x,i.y)[2];
-        if(b>g+30&&b>r+30){
+        if(b-g>20&&b-r>20){
             bluePoint->push_back(i);
         }
         else{
@@ -27,9 +28,9 @@ void pmb0100rec::colorDraw(cv::Mat &img,Points points,RGB rgb){
         cv::cvtColor(img,img,cv::COLOR_GRAY2BGR);
     }
     for(auto &p: points){
-        img.at<cv::Vec3b>(p.x,p.y)[0]=rgb[2];
-        img.at<cv::Vec3b>(p.x,p.y)[1]=rgb[1];
-        img.at<cv::Vec3b>(p.x,p.y)[2]=rgb[0];
+        img.at<cv::Vec3b>(p.y,p.x)[0]=rgb[2];
+        img.at<cv::Vec3b>(p.y,p.x)[1]=rgb[1];
+        img.at<cv::Vec3b>(p.y,p.x)[2]=rgb[0];
     }
 }
 
@@ -78,7 +79,7 @@ ctr pmb0100rec::center(Points points,double kr,int maxR,int minR){
     return ct;
 }
 
-ctr pmb0100rec::centerBlue(Points points,Points pointsBlue,int maxR,int minR){
+ctr pmb0100rec::centerBlue(Points points,Points pointsBlue,double kr,int maxR,int minR){
     ctr ct(0,0,0);
     vector<double> ds;
     int count;
@@ -118,9 +119,9 @@ ctr pmb0100rec::centerBlue(Points points,Points pointsBlue,int maxR,int minR){
                 tmp=count/ir;
                 if(tmp>s){
                     s=tmp;
-                    ct.x=(float)ip.x;
-                    ct.y=(float)ip.y;
-                    ct.z=(float)ir;
+                    ct.x=(float)ip.x/kr;
+                    ct.y=(float)ip.y/kr;
+                    ct.z=(float)ir/kr;
                 }
             }
         }
@@ -147,12 +148,19 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para,double kr){
     ctr whiteBall(-1,-1,-1);
     ctr blueBall(-1,-1,-1);
     dsColor(img,points,&bluePoints,&whitePoints);
+    cout<<bluePoints.size()<<endl;
     if(whitePoints.size()>=para.pointNum){
         whiteBall = center(whitePoints,kr);
     }
     if(bluePoints.size()>=para.pointNum){
-        blueBall = center(bluePoints,kr);
+        blueBall = centerBlue(points,bluePoints,kr);
     }
+    RGB green = {0,255,0};
+    RGB red = {255,0,0};
+    colorDraw(img,whitePoints,green);
+    colorDraw(img,bluePoints,red);
+    cv::imshow("test",img);
+    cv::waitKey(20);
     res.data.push_back(whiteBall);
     res.data.push_back(blueBall);
     return res;

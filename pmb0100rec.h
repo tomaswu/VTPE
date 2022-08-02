@@ -33,7 +33,7 @@ typedef struct _recPara{
 void dsColor(cv::Mat &img,Points points,Points *bluePoint,Points *whitePoint);
 void colorDraw(cv::Mat &img,Points points,RGB rgb);
 ctr center(Points points,double kr,int maxR=35,int minR=5);
-ctr centerBlue(Points points,Points pointsBlue,int maxR=35,int minR=5);
+ctr centerBlue(Points points,Points pointsBlue,double kr,int maxR=35,int minR=5);
 recResult recBall(cv::Mat img,Para para,double kr=1);
 cv::Mat preThreshold(cv::Mat img,int threshold);
 void convertStandardUint(ctr* p, double ratio);

@@ -138,7 +138,8 @@ void TVideoAnalysis::getFrame(){
         QList<double> res;
         res.append(pos);
         recResult.push_back(r);
-        for(auto &i:r.data){
+        for(int j=0;j<r.data.size();j++){
+            auto i = r.data[j];
             if(pmb0100rec_para.standardUint){
                 res.append(i.x*pmb0100rec_para.ratio);
                 res.append(i.y*pmb0100rec_para.ratio);
@@ -148,7 +149,12 @@ void TVideoAnalysis::getFrame(){
                 res.append(i.y);
             }
             if(i.x>0&&i.y>0&&i.z>0){
-                cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,255,0),img.size().width/640);
+                if(!j){
+                    cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,255,0),img.size().width/640);
+                }
+                else{
+                    cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,0,255),img.size().width/640);
+                }
             }
         }
         emit recognizedOneFrame(res);

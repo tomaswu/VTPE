@@ -10,12 +10,14 @@ class EPath():
     qmldir=r'E:\private\TomasWu\CPP_programs\VTPE'
     pythonHome = r'F:\Users\Tomas\AppData\Local\Programs\Python\Python310'
     pythonLib = r'E:\pkgtools\vtpepython\Lib'
+    pythonTcl = r'E:\pkgtools\vtpepython\tcl'
     opencv_world =r'E:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\bin\opencv_world460.dll'
     opencv_ffmpeg = r'E:\Tomas_temp\opencv\opencv460\opencv\build\bin\opencv_videoio_ffmpeg460_64.dll'
     mvsdk = r'C:\Program Files\General MVTech\MV Viewer\Runtime\x64'
     vcredist_2013 = r'E:\work\以后会用到\华谷动力MVviewer_2.3.1.GEN_Build20210929\UT and GE_DriverV2.1.6\华谷动力UT及GE系列相机软件包2018\华谷动力SDKV_2.1.6\Tools\vcredist\vcredist_2013_x64.exe'
     softwareManual = r'E:\private\TomasWu\CPP_programs\VTPE\softwareManual.pdf'
     ex_manual = r'E:\private\TomasWu\CPP_programs\VTPE\ZKY-PMB0100SS.pdf'
+    cameraMatrix = r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_2_3_MSVC2019_64bit-Release\cameraMatrix'
 
 def copyPython(dst):
     print('复制python310.dll')
@@ -24,6 +26,8 @@ def copyPython(dst):
     shutil.copytree(EPath.pythonHome+'/DLLs',dst+'/DLLs')
     print('复制python Lib')
     shutil.copytree(EPath.pythonLib,dst+'/Lib')
+    print('复制python tcl')
+    shutil.copytree(EPath.pythonTcl,dst+'/tcl')
 
 def copyMVSDK(dst):
     for i in os.listdir(EPath.mvsdk):
@@ -62,6 +66,8 @@ def deployqt():
     copyMVSDK(deployPath)
     print('复制vc发布运行库')
     shutil.copy(EPath.vcredist_2013,deployPath)
+    print('复制cameraMatrix')
+    shutil.copy(EPath.cameraMatrix,deployPath)
     print('复制说明书')
     shutil.copy(EPath.softwareManual,deployPath)
     shutil.copy(EPath.ex_manual,deployPath)

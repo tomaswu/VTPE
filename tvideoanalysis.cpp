@@ -115,6 +115,13 @@ void TVideoAnalysis::setCaliFlag(bool flag){
 
 void TVideoAnalysis::getFrame(){
     bool ret = video_reader->read(img);
+    double kr;
+    if(img.cols>640){
+        kr = 640.0/img.cols;
+    }
+    else{
+        kr=1.0;
+    }
     if(!ret){
         return;
     }
@@ -127,7 +134,7 @@ void TVideoAnalysis::getFrame(){
     }
     if(recFlag){
         pmb0100rec_para.pos=this->pos;
-        pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para);
+        pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para,kr);
         QList<double> res;
         res.append(pos);
         recResult.push_back(r);

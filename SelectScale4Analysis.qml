@@ -21,7 +21,12 @@ Item {
         if(mvid.isOpened()){
             if(video_img.paintedWidth>0){
                 var row1,row2,col1,col2,x0,y0,cw,ch
-                x0 = video_img.width/2+(data_table.width+data_table.x)+video_img.x+data_table.width+data_table.x
+                x0 = video_img.width/2+(data_table.width+data_table.x)+video_img.x//+data_table.width+data_table.x
+                if(data_table.visible){
+                    x0-=data_table.width
+                }
+
+                console.log(x0)
                 y0 = video_img.height/2+video_img.y
                 cw = video_img.paintedWidth*video_img.scale
                 ch = video_img.paintedHeight*video_img.scale
@@ -47,7 +52,7 @@ Item {
                 if(r2<0){r2=0;r1=r2}
                 if(r2>size[1])r2=size[1]
 
-                console.log(c1,c2,r1,r2)
+//                console.log(c1,c2,r1,r2)
 
                 pmb0100_para_window.setScale(c1,c2,r1,r2)
 

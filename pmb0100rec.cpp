@@ -2,6 +2,7 @@
 #include <opencv2/imgproc.hpp>
 #include <cmath>
 #include <iostream>
+#include <exception>
 
 using namespace pmb0100rec;
 using namespace std;
@@ -12,7 +13,7 @@ void pmb0100rec::dsColor(cv::Mat &img,Points points,Points *bluePoint,Points *wh
         b = img.at<cv::Vec3b>(i.x,i.y)[0];
         g = img.at<cv::Vec3b>(i.x,i.y)[1];
         r = img.at<cv::Vec3b>(i.x,i.y)[2];
-        if(b-20>g&&b-20>r){
+        if(b>g+30&&b>r+30){
             bluePoint->push_back(i);
         }
         else{
@@ -25,7 +26,6 @@ void pmb0100rec::colorDraw(cv::Mat &img,Points points,RGB rgb){
     if(img.channels()==1){
         cv::cvtColor(img,img,cv::COLOR_GRAY2BGR);
     }
-
     for(auto &p: points){
         img.at<cv::Vec3b>(p.x,p.y)[0]=rgb[2];
         img.at<cv::Vec3b>(p.x,p.y)[1]=rgb[1];
@@ -33,7 +33,7 @@ void pmb0100rec::colorDraw(cv::Mat &img,Points points,RGB rgb){
     }
 }
 
-ctr pmb0100rec::center(Points points,int maxR,int minR){
+ctr pmb0100rec::center(Points points,double kr,int maxR,int minR){
     ctr ct(0,0,0);
     vector<double> ds;
     int count;
@@ -69,9 +69,9 @@ ctr pmb0100rec::center(Points points,int maxR,int minR){
             tmp=count/ir;
             if(tmp>s){
                 s=tmp;
-                ct.x=(float)ip.x;
-                ct.y=(float)ip.y;
-                ct.z=(float)ir;
+                ct.x=(float)ip.x/kr;
+                ct.y=(float)ip.y/kr;
+                ct.z=(float)ir/kr;
             }
         }
     }
@@ -129,30 +129,29 @@ ctr pmb0100rec::centerBlue(Points points,Points pointsBlue,int maxR,int minR){
     return ct;
 }
 
-recResult pmb0100rec::recBall(cv::Mat img,Para para){
+recResult pmb0100rec::recBall(cv::Mat img,Para para,double kr){
     Points points;
     recResult res;
     res.pos=para.pos;
+    cv::resize(img,img,cv::Size(),kr,kr);
     cv::Mat gray_img;
     cv::cvtColor(img,gray_img,cv::COLOR_BGR2GRAY);
-    for(int row=para.row1;row<para.row2;row++){
-        for(int col=para.col1;col<para.col2;col++){
+    for(int row=para.row1*kr;row<para.row2*kr;row++){
+        for(int col=para.col1*kr;col<para.col2*kr;col++){
             if(gray_img.at<uchar>(row,col)>=para.threshold){
                 points.push_back(cv::Point(col,row));
             }
         }
     }
-
     Points whitePoints,bluePoints;
     ctr whiteBall(-1,-1,-1);
     ctr blueBall(-1,-1,-1);
     dsColor(img,points,&bluePoints,&whitePoints);
     if(whitePoints.size()>=para.pointNum){
-        whiteBall = center(whitePoints);
+        whiteBall = center(whitePoints,kr);
     }
-
     if(bluePoints.size()>=para.pointNum){
-        blueBall = center(bluePoints);
+        blueBall = center(bluePoints,kr);
     }
     res.data.push_back(whiteBall);
     res.data.push_back(blueBall);

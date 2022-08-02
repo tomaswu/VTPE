@@ -5,7 +5,7 @@ import Qt.labs.qmlmodels
 Rectangle {
 
     id:root
-    width:280
+    width:300
     height: 480
     property bool standardUnit: true
     property real unitRatio: 1
@@ -133,7 +133,7 @@ Rectangle {
             }
 
             Text {
-                text: pmb0100_para_window.standardUint? display.toLocaleString(Qt.locale("en-US"),"e",2): display
+                text: root.standardUnit? display.toLocaleString(Qt.locale("en-US"),"f",3): display
                 anchors.centerIn: parent
                 font.pointSize: 8
                 color: "black"

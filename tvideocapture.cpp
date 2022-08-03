@@ -866,10 +866,12 @@ QString TVideoCapture::getCameraMatrix(QString fd){
     while (num < files.size())
     {
         //----解决一下中文路径问题----
-        FILE* f = fopen(files[num].c_str(), "rb");
-        fseek(f, 0, SEEK_END); // seek to end of file
-        size_t buffer_size = ftell(f); // get current file pointer
-        fseek(f, 0, SEEK_SET); // seek back to beginning of file
+//        FILE* f = fopen(files[num].c_str(), "rb");
+//        fseek(f, 0, SEEK_END); // seek to end of file
+//        size_t buffer_size = ftell(f); // get current file pointer
+//        fseek(f, 0, SEEK_SET); // seek back to beginning of file
+        std::fstream infile;
+        infile.open(files[num],)
         std::vector<char> buffer(buffer_size);
         fread(&buffer[0], sizeof(char), buffer_size, f);
         fclose(f);
@@ -896,6 +898,9 @@ QString TVideoCapture::getCameraMatrix(QString fd){
         }
         tempcorners.clear();
         num++;
+    }
+    if(objectv.size()==0){
+        return "校正失败";
     }
 
     cv::fisheye::calibrate(objectv, imagev, cv::Size(image.cols,image.rows), intrinsics, distortion_coeff, cv::noArray(), cv::noArray(), flag, cv::TermCriteria(3, 20, 1e-6));
@@ -937,6 +942,9 @@ QString TVideoCapture::getCameraMatrix(QString fd){
     corrected.release();
     mapx.release();
     mapy.release();
+    if(objectv.size()<5){
+        return "校正成功，但可用棋盘图较少！";
+    }
     return  "校正成功!";
 }
 

@@ -863,22 +863,26 @@ QString TVideoCapture::getCameraMatrix(QString fd){
     std::ofstream camera_matrix("cameraMatrix");
 
     int num = 0;
+    char tmp;
     while (num < files.size())
     {
         //----解决一下中文路径问题----
-//        FILE* f = fopen(files[num].c_str(), "rb");
-//        fseek(f, 0, SEEK_END); // seek to end of file
-//        size_t buffer_size = ftell(f); // get current file pointer
-//        fseek(f, 0, SEEK_SET); // seek back to beginning of file
-        std::fstream infile;
-        infile.open(files[num],)
-        std::vector<char> buffer(buffer_size);
-        fread(&buffer[0], sizeof(char), buffer_size, f);
-        fclose(f);
+        std::vector<char> buffer;
+        QFile f(QString::fromStdString(files[num]));
+        f.open(QIODevice::ReadOnly);
+        QDataStream data(&f);
+        while(!data.atEnd()){
+            data>>tmp;
+            buffer.push_back(tmp);
+        }
+        f.close();
         //------------------------
         image = cv::imdecode(buffer,cv::IMREAD_COLOR);
-        if (image.empty())
-            break;
+        if (image.empty()){
+            std::cout<<"empty buff:"<<files[num]<<std::endl;
+            num++;
+            continue;
+        }
 
         cvtColor(image, grayimage, CV_BGR2GRAY);
         bool findchessboard = cv::checkChessboard(grayimage, ChessBoardSize);

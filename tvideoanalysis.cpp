@@ -275,7 +275,6 @@ bool TVideoAnalysis::showFrequencyImage(int start,int number,int interval){
             mask=cv::Mat::zeros(fimg.size(),CV_8UC1);
             cv::circle(mask,cv::Point(recResult[j].data[0].x,recResult[j].data[0].y),recResult[j].data[0].z,cv::Scalar(255),-1);
             fimg.copyTo(stro,mask);
-
             count+=1;
             if(count>=number){
                 break;

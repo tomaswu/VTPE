@@ -11,6 +11,7 @@
 #include <fstream>
 #include <QThread>
 #include <qdebug.h>
+#include <QFile>
 #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
 #include <IMVAPI/IMVApi.h>
 #include <IMVAPI/IMVDefines.h>

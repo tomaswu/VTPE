@@ -19,9 +19,12 @@ TVideoAnalysis::TVideoAnalysis(QObject *parent)
     multiRecPool = new MultiRec;
     video_reader = new cv::VideoCapture;
     play_timer = new QTimer;
-    connect(this->multiRecPool,&MultiRec::finishedRec,this,&TVideoAnalysis::onPoolFinishedOneFrame);
+    rec_timer  = new QTimer;
+    connect(this->multiRecPool,&MultiRec::recOrder,this,&TVideoAnalysis::onPoolFinishedOneFrame);
     connect(this->play_timer,&QTimer::timeout,this,&TVideoAnalysis::getFrame);
     play_timer->setInterval(5);
+    connect(this->rec_timer,&QTimer::timeout,this,&TVideoAnalysis::addRecMission);
+    rec_timer->setInterval(1);
 //    this->open(this->testfile);
 }
 
@@ -32,8 +35,35 @@ TVideoAnalysis::~TVideoAnalysis(){
     delete video_reader;
 }
 
-void TVideoAnalysis::onPoolFinishedOneFrame(pmb0100rec::recResult res){
-    qDebug()<<"get pool res "<<res.pos<<res.data[0].x<<res.data[0].y;
+void TVideoAnalysis::onPoolFinishedOneFrame(pmb0100rec::recResult r){
+//    qDebug()<<"get order pool res "<<r.pos<<r.data[0].x<<r.data[0].y;
+    QList<double> res;
+    res.append(r.pos);
+    video_reader->set(cv::CAP_PROP_POS_FRAMES,r.pos);
+    cv::Mat img;
+    video_reader->read(img);
+    for(int j=0;j<r.data.size();j++){
+        auto i = r.data[j];
+        res.append(i.x);
+        res.append(i.y);
+        if(i.x>0&&i.y>0&&i.z>0){
+            if(!j){
+                cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,255,0),img.size().width/640);
+            }
+            else{
+                cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,0,255),img.size().width/640);
+            }
+        }
+    }
+    emit recognizedOneFrame(res);
+    ipdr->img = Mat2QImage(img);
+    emit imageRefreshed();
+    pos=r.pos;
+    emit posChanged();
+    if(r.pos==this->endPos){
+        qDebug()<<"finished"<<this->multiRecPool->pool->activeThreadCount();
+        emit finishedRec();
+    }
 }
 
 void TVideoAnalysis::open(QString path){
@@ -138,44 +168,11 @@ void TVideoAnalysis::getFrame(){
         cv::remap(img, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
         img=correctedMat;
     }
-    if(recFlag){
-        pmb0100rec_para.pos=this->pos;
-        pmb0100rec::recResult r = pmb0100rec::recBall(img,pmb0100rec_para,kr);
-        multiRecPool->addMission(img,pmb0100rec_para,kr);
-        QList<double> res;
-        res.append(pos);
-        recResult.push_back(r);
-        for(int j=0;j<r.data.size();j++){
-            auto i = r.data[j];
-            if(pmb0100rec_para.standardUint){
-                res.append(i.x*pmb0100rec_para.ratio);
-                res.append(i.y*pmb0100rec_para.ratio);
-            }
-            else{
-                res.append(i.x);
-                res.append(i.y);
-            }
-            if(i.x>0&&i.y>0&&i.z>0){
-                if(!j){
-                    cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,255,0),img.size().width/640);
-                }
-                else{
-                    cv::circle(img,cv::Point(i.x,i.y),i.z,cv::Scalar(0,0,255),img.size().width/640);
-                }
-            }
-        }
-        emit recognizedOneFrame(res);
-    }
+
     ipdr->img = Mat2QImage(img);
     emit imageRefreshed();
     getPos();
     if(pos==endPos){
-        if(recFlag){
-            recFlag=false;
-            play_timer->stop();
-            emit finishedRec();
-            return;
-        }
         setPos(beginPos);
     }
 }
@@ -201,15 +198,16 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
         pmb0100rec_para.standardUint = standardUint;
         pmb0100rec_para.ratio = ratio;
         this->recResult.clear();
+        this->multiRecPool->recAnswer.clear();
+        this->multiRecPool->curPos=beginPos;
         break;
     }
     if(play_timer->isActive()){
         play_timer->stop();
     }
-    play_timer->setInterval(1);
-    setPos(beginPos);
     recFlag=true;
-    play_timer->start();
+    recPos=beginPos;
+    rec_timer->start();
 }
 
 void TVideoAnalysis::stopRecognize(){
@@ -217,7 +215,25 @@ void TVideoAnalysis::stopRecognize(){
         play_timer->stop();
     }
     recFlag=false;
-    setPlaySpeed(play_speed);
+    multiRecPool->pool->clear();
+    bool r = multiRecPool->pool->waitForDone(-1);
+    if(r){
+        qDebug()<<"stop"<< multiRecPool->pool->activeThreadCount();
+    }
+}
+
+void TVideoAnalysis::addRecMission(){
+    if(recPos<=endPos && recFlag){
+        this->video_reader->set(cv::CAP_PROP_POS_FRAMES,this->recPos);
+        cv::Mat img;
+        this->video_reader->read(img);
+        this->pmb0100rec_para.pos = recPos;
+        this->multiRecPool->addMission(img,this->pmb0100rec_para);
+        recPos+=1;
+    }
+    else{
+        rec_timer->stop();
+    }
 }
 
 void TVideoAnalysis::setPlaySpeed(double speed){

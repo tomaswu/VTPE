@@ -51,20 +51,29 @@ std::vector<std::string> TPyCom::getFiles(std::string path){
 }
 
 bool TPyCom::sendEmail(QString content,QString subject,QString to,QString from, QString password){
-    bool ret = false;
-    if(!Py_IsInitialized()){
-        Py_Initialize();
+    try{
+        bool ret = false;
+        if(!Py_IsInitialized()){
+            Py_Initialize();
+        }
+        bpy::object m = bpy::import("temail");
+        bpy::object email = m.attr("Mail")();
+        email.attr("sender") = from.toStdString();
+        email.attr("mail_pass") = password.toStdString();
+        bpy::list recvs;
+        recvs.append(to.toStdString());
+        email.attr("receivers") = recvs;
+        bpy::object r = email.attr("send")(content.toStdString(),subject.toStdString());
+        ret = bpy::extract<bool>(r);
+        return ret;
     }
-    bpy::object m = bpy::import("temail");
-    bpy::object email = m.attr("Mail")();
-    email.attr("sender") = from.toStdString();
-    email.attr("mail_pass") = password.toStdString();
-    bpy::list recvs;
-    recvs.append(to.toStdString());
-    email.attr("receivers") = recvs;
-    bpy::object r = email.attr("send")(content.toStdString(),subject.toStdString());
-    ret = bpy::extract<bool>(r);
-    return ret;
+    catch (boost::python::error_already_set const &) {
+        if (PyErr_Occurred()) {
+            //find out it is exception "ldap.SERVER_DOWN"?
+        }
+            PyErr_Clear();
+    }
+    return false;
 }
 
 void TPyCom::list2csv(QList<QList<double>> l,QString path,bool standardUnit){

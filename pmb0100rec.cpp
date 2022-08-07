@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <exception>
+#include <qdebug.h>
 
 using namespace pmb0100rec;
 using namespace std;
@@ -152,7 +153,8 @@ recResult pmb0100rec::recBall(cv::Mat img,Para para,double kr){
         whiteBall = center(whitePoints,kr);
     }
     if(bluePoints.size()>=para.pointNum){
-        blueBall = centerBlue(points,bluePoints,kr);
+//        blueBall = centerBlue(points,bluePoints,kr);
+        blueBall = center(bluePoints,kr);
     }
     res.data.push_back(whiteBall);
     res.data.push_back(blueBall);

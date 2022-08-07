@@ -33,10 +33,12 @@ public:
     int                                 pos;
     int                                 beginPos;
     int                                 endPos;
+    int                                 recPos;
     double                              play_speed;
     bool                                recFlag=false;
     imgProvider                         *ipdr;
     QTimer                              *play_timer;
+    QTimer                              *rec_timer;
     std::string                          testfile="C:\\Users\\Tomas Wu\\Videos\\202203151103光镊演示.mp4";
     pmb0100rec::Para                    pmb0100rec_para;
     std::vector<pmb0100rec::recResult>  recResult;
@@ -51,6 +53,7 @@ public:
     //method
     cv::Mat                             QImage2Mat(QImage const& image);
     QImage                              Mat2QImage(cv::Mat const& mat);
+    void                                addRecMission();
     Q_INVOKABLE double                  getFps();
     Q_INVOKABLE int                     getPos();
     Q_INVOKABLE bool                    setPos(int i);
@@ -73,7 +76,7 @@ public:
     Q_INVOKABLE bool                    showFrequencyImage(int start,int number,int interval);
     bool                                initUndistort(cv::MatSize size);
     Q_INVOKABLE void                    setCaliFlag(bool flag);
-    void                                onPoolFinishedOneFrame(pmb0100rec::recResult res);
+    void                                onPoolFinishedOneFrame(pmb0100rec::recResult r);
 
 
     // qml read

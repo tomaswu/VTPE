@@ -254,6 +254,7 @@ Window {
             target: mvid
             function onFinishedRec(){
                 confirm.text="开始识别"
+                dia.showInfo("分析结束！")
             }
         }
 

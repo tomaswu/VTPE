@@ -36,6 +36,7 @@ public:
     int                                 recPos;
     double                              play_speed;
     bool                                recFlag=false;
+    bool                                needScale=false;
     imgProvider                         *ipdr;
     QTimer                              *play_timer;
     QTimer                              *rec_timer;
@@ -70,7 +71,7 @@ public:
     Q_INVOKABLE void                    setPlaySpeed(double speed);
     Q_INVOKABLE void                    play_pause();
     Q_INVOKABLE bool                    isPlaying(){return play_timer->isActive();};
-    Q_INVOKABLE void                    startRecognize(int threshold,int pixel,int millimeter,int pointNum=60,int method=0,int c1=0,int c2=640,int r1=0,int r2=480,bool standardUint=false,double raito=1.0);
+    Q_INVOKABLE void                    startRecognize(int threshold,int pixel,int millimeter,int pointNum=60,int method=0,int c1=0,int c2=640,int r1=0,int r2=480,bool standardUint=false,double raito=1.0,bool needScale=false);
     Q_INVOKABLE void                    stopRecognize();
     Q_INVOKABLE QList<int>              getImageSize();
     Q_INVOKABLE void                    preThreshold(int threshold);

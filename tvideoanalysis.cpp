@@ -188,7 +188,7 @@ void TVideoAnalysis::preThreshold(int threshold){
     emit imageRefreshed();
 }
 
-void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int pointNum,int method,int c1,int c2,int r1,int r2,bool standardUint,double ratio){
+void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int pointNum,int method,int c1,int c2,int r1,int r2,bool standardUint,double ratio,bool needScale){
     switch(method){
     case 0:
         pmb0100rec_para.threshold=threshold;
@@ -199,6 +199,7 @@ void TVideoAnalysis::startRecognize(int threshold,int pixel,int millimeter,int p
         pmb0100rec_para.row2=r2;
         pmb0100rec_para.standardUint = standardUint;
         pmb0100rec_para.ratio = ratio;
+        this->needScale=needScale;
         this->recResult.clear();
         this->multiRecPool->recAnswer.clear();
         this->multiRecPool->curPos=beginPos;
@@ -235,7 +236,7 @@ void TVideoAnalysis::addRecMission(){
             img=correctedMat;
         }
         double kr;
-        if(img.cols>640){
+        if(img.cols>640 && needScale){
             kr = 640.0/img.cols;
         }
         else{

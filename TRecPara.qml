@@ -126,6 +126,17 @@ Window {
         }
     }
 
+    CheckBox{
+        id:needScale
+        text:"智能缩放"
+        checked:true
+        x:btn_scale.x+btn_scale.width+30
+        anchors.verticalCenter: scale_text.verticalCenter
+        ToolTip.visible: hovered
+        ToolTip.text: "智能缩放会提升识别速度，但会引入额外噪声！"
+        ToolTip.delay: 500
+    }
+
     Text {
         id: x_text
         text: qsTr("x：")
@@ -240,7 +251,7 @@ Window {
                         return
                     }
                     text="取消"
-                    mvid.startRecognize(threshold_slider.value,pixel_input.text,mm_input,60,0,xmin_input.text,xmax_input.text,ymin_input.text,ymax_input.text,unit.checked,ratio)
+                    mvid.startRecognize(threshold_slider.value,pixel_input.text,mm_input,60,0,xmin_input.text,xmax_input.text,ymin_input.text,ymax_input.text,unit.checked,ratio,needScale.checked)
                 }
                 else{
                     text="开始识别"

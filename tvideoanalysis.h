@@ -63,6 +63,7 @@ public:
     Q_INVOKABLE void                    setEndPos(int i);
     Q_INVOKABLE int                     getFrameCount();
     Q_INVOKABLE void                    open(QString path);
+    Q_INVOKABLE void                    close();
     Q_INVOKABLE bool                    isOpened();
     void                                getFrame();
     Q_INVOKABLE void                    reloadFrame();

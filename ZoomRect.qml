@@ -67,6 +67,8 @@ Item {
                 }
                 else{
                     video_img.scale=1
+                    video_img.x=(centerWidget.width-video_img.timgWidth)/2
+                    video_img.y=(centerWidget.height-video_img.timgHeight)/2
                 }
                 txt.text="100%"
             }

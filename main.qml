@@ -29,6 +29,9 @@ Window {
             close.accepted=false
             dia.showInfo("需要先关闭绘图窗口！")
         }
+        if(mvid.isOpened()){
+            mvid.close()
+        }
     }
 
 
@@ -453,6 +456,9 @@ Window {
                     onClicked: {
                         var fileName=shell.getOpenFileName("打开视频",folder_recording.recordPath,"video(*.avi *.mp4)")
                         if(fileName){
+                            if(mvid.isPlaying()){
+                                play.clicked()
+                            }
                             var dir = shell.getFolderFromFilePath(fileName)
                             folder_recording.recordPath = dir
                             centerWidget.currentIndex = 1
@@ -461,6 +467,7 @@ Window {
                             }//end switch
                             mvid.open(fileName)
                             if(mvid.isOpened()){
+                                slider.value0=0
                                 var fps = mvid.getFps().toFixed(2)
                                 video_fps_text.text = `视频帧率: ${fps}`
                                 data_process_firgure.setFps(fps)
@@ -468,6 +475,8 @@ Window {
                                 video_player.checked=true
                                 data_table.fps=fps
                                 stro_para_window.setFrameCount(mvid.getFrameCount())
+                                var img_size = mvid.getImageSize()
+                                pmb0100_para_window.setScale(0,img_size[0],0,img_size[1])
                             }
                             else{
                                 dia.showInfo("未能打开视频！")
@@ -1298,6 +1307,7 @@ Window {
                                 function onPosChanged(){
                                     if(!slider.mouseControled){
                                         slider.value1 = mvid.pos
+//                                        console.log(mvid.pos)
                                     }
                                 }
                             }

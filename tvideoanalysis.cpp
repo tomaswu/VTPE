@@ -77,10 +77,19 @@ void TVideoAnalysis::open(QString path){
     video_reader->open(path.toStdString());
     if (video_reader->isOpened()){
         setPlaySpeed(1.0);
+        getPos();
         setBeginPos(0);
         setEndPos(getFrameCount());
         getFrame();
         emit alreadyOpened();
+    }
+}
+
+void TVideoAnalysis::close(){
+    play_timer->stop();
+    stopRecognize();
+    if(video_reader->isOpened()){
+        video_reader->release();
     }
 }
 
@@ -151,13 +160,6 @@ void TVideoAnalysis::setCaliFlag(bool flag){
 
 void TVideoAnalysis::getFrame(){
     bool ret = video_reader->read(img);
-    double kr;
-    if(img.cols>640){
-        kr = 640.0/img.cols;
-    }
-    else{
-        kr=1.0;
-    }
     if(!ret){
         return;
     }
@@ -172,7 +174,7 @@ void TVideoAnalysis::getFrame(){
     ipdr->img = Mat2QImage(img);
     emit imageRefreshed();
     getPos();
-    if(pos==endPos){
+    if(pos>=endPos && play_timer->isActive()){
         setPos(beginPos);
     }
 }
@@ -216,10 +218,7 @@ void TVideoAnalysis::stopRecognize(){
     }
     recFlag=false;
     multiRecPool->pool->clear();
-    bool r = multiRecPool->pool->waitForDone(-1);
-    if(r){
-        qDebug()<<"stop"<< multiRecPool->pool->activeThreadCount();
-    }
+    multiRecPool->pool->waitForDone(-1);
 }
 
 void TVideoAnalysis::addRecMission(){
@@ -228,7 +227,21 @@ void TVideoAnalysis::addRecMission(){
         cv::Mat img;
         this->video_reader->read(img);
         this->pmb0100rec_para.pos = recPos;
-        this->multiRecPool->addMission(img,this->pmb0100rec_para);
+        if (cali_flag){
+            if(correctSize.width!=img.size[1] || correctSize.height!=img.size[0]){
+                initUndistort(img.size);
+            }
+            cv::remap(img, correctedMat, mapx, mapy, cv::INTER_LINEAR, cv::BORDER_DEFAULT);
+            img=correctedMat;
+        }
+        double kr;
+        if(img.cols>640){
+            kr = 640.0/img.cols;
+        }
+        else{
+            kr=1.0;
+        }
+        this->multiRecPool->addMission(img,this->pmb0100rec_para,kr);
         recPos+=1;
     }
     else{

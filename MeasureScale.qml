@@ -160,9 +160,9 @@ Item {
                     mouse.accepted=false
                 }
             }
-            onReleased: {
+            onReleased: function(mouse){
                 if(caliFlag){
-                    cvs.pixLength=Math.sqrt(Math.pow(cvs.x0,2)+Math.pow(cvs.y0,2))
+                    cvs.pixLength=Math.sqrt(Math.pow(mouseX-cvs.x0,2)+Math.pow(mouseY-cvs.y0,2))
                     tinput.text=""
                     apop.open()
                 }//end if

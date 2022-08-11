@@ -55,6 +55,7 @@ void TVideoAnalysis::onPoolFinishedOneFrame(pmb0100rec::recResult r){
             }
         }
     }
+    this->recResult.push_back(r);
     emit recognizedOneFrame(res);
     ipdr->img = Mat2QImage(img);
     emit imageRefreshed();

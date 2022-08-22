@@ -7,6 +7,12 @@ QT += quick \
 
 CONFIG += c++17 #console #控制台，用于调试
 
+QMAKE_CXXFLAGS_RELEASE += -O2
+
+windows{
+    QMAKE_CXXFLAGS += /MP
+}
+
 RC_FILE += logo.rc
 
 HEADERS += \

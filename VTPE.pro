@@ -119,12 +119,12 @@ windows{
     INCLUDEPATH += \
         E:\Tomas_temp\opencv\opencv460\opencv\build\include \
         ./include \
-        "C:\Users\Tomas Wu\AppData\Local\Programs\Python\Python310\include" \
+        "C:\Users\tomas\AppData\Local\Programs\Python\Python310\include" \
         "E:\boost_1_79_0\boost_1_79_0"
 
     LIBS += -LE:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\lib \
             -LE:\private\TomasWu\CPP_programs\VTPE\Depends\workPower\x64\vs2013shared \
-            -L"C:\Users\Tomas Wu\AppData\Local\Programs\Python\Python310\libs" \
+            -L"C:\Users\tomas\AppData\Local\Programs\Python\Python310\libs" \
             -L"E:\boost_1_79_0\boost_1_79_0\stage\lib"
 
     CONFIG(debug,debug|release){

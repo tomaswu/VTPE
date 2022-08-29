@@ -43,7 +43,7 @@ public:
     std::string                          testfile="C:\\Users\\Tomas Wu\\Videos\\202203151103光镊演示.mp4";
     pmb0100rec::Para                    pmb0100rec_para;
     std::vector<pmb0100rec::recResult>  recResult;
-    bool                                cali_flag;
+    bool                                cali_flag=false;
     cv::Size2i                          correctSize;
     cv::Mat                             correctedMat;
     cv::Mat                             mapx;

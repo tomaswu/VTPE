@@ -60,17 +60,18 @@ Item {
             anchors.fill: btn
             hoverEnabled: true
             onClicked: {
-                if(centerWidget.currentIndex===0){
-                    camera_img.scale=1
-                    camera_img.x=(centerWidget.width-camera_img.timgWidth)/2
-                    camera_img.y=(centerWidget.height-camera_img.timgHeight)/2
-                }
-                else{
-                    video_img.scale=1
-                    video_img.x=(centerWidget.width-video_img.timgWidth)/2
-                    video_img.y=(centerWidget.height-video_img.timgHeight)/2
-                }
-                txt.text="100%"
+//                if(centerWidget.currentIndex===0){
+//                    camera_img.scale=1
+//                    camera_img.x=(centerWidget.width-camera_img.timgWidth)/2
+//                    camera_img.y=(centerWidget.height-camera_img.timgHeight)/2
+//                }
+//                else{
+//                    video_img.scale=1
+//                    video_img.x=(centerWidget.width-video_img.timgWidth)/2
+//                    video_img.y=(centerWidget.height-video_img.timgHeight)/2
+//                }
+//                txt.text="100%"
+                adjustScreen()
             }
             onEntered: {
                 btn.color = "#003399"
@@ -117,6 +118,36 @@ Item {
         var m=d*100
         var s=`${m.toFixed()}%`
         txt.text=s
+    }
+
+    function adjustScreen(){
+        var scl = 1.0;
+        var w = centerWidget.width
+        var h = centerWidget.height-camera_status_bar.height
+        var tw = camera_img.timgWidth
+        var th = camera_img.timgHeight
+        var a = w/tw
+        var b = w/th
+        console.log(a,b)
+        if(centerWidget.currentIndex===0){
+            if(a<1&&b<1){
+                 scl = a>b? b:a
+            }
+            else{
+                if(a>1)
+            }
+
+
+            scl = scl.toFixed(1)-0.1
+            camera_img.scale = scl
+            setValue(scl);
+            camera_img.x=(w-camera_img.timgWidth)/2
+            camera_img.y=(h-camera_img.timgHeight)/2
+        }
+
+        else{
+            console.log("video pass")
+        }
     }
 
 }

@@ -17,7 +17,7 @@ class EPath():
     vcredist_2013 = r'E:\work\以后会用到\华谷动力MVviewer_2.3.1.GEN_Build20210929\UT and GE_DriverV2.1.6\华谷动力UT及GE系列相机软件包2018\华谷动力SDKV_2.1.6\Tools\vcredist\vcredist_2013_x64.exe'
     softwareManual = r'E:\private\TomasWu\CPP_programs\VTPE\softwareManual.pdf'
     ex_manual = r'E:\private\TomasWu\CPP_programs\VTPE\ZKY-PMB0100SS.pdf'
-    cameraMatrix = r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_2_3_MSVC2019_64bit-Release\cameraMatrix'
+    cameraMatrix = r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_3_1_MSVC2019_64bit-Release\cameraMatrix'
 
 def copyPython(dst):
     print('复制python310.dll')
@@ -35,8 +35,8 @@ def copyMVSDK(dst):
         shutil.copy(os.path.join(EPath.mvsdk,i),dst)
 
 def deployqt():
-    exeFile=r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_2_3_MSVC2019_64bit-Release\release\VTPE.exe'
-    deployPath=r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_2_3_MSVC2019_64bit-Release\deploy'
+    exeFile=r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_3_1_MSVC2019_64bit-Release\release\VTPE.exe'
+    deployPath=r'E:\private\TomasWu\CPP_programs\build-VTPE-Desktop_Qt_6_3_1_MSVC2019_64bit-Release\deploy'
     if os.path.isdir(deployPath):
         print('清空发布历史...')
         shutil.rmtree(deployPath)

@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
-    app.setWindowIcon(QIcon(":/imgs/ico/Tico.ico"));
+    app.setWindowIcon(QIcon(":/imgs/ico/ZKY.ico"));
     int app_ret = app.exec();
 
     //资源释放,结束python解释器

@@ -4,7 +4,7 @@ import QtQuick.Controls
 
 Dialog {
     id : camera_settings_dialog
-    property bool photoMode: true
+    property bool photoMode: false
     width: 260
     height: 180
     background: Rectangle{

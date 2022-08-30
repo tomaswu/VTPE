@@ -893,8 +893,8 @@ QString TVideoCapture::getCameraMatrix(QString fd){
             {
                 cornerSubPix(grayimage, tempcorners, cv::Size(15, 15), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
                 drawChessboardCorners(image, ChessBoardSize, tempcorners, find_corners_result);
-                imshow("corner_image", image);
-                cv::waitKey(100);
+//                imshow("corner_image", image);
+//                cv::waitKey(100);
                 objectv.push_back(object);
                 imagev.push_back(tempcorners);
                 std::cout << "capture " << num << " pictures" << std::endl;

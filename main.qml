@@ -387,7 +387,7 @@ Window {
                     width: 24
                     height: 24
                     onHoveredChanged: tbntip("gray curve\n灰度曲线测量",measurement_gray_curve)
-                    onCheckedChanged: dia.showInfo("暂不支持的功能！")
+                    onClicked: dia.showInfo("暂不支持的功能！")
                 }
 
                 SToolButton{

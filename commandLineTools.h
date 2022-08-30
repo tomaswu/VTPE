@@ -32,6 +32,8 @@ public:
     Q_INVOKABLE bool showFrequencyImage(cv::Mat mat);
     Q_INVOKABLE QString getDirByFilePaht(QString filepath);
     Q_INVOKABLE void openFile(QString file);
+    Q_INVOKABLE bool isFile(QString file);
+    Q_INVOKABLE bool confirm_message(QString info,QString title);
 
 signals:
 

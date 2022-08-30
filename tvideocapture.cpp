@@ -946,6 +946,8 @@ QString TVideoCapture::getCameraMatrix(QString fd){
     corrected.release();
     mapx.release();
     mapy.release();
+    readCameraMatrix(this->intrinsics_matrix,this->distortion_coeff);
+
     if(objectv.size()<5){
         return "校正成功，但可用棋盘图较少！";
     }

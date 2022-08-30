@@ -204,12 +204,20 @@ Window {
                     onClicked: {
                         if(mcap.isOpened()){
                             if(!mcap.isRecord()){
-                                if(!folder_recording.recordPath){
+                                if(!folder_recording.recordPath || !folder_recording.recordPath.endsWith(".avi")){
                                     dia.showInfo("请先设置录像保存路径！")
                                 }
                                 else{
+                                    if(shell.isFile(folder_recording.recordPath)){
+                                        var ret = shell.confirm_message("是否覆盖？",folder_recording.recordPath+"已经存在!")
+                                        if(!ret){
+                                            return
+                                        }
+                                    }
                                     mcap.startRecord(folder_recording.recordPath)
-                                    record_led_blink_timer.start()
+                                    if(mcap.isRecord()){
+                                        record_led_blink_timer.start()
+                                    }
                                 }
                             }
                             else{
@@ -580,7 +588,6 @@ Window {
                             mouseArea_zoom.x=centerWidget.x+15
                             mouseArea_zoom.width=centerWidget.width-30
                         }
-
                     }
                 }
 
@@ -976,6 +983,8 @@ Window {
                             }
                         }
                     }//end Connections
+                    onTimgHeightChanged: zoom_label.adjustScreen()
+                    onTimgWidthChanged: zoom_label.adjustScreen()
 
                 } // end image
             } // end rect
@@ -1103,119 +1112,134 @@ Window {
                 color:"#007acc"
                 anchors.bottom: parent.bottom
 
-                Row{
-                    spacing: 30
-                    padding:10
+
+                Text {
+                    id: camera_fps_text
+                    z:4
+                    x:10
                     anchors.verticalCenter: parent.verticalCenter
-                    Text {
-                        id: camera_fps_text
-                        z:4
-                        text: mcap.opened ? "相机帧率: " + mcap.fps.toString() : "相机帧率: 未打开"
-                        color: "#ffffff"//"#3c3c3c"
-                        Connections{
-                            target: mcap
-                            function onFpsChanged(fps){
-                                camera_fps_text.text = "相机帧率: " + mcap.fps.toString()
-                            }
+                    text: mcap.opened ? "相机帧率: " + mcap.fps.toString() : "相机帧率: 未打开"
+                    color: "#ffffff"//"#3c3c3c"
+                    Connections{
+                        target: mcap
+                        function onFpsChanged(fps){
+                            camera_fps_text.text = "相机帧率: " + mcap.fps.toString()
                         }
-                        Connections{
-                            target: mcap
-                            function onOpenedChanged(){
-                                if(!mcap.opened)camera_fps_text.text = "相机帧率: 未打开"
+                    }
+                    Connections{
+                        target: mcap
+                        function onOpenedChanged(){
+                            if(!mcap.opened)camera_fps_text.text = "相机帧率: 未打开"
+                        }
+                    }
+                }
+
+                Rectangle{
+                    id: record_led
+                    x: camera_fps_text.x+camera_fps_text.width+15
+                    anchors.verticalCenter: parent.verticalCenter
+                    z:4
+                    width: 12
+                    height: width
+                    radius: width/2
+                    color:"darkgray"
+                    property bool light: false
+                    Timer{
+                        id:record_led_blink_timer
+                        interval:800
+                        repeat: true
+                        onTriggered: {
+                            if(record_led.light){
+                                record_led.color="darkgray"
+                            }
+                            else{
+                                record_led.color="red"
+                            }
+                            record_led.light=!record_led.light
+                        }
+
+
+                    }
+                }
+
+                Text {
+                    id: record_fps_text
+                    x: record_led.x+record_led.width+15
+                    anchors.verticalCenter: parent.verticalCenter
+                    z:4
+                    text: "录像帧率: "
+                    color: "#ffffff"//"#3c3c3c"
+                    Connections{
+                        target: mcap
+                        function onRecordFpsChanged(rfps){
+                            if(rfps>=0){
+                                record_fps_text.text = "录像帧率: "+rfps.toString()
+                            }
+                            else{
+                                record_fps_text.text = "录像帧率: "
                             }
                         }
                     }
-                    Rectangle{
-                        id: record_led
-                        z:4
-                        width: 12
-                        height: width
-                        radius: width/2
-                        anchors.verticalCenter: parent.verticalCenter
-                        color:"darkgray"
-                        property bool light: false
-                        Timer{
-                            id:record_led_blink_timer
-                            interval:800
-                            repeat: true
-                            onTriggered: {
-                                if(record_led.light){
-                                    record_led.color="darkgray"
-                                }
-                                else{
-                                    record_led.color="red"
-                                }
-                                record_led.light=!record_led.light
-                            }
+                }
 
+                Text {
+                    id: camera_saveinfo
+                    z:4
+                    x: record_fps_text.x+record_fps_text.width+15
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width-x-(parent.width-camera_statusbar_zoom_label.x)
+                    text: ""
+                    color:"#ffffff"
+                    font.underline: true
+                    elide: Text.ElideRight
+                    MouseArea{
+                        id:camera_saveinfo_mouse
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            var path = camera_saveinfo.text.slice(14,camera_saveinfo.length)
+                            var cmd
+                            switch(Qt.platform.os){
+                               case "windows":
+                                   path = path.replace(new RegExp("/", "g"),"\\")
+                                   cmd = `explorer /select, ${path}`
+                                   shell.system(cmd)
+                                   break
+                               case "osx":
+                                   cmd = `open -R /${path}`
+                                   shell.system(cmd)
+                                   break
+                               default:
+                                   dia.showInfo("本系统暂不支持在文件系统\n中显示该文件")
+                                   break
+                            }//end switch
+                        }// end onClicked
+                    }//end MouseArea
 
-                        }
+                    Timer{
+                        id:camera_saveinfo_timer
+                        interval: 18000
+                        triggeredOnStart: false
+                        repeat: false
+                        onTriggered: camera_saveinfo.text=""
                     }
-                    Text {
-                        id: record_fps_text
-                        z:4
-                        text: "录像帧率: "
-                        color: "#ffffff"//"#3c3c3c"
-                        Connections{
-                            target: mcap
-                            function onRecordFpsChanged(rfps){
-                                if(rfps>=0){
-                                    record_fps_text.text = "录像帧率: "+rfps.toString()
-                                }
-                                else{
-                                    record_fps_text.text = "录像帧率: "
-                                }
-                            }
-                        }
+                    function camera_saveinfoShow(s){
+                        camera_saveinfo.text=s
+                        camera_saveinfo_timer.start()
                     }
+                }
 
-                    Text {
-                        id: camera_saveinfo
-                        z:4
-                        text: ""
-                        color:"#ffffff"
-                        font.underline: true
-                        MouseArea{
-                            id:camera_saveinfo_mouse
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                var path = camera_saveinfo.text.slice(14,camera_saveinfo.length)
-                                var cmd
-                                switch(Qt.platform.os){
-                                   case "windows":
-                                       path = path.replace(new RegExp("/", "g"),"\\")
-                                       cmd = `explorer /select, ${path}`
-                                       shell.system(cmd)
-                                       break
-                                   case "osx":
-                                       cmd = `open -R /${path}`
-                                       shell.system(cmd)
-                                       break
-                                   default:
-                                       dia.showInfo("本系统暂不支持在文件系统\n中显示该文件")
-                                       break
-                                }//end switch
-                            }// end onClicked
-                        }//end MouseArea
 
-                        Timer{
-                            id:camera_saveinfo_timer
-                            interval: 18000
-                            triggeredOnStart: false
-                            repeat: false
-                            onTriggered: camera_saveinfo.text=""
-                        }
-                        function camera_saveinfoShow(s){
-                            camera_saveinfo.text=s
-                            camera_saveinfo_timer.start()
-                        }
-                    }
-
-                }//end row
+                Text {
+                    id: camera_statusbar_zoom_label
+                    z:4
+                    anchors.verticalCenter: parent.verticalCenter
+                    x:camera_status_bar.width-80
+                    text: "缩放:100% "
+                    color: "#ffffff"//"#3c3c3c"
+                }
 
             }// end status bar
-
 
         }// page camera widget
 
@@ -1265,9 +1289,10 @@ Window {
                         }else{
                             camera_img.source=""
                         }
-
                     }
                 }//end Connections
+                onTimgHeightChanged: zoom_label.adjustScreen()
+                onTimgWidthChanged: zoom_label.adjustScreen()
             } //end image
 
             // player bar
@@ -1405,6 +1430,16 @@ Window {
                     }
 
                 }//end row
+
+                Text {
+                    id: video_statusbar_zoom_label
+                    z:4
+                    anchors.verticalCenter: parent.verticalCenter
+                    x:camera_status_bar.width-80
+                    text: "缩放:100% "
+                    color: "#ffffff"//"#3c3c3c"
+                }
+
             }// end status bar
 
         }// end page video widget
@@ -1648,7 +1683,6 @@ Window {
         color:"white"
         visible: false
     }
-
 
     // Device list pannel
     DeviceList{

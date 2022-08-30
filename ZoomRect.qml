@@ -118,35 +118,67 @@ Item {
         var m=d*100
         var s=`${m.toFixed()}%`
         txt.text=s
+        if(centerWidget.currentIndex===0){
+            camera_statusbar_zoom_label.text="缩放:"+s
+        }
+        else{
+            video_statusbar_zoom_label.text="缩放:"+s
+        }
     }
 
     function adjustScreen(){
+        var tmp;
         var scl = 1.0;
         var w = centerWidget.width
         var h = centerWidget.height-camera_status_bar.height
         var tw = camera_img.timgWidth
         var th = camera_img.timgHeight
         var a = w/tw
-        var b = w/th
-        console.log(a,b)
+        var b = h/th
         if(centerWidget.currentIndex===0){
-            if(a<1&&b<1){
-                 scl = a>b? b:a
+            if(w>=tw&&h>=th){
+                scl = a>b? b:a
+            }
+            else if(w>=tw&&h<=th){
+                scl = b
+            }
+            else if(w<=tw && h>=th){
+                scl = a
             }
             else{
-                if(a>1)
+                scl = a>b? b:a
             }
-
-
-            scl = scl.toFixed(1)-0.1
+            tmp = scl.toFixed(1)
+            scl = tmp>scl? tmp-0.1:tmp
             camera_img.scale = scl
             setValue(scl);
             camera_img.x=(w-camera_img.timgWidth)/2
             camera_img.y=(h-camera_img.timgHeight)/2
         }
-
         else{
-            console.log("video pass")
+            var table_shift = (data_table.width+data_table.x)
+            tw = video_img.timgWidth-table_shift
+            th = video_img.timgHeight
+            a = w/tw
+            b = h/th
+            if(w>=tw&&h>=th){
+                scl = a>b? b:a
+            }
+            else if(w>=tw&&h<=th){
+                scl = b
+            }
+            else if(w<=tw && h>=th){
+                scl = a
+            }
+            else{
+                scl = a>b? b:a
+            }
+            tmp = scl.toFixed(1)
+            scl = tmp>scl? tmp-0.1:tmp
+            video_img.scale = scl
+            setValue(scl);
+            video_img.x=(w+table_shift-video_img.timgWidth)/2
+            video_img.y=(h-video_img.timgHeight)/2
         }
     }
 

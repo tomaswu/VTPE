@@ -280,7 +280,7 @@ Window {
 
     function setRatio(mm,pix){
         mm_input.text = mm
-        pixel_input.text =pix
+        pixel_input.text = (pix/video_img.scale).toFixed()
         data_table.unitRatio=mm/pix
     }
 

@@ -116,7 +116,7 @@ bool TVideoAnalysis::setPos(int i){
 }
 
 void TVideoAnalysis::reloadFrame(){
-    this->setBeginPos(this->pos-1);
+    this->setPos(this->pos-1);
     this->getFrame();
 }
 
@@ -157,6 +157,9 @@ bool TVideoAnalysis::initUndistort(cv::MatSize size){
 
 void TVideoAnalysis::setCaliFlag(bool flag){
     this->cali_flag=flag;
+    if(flag && !this->img.empty()){
+        initUndistort(this->img.size);
+    }
 }
 
 void TVideoAnalysis::getFrame(){

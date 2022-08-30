@@ -6,6 +6,7 @@
 #include <iostream>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QMessageBox>
 
 commandLineTools* shell = new commandLineTools; //全局变量
 
@@ -78,3 +79,26 @@ void commandLineTools::openFile(QString file){
     QDesktopServices::openUrl(QUrl::fromLocalFile(file));
 }
 
+bool commandLineTools::isFile(QString file){
+    QFileInfo fileInfo(file);
+    if(fileInfo.exists())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool commandLineTools::confirm_message(QString info,QString title){
+    QMessageBox msgBox;
+    msgBox.setText(title);
+    msgBox.setInformativeText(info);
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    if(ret == QMessageBox::Ok){
+        return true;
+    }
+    else{
+        return false;
+    }
+}

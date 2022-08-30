@@ -26,7 +26,7 @@ Item {
                     x0-=data_table.width
                 }
 
-                console.log(x0)
+//                console.log(x0)
                 y0 = video_img.height/2+video_img.y
                 cw = video_img.paintedWidth*video_img.scale
                 ch = video_img.paintedHeight*video_img.scale

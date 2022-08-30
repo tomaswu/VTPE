@@ -1592,40 +1592,171 @@ Window {
         width:centerWidget.width
         height: camera_widget_bg.height
         z:4
+        hoverEnabled: true
         enabled: pmb0100_para_window.select
         property double x0: 0
         property double y0: 0
+        property bool draw_flag: false
+        property bool size_flag: false
+        property real sizeMethod: 0
         onPressed: {
             x0 = mouseX
             y0 = mouseY
+            if(cursorShape==Qt.ArrowCursor){
+                draw_flag=true
+            }
+            else{
+                size_flag=true
+            }
+        }
+        onReleased: {
+            size_flag=false
+            draw_flag=false
         }
 
         onPositionChanged: {
-            var w,h
-            if(pmb0100_para_window.select){
-                w = mouseX-x0
-                h = mouseY-y0
-                s4a.visible = true
-                if (w>0){
-                    s4a.width = w
-                    s4a.x = x0+centerWidget.x
-                }
-                else{
-                    s4a.width = -w
-                    s4a.x = mouseX+centerWidget.x
-                }
+            var dx,dy,x,y;
+            if(draw_flag){
+                var w,h
+                if(pmb0100_para_window.select){
+                    w = mouseX-x0
+                    h = mouseY-y0
+                    s4a.visible = true
+                    if (w>0){
+                        s4a.width = w
+                        s4a.x = x0+centerWidget.x
+                    }
+                    else{
+                        s4a.width = -w
+                        s4a.x = mouseX+centerWidget.x
+                    }
 
-                if (h>=0){
-                    s4a.height = h
-                    s4a.y = y0+centerWidget.y
+                    if (h>=0){
+                        s4a.height = h
+                        s4a.y = y0+centerWidget.y
+                    }
+                    else{
+                        s4a.height = -h
+                        s4a.y = mouseY+centerWidget.y
+                    }
+                    s4a.setScale()
                 }
-                else{
-                    s4a.height = -h
-                    s4a.y = mouseY+centerWidget.y
-                }
+            }
+            else if(size_flag){
+                dx = mouseX-x0
+                dy = mouseY-y0
+                x0=mouseX
+                y0=mouseY
+                //中，左，右，上，下，左上，右上，左下，右下
+                switch (sizeMethod){
+                    case 0:
+                        s4a.x+=dx
+                        s4a.y+=dy
+                        break
+                    case 1:
+                        s4a.x+=dx
+                        s4a.width-=dx
+                        break
+                    case 2:
+                        s4a.width+=dx
+                        break
+                    case 3:
+                        s4a.y+=dy
+                        s4a.height-=dy
+                        break
+                    case 4:
+                        s4a.height+=dy
+                        break
+                    case 5:
+                        s4a.x+=dx
+                        s4a.width-=dx
+                        s4a.y+=dy
+                        s4a.height-=dy
+                        break
+                    case 6:
+                        s4a.width+=dx
+                        s4a.y+=dy
+                        s4a.height-=dy
+                        break
+                    case 7:
+                        s4a.x+=dx
+                        s4a.width-=dx
+                        s4a.height+=dy
+                        break
+                    case 8:
+                        s4a.height+=dy
+                        s4a.width+=dx
+                        break
+                }//end switch
                 s4a.setScale()
             }
+            else{
+                x = mouseX+centerWidget.x
+                y = mouseY+centerWidget.y
+                //4个点，左上，右上，左下，右下，a,b,c,d
+                var ax=s4a.x
+                var ay=s4a.y
+                var bx=s4a.x+s4a.width
+                var by=s4a.y
+                var cx=s4a.x
+                var cy=s4a.y+s4a.height
+                dx=s4a.x+s4a.width
+                dy=s4a.y+s4a.height
+                //中心
+                var ox = s4a.x+s4a.width/2
+                var oy = s4a.y+s4a.height/2
+                var p=5;//边界宽度
 
+                if(x>ax+p && x<bx-p && y>ay+p && y<cy-p){
+                    //内
+                    cursorShape=Qt.OpenHandCursor
+                    sizeMethod=0
+                }
+                else if(x<ax+p && x>ax-p && y>ay+p && y<cy-p){
+                    //左
+                    cursorShape=Qt.SizeHorCursor
+                    sizeMethod=1
+                }
+                else if(x>bx-p && x<bx+p && y>ay+p && y<cy-p){
+                    //右
+                    cursorShape=Qt.SizeHorCursor
+                    sizeMethod=2
+                }
+                else if(y>ay-p &&y<ay+p && x>ax+p && x<bx-p){
+                    //上
+                    cursorShape=Qt.SizeVerCursor
+                    sizeMethod=3
+                }
+                else if(y>cy-p && y<cy+p && x>ax+p && x<bx-p){
+                    //下
+                    cursorShape=Qt.SizeVerCursor
+                    sizeMethod=4
+                }
+                else if(x>ax-p &&x<ax+p && y<ay+p && y>ay-p){
+                    //左上
+                    cursorShape=Qt.SizeFDiagCursor
+                    sizeMethod=5
+                }
+                else if(x>bx-p && x<bx+p && y<by+p && y>by-p){
+                    //右上
+                    cursorShape=Qt.SizeBDiagCursor
+                    sizeMethod=6
+                }
+                else if(x>cx-p && x<cx+p && y<cy+p && y>cy-p){
+                    //左下
+                    cursorShape=Qt.SizeBDiagCursor
+                    sizeMethod=7
+                }
+                else if(x>dx-p &&x<dx+p && y<dy+p && y>dy-p){
+                    //右下
+                    cursorShape=Qt.SizeFDiagCursor
+                    sizeMethod=8
+                }
+                else{
+                    cursorShape=Qt.ArrowCursor
+                }
+
+            }
         } //end onPositionChanged
     } // end mouse area
 

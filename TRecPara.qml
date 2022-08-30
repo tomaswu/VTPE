@@ -15,6 +15,11 @@ Window {
     property bool standardUint: unit.checked
     onVisibleChanged: if(visible)mvid.preThreshold(threshold_slider.value)
 
+    onClosing:{
+        btn_scale.checked=false
+        s4a.visible=false
+    }
+
     Text {
         id: threshold_text
         text: qsTr("灰度阈值")

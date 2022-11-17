@@ -1,4 +1,4 @@
-import QtQuick
+import QtQuick 2.15
 
 Rectangle{
     color:Qt.rgba(0,0,0,0.2)

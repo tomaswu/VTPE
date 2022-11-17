@@ -1,6 +1,6 @@
 //另一个
 
-import QtQuick
+import QtQuick 2.15
 
 
 Rectangle{

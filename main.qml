@@ -1,4 +1,4 @@
- import QtQuick
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
@@ -34,14 +34,13 @@ Window {
         }
     }
 
-
     ToolBar{
         id:toolbar
         width:parent.width-16
         height: 120
         y:0
         z:5
-        anchors.horizontalCenter: parent.horizontalCenter       
+        anchors.horizontalCenter: parent.horizontalCenter
         background: Rectangle{
             anchors.fill: parent;
             color:"white"
@@ -857,16 +856,16 @@ Window {
 
     }// end toolbar
 
-    Rectangle{
-        id:toolbar_bg //用来挡一下图像移动位置时从工具栏缝里露出来的
-        x:0
-        y:toolbar.y
-        z:toolbar.z-1
-        width:root.width
-        height: toolbar.height
-        color:root.color
+//    Rectangle{
+//        id:toolbar_bg //用来挡一下图像移动位置时从工具栏缝里露出来的
+//        x:0
+//        y:toolbar.y
+//        z:toolbar.z-1
+//        width:root.width
+//        height: toolbar.height
+//        color:root.color
 
-    }
+//    }
 
     SToolButton{
         //隐藏工具栏后的呼出热键
@@ -946,6 +945,7 @@ Window {
         implicitWidth: parent.width
         height:parent.height-toolbar.height-toolbar.y
         anchors.top: toolbar.bottom
+        clip:true
         z:0
 
         Page{
@@ -961,7 +961,7 @@ Window {
                 z:1
                 Image {
                     id:camera_img
-//                    anchors.fill: parent
+//                   anchors.fill: parent
                     property real timgWidth: 0
                     property real timgHeight:0
                     x:(centerWidget.width-timgWidth)/2

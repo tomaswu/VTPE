@@ -1,4 +1,4 @@
-import QtQuick
+import QtQuick 2.15
 
 Item {
     // 目前暂时只支持在main中进行拖动选择，后期可以考虑增加一个自由变换的功能

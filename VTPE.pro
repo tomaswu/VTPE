@@ -1,4 +1,5 @@
-QT += quick \
+QT += core \
+      quick \
       quickcontrols2 \
       multimedia\
       serialport\
@@ -129,12 +130,12 @@ windows{
 
     CONFIG(debug,debug|release){
         LIBS += -lopencv_world460d -lMVSDKmd -lpython310 -l_tkinter \ #这里如果使用python3_d则会在import numpy等三方库时出错
-                -lboost_python310-vc142-mt-x64-1_79
+                -lboost_python310-vc143-mt-x64-1_79
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
                            copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
     }
     CONFIG(release,debug|release){
-        LIBS += -lopencv_world460 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc142-mt-x64-1_79
+        LIBS += -lopencv_world460 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc143-mt-x64-1_79
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
                            copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\" && \
                            copy \"$$PWD\\ZKY-PMB0100SS.pdf\" \"$$OUT_PWD\\release\\ZKY-PMB0100SS.pdf\" &&\

@@ -1,5 +1,5 @@
 //这个窗口只是华谷动力相机的设置页面
-import QtQuick 2.15
+import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1

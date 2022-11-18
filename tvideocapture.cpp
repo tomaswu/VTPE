@@ -21,8 +21,8 @@
 #include <fstream>
 
 #ifdef Q_OS_WINDOWS
-#include <IMVAPI/IMVApi.h>
-#include <IMVAPI/IMVDefines.h>
+#include <IMVApi.h>
+#include <IMVDefines.h>
 #include "windows.h"
 #endif
 

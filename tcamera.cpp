@@ -12,11 +12,6 @@
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 
-//#ifdef  Q_OS_WINDOWS //华谷动力相机仅支持windows
-//#include <IMVAPI/IMVApi.h>
-//#include <IMVAPI/IMVDefines.h>
-//#endif
-
 bool equalList(QStringList m,QStringList n){
 
     if (m.length()!=n.length()){

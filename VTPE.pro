@@ -19,8 +19,6 @@ RC_FILE += logo.rc
 HEADERS += \
     cameraMessageQue.h \
     commandLineTools.h \
-    include/IMVAPI/IMVApi.h \
-    include/IMVAPI/IMVDefines.h \
     multirec.h \
     pmb0100rec.h \
     pmc0100_com.h \
@@ -119,23 +117,26 @@ windows{
 
     INCLUDEPATH += \
         E:\Tomas_temp\opencv\opencv460\opencv\build\include \
-        ./include \
+        "C:\Program Files\General MVTech\MV Viewer\Development\Include" \
         "C:\Users\tomas\AppData\Local\Programs\Python\Python310\include" \
-        "E:\boost_1_79_0\boost_1_79_0"
+        "E:\boost_1_79_0\boost_1_79_0" \
+        "C:\Program Files (x86)\CKCam\SDK\include"
 
     LIBS += -LE:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\lib \
-            -LE:\private\TomasWu\CPP_programs\VTPE\Depends\workPower\x64\vs2013shared \
+            -L"C:\Program Files\General MVTech\MV Viewer\Development\Lib\x64" \
             -L"C:\Users\tomas\AppData\Local\Programs\Python\Python310\libs" \
-            -L"E:\boost_1_79_0\boost_1_79_0\stage\lib"
+            -L"E:\boost_1_79_0\boost_1_79_0\stage\lib" \
+            -L"C:\Program Files (x86)\CKCam\SDK\x64"
 
     CONFIG(debug,debug|release){
-        LIBS += -lopencv_world460d -lMVSDKmd -lpython310 -l_tkinter \ #这里如果使用python3_d则会在import numpy等三方库时出错
-                -lboost_python310-vc143-mt-x64-1_79
+        LIBS += -lopencv_world460d -lMVSDKmd -lpython310_d -l_tkinter \ #这里如果使用python3_d则会在import numpy等三方库时出错
+                -lboost_python310-vc143-mt-gd-x64-1_79 \
+                -lCKCameraDLL_X64
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
                            copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\"
     }
     CONFIG(release,debug|release){
-        LIBS += -lopencv_world460 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc143-mt-x64-1_79
+        LIBS += -lopencv_world460 -lMVSDKmd -lpython310 -l_tkinter -lboost_python310-vc143-mt-x64-1_79 -lCKCameraDLL_X64
         QMAKE_POST_LINK += copy \"$$PWD\\python_scripts\\data_process.py\" \"$$OUT_PWD\\release\\data_process.py\" && \
                            copy \"$$PWD\\python_scripts\\temail.py\" \"$$OUT_PWD\\release\\temail.py\" && \
                            copy \"$$PWD\\ZKY-PMB0100SS.pdf\" \"$$OUT_PWD\\release\\ZKY-PMB0100SS.pdf\" &&\

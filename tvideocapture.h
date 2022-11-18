@@ -13,8 +13,8 @@
 #include <qdebug.h>
 #include <QFile>
 #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
-#include <IMVAPI/IMVApi.h>
-#include <IMVAPI/IMVDefines.h>
+#include <IMVApi.h>
+#include <IMVDefines.h>
 #include <cameraMessageQue.h>
 #include <QQueue>
 #endif // 华谷动力相机仅支持windows

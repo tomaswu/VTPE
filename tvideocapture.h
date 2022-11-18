@@ -12,7 +12,15 @@
 #include <QThread>
 #include <qdebug.h>
 #include <QFile>
-#ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+
+#ifdef Q_OS_WINDOWS
+    #ifndef WORK_POWER_CAMERA
+        //#define WORK_POWER_CAMERA
+    #endif
+#endif
+
+
+#ifdef WORK_POWER_CAMERA// 华谷动力相机仅支持windows
 #include <IMVApi.h>
 #include <IMVDefines.h>
 #include <cameraMessageQue.h>
@@ -24,7 +32,7 @@ enum CameraType{
     workPowerCam
 };
 
-#ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+#ifdef WORK_POWER_CAMERA// 华谷动力相机仅支持windows
 
 quint32 getMemSize();
 
@@ -82,7 +90,7 @@ signals:
 
 
 
-#endif
+#endif //WORK_POWER_CAMERA
 
 
 class TVideoCapture : public QObject
@@ -102,7 +110,7 @@ public:
     int                     fps_count=0;
     clock_t                 t0 = clock(); //for fps calculation start time
     clock_t                 t_show = clock(); //用来判断是否到时间显示了
-    #ifdef Q_OS_WINDOWS
+    #ifdef WORK_POWER_CAMERA
     IMV_HANDLE              m_devHandle; //华谷动力用的 *cap
     IMV_RecordParam         stRecordParam; //录像参数
     TMessageQue<CFrameInfo> tque;
@@ -172,7 +180,7 @@ signals:
     void recordFinished(QString info);
 };
 
-#ifdef Q_OS_WINDOWS //华谷动力相机只支持windows 图像处理回调函数
+#ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows 图像处理回调函数
 static void onGetFrame(IMV_Frame* pFrame, void* pUser);
 #endif //华谷动力相机只支持windows
 

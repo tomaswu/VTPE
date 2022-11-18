@@ -20,7 +20,7 @@
 #include <commandLineTools.h>
 #include <fstream>
 
-#ifdef Q_OS_WINDOWS
+#ifdef WORK_POWER_CAMERA
 #include <IMVApi.h>
 #include <IMVDefines.h>
 #include "windows.h"
@@ -52,7 +52,7 @@ bool TVideoCapture::init(int index){
                 ret = cap->open(this->index);
             }
             break;
-        #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
+        #ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows
         case workPowerCam:
             IMV_DeviceList p;
             IMV_EnumDevices(&p,IMV_EInterfaceType::interfaceTypeUsb3);
@@ -75,7 +75,7 @@ void TVideoCapture::uninit(){
         case cvCam:
             running_flag=false;
             break;
-        #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
+        #ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows
         case workPowerCam:
             running_flag=false;
             IMV_StopGrabbing(this->m_devHandle);
@@ -91,7 +91,7 @@ void TVideoCapture::set_indexAndType(int index){
         this->index=index;
         this->CamType = cvCam;
     }
-    #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
+    #ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows
     else if(index>=cvCamNum && index<cvCamNum+workPowerCamNum){
         this->index=index-cvCamNum;
         this->CamType=workPowerCam;
@@ -167,7 +167,7 @@ void TVideoCapture::capture(){
                emit stopped();
             }
             break;
-        #ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
+        #ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows
         case workPowerCam:
             int ret;
             ret = IMV_AttachGrabbing(this->m_devHandle,onGetFrame,this);
@@ -313,7 +313,7 @@ void TVideoCapture::setResolution(QString s){
             cap->set(cv::CAP_PROP_FRAME_WIDTH,width);
             cap->set(cv::CAP_PROP_FRAME_HEIGHT,height);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             IMV_StopGrabbing(this->m_devHandle);
             if(width!=1280&&height!=1024){
@@ -348,7 +348,7 @@ void TVideoCapture::startRecord(QString path){
                 record_flag=true;
             }
             break;
-        #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+        #ifdef WORK_POWER_CAMERA// 华谷动力相机仅支持windows
         case workPowerCam:
             record_flag=true;
             this->record_thread = new recordThread(this->m_devHandle,path,this->fps,size,&this->recordQue,NULL);
@@ -366,7 +366,7 @@ void TVideoCapture::stopRecord(){
             record_flag = false;
             outputVideo.release();
             emit rfpsChanged(-1);
-        #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+        #ifdef WORK_POWER_CAMERA// 华谷动力相机仅支持windows
         case workPowerCam:
             record_flag = false;
             record_thread->stopRecord();
@@ -379,7 +379,7 @@ void TVideoCapture::onRfpsChanged(double rfps){
 }
 
 void TVideoCapture::onRecordFinished(){
-#ifdef Q_OS_WINDOWS
+#ifdef WORK_POWER_CAMERA
     record_thread->wait();
     delete this->record_thread;
     emit recordFinished("内存满了自动停止");
@@ -391,7 +391,7 @@ bool TVideoCapture::isOpened(){
     switch (this->CamType){
         case cvCam:
             return cap->isOpened();
-        #ifdef Q_OS_WINDOWS// 华谷动力相机仅支持windows
+        #ifdef WORK_POWER_CAMERA// 华谷动力相机仅支持windows
         case workPowerCam:
             return IMV_IsOpen(this->m_devHandle);
         #endif
@@ -428,7 +428,7 @@ cv::Size TVideoCapture::getCurrentResolution(){
             size.width = cap->get(cv::CAP_PROP_FRAME_WIDTH);
             size.height = cap->get(cv::CAP_PROP_FRAME_HEIGHT);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             IMV_GetIntFeatureValue(this->m_devHandle,"Width",&width);
             size.width = width;
@@ -446,7 +446,7 @@ bool TVideoCapture::setExposureTime(double minisecond){
         case cvCam:
             ret = this->cap->set(cv::CAP_PROP_EXPOSURE,minisecond);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetDoubleFeatureValue(m_devHandle, "ExposureTime", minisecond)==0){
                 ret = true;
@@ -463,7 +463,7 @@ bool TVideoCapture::setAdjustPluse(double dGainRaw){
         case cvCam:
             ret = this->cap->set(cv::CAP_PROP_GAIN,dGainRaw);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetDoubleFeatureValue(m_devHandle, "GainRaw",dGainRaw)==0){
                 ret = true;
@@ -480,7 +480,7 @@ bool TVideoCapture::setGamma(double gamma){
         case cvCam:
             ret = this->cap->set(cv::CAP_PROP_GAMMA,gamma);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetDoubleFeatureValue(m_devHandle, "Gamma",gamma)==0){
                 ret = true;
@@ -497,7 +497,7 @@ bool TVideoCapture::setFps(double fps){
         case cvCam:
             ret = this->cap->set(cv::CAP_PROP_FPS,fps);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetDoubleFeatureValue(m_devHandle, "AcquisitionFrameRate",fps)==0){
                 ret = true;
@@ -514,7 +514,7 @@ bool TVideoCapture::setFpsEnabled(bool e){
         case cvCam:
             return true;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetBoolFeatureValue(m_devHandle, "AcquisitionFrameRateEnable",e)==0){
                 ret = true;
@@ -531,7 +531,7 @@ bool TVideoCapture::setAutoExposure(int e){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetEnumFeatureValue(m_devHandle,"ExposureAuto",e)==0){
                 ret = true;
@@ -548,7 +548,7 @@ bool TVideoCapture::setBrightness(int b){
         case cvCam:
             ret = cap->set(cv::CAP_PROP_BRIGHTNESS,b);
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetIntFeatureValue(m_devHandle,"Brightness",b)==0){
                 ret = true;
@@ -565,7 +565,7 @@ bool TVideoCapture::setDigtalShift(int shift){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetIntFeatureValue(m_devHandle,"DigitalShift",shift)==0){
                 ret = true;
@@ -582,7 +582,7 @@ bool TVideoCapture::setAcuityEnabled(bool e){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetBoolFeatureValue(m_devHandle,"SharpnessEnabled",e)==0){
                 ret = true;
@@ -599,7 +599,7 @@ bool TVideoCapture::setAcuity(int acuity){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetIntFeatureValue(m_devHandle,"Sharpness",acuity)==0){
                 ret = true;
@@ -616,7 +616,7 @@ bool TVideoCapture::setDenoiseEnabled(bool e){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetBoolFeatureValue(m_devHandle,"DenoisingEnabled",e)==0){
                 ret = true;
@@ -633,7 +633,7 @@ bool TVideoCapture::setDenoise(int deniose){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetIntFeatureValue(m_devHandle,"Denoising",deniose)==0){
                 ret = true;
@@ -650,7 +650,7 @@ bool TVideoCapture::setAutoBalance(int e){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceWhiteAuto",e)==0){
                 ret = true;
@@ -667,7 +667,7 @@ bool TVideoCapture::setBalanceR(double r){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceRatioSelector",0)==0){
                 if(IMV_SetDoubleFeatureValue(m_devHandle,"BalanceRatio",r)==0)ret = true;
@@ -684,7 +684,7 @@ bool TVideoCapture::setBalanceG(double g){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceRatioSelector",1)==0){
                 if(IMV_SetDoubleFeatureValue(m_devHandle,"BalanceRatio",g)==0)ret = true;
@@ -701,7 +701,7 @@ bool TVideoCapture::setBalanceB(double b){
         case cvCam:
             return false;
             break;
-        #ifdef Q_OS_WIN
+        #ifdef WORK_POWER_CAMERA
         case workPowerCam:
             if(IMV_SetEnumFeatureValue(m_devHandle,"BalanceRatioSelector",2)==0){
                 if(IMV_SetDoubleFeatureValue(m_devHandle,"BalanceRatio",b)==0)ret = true;
@@ -729,7 +729,7 @@ cv::Mat TVideoCapture::QImage2Mat(QImage const& image)
     return mat;
 }
 
-#ifdef Q_OS_WINDOWS //华谷动力相机只支持windows
+#ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows
 //work power camera callback function for grabbing
 // Data frame callback function
 static void onGetFrame(IMV_Frame* pFrame, void* pUser)
@@ -985,7 +985,7 @@ bool TVideoCapture::initUndistort(cv::MatSize size){
 }
 
 
-#ifdef Q_OS_WINDOWS
+#ifdef WORK_POWER_CAMERA
 recordThread::recordThread(IMV_HANDLE mdev,QString filePath,double fps,cv::Size size,QQueue<cv::Mat> *que,QObject *parent):
     QThread(parent)
 {

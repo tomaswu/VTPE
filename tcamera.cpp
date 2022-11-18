@@ -81,7 +81,7 @@ void TCamera::getCameraList(){
     for (auto &c: rlist){
         camera_list.append(c.description());
     };
-#ifdef Q_OS_WINDOWS //华谷动力相机只支持windows系统
+#ifdef WORK_POWER_CAMERA //华谷动力相机只支持windows系统
     IMV_DeviceList *p = new IMV_DeviceList;
     IMV_EnumDevices(p,IMV_EInterfaceType::interfaceTypeUsb3);
     cap->workPowerCamNum = p->nDevNum;

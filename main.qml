@@ -1,4 +1,4 @@
-import QtQuick 2.15
+﻿import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
@@ -992,11 +992,13 @@ Window {
             // pmc0100 chart view for the serial port data
             ChartView {
                 id:pmc0100_chart
-                width:camera_img.paintedWidth
+                width:parent.width
                 height: 400
                 backgroundColor: Qt.rgba(1,1,1,0)
-                x:(camera_img.width-camera_img.paintedWidth)/2
-                y:(camera_img.height-camera_img.paintedHeight)/2
+//                x:(camera_img.width-camera_img.paintedWidth)/2
+//                y:(camera_img.height-camera_img.paintedHeight)/2
+                x:parent.x
+                y:0
                 z:3
                 antialiasing: true
                 visible: false
@@ -1481,7 +1483,6 @@ Window {
                 else{
                     m = video_img.scale
                 }
-
 
                 if (a>0){
                    m+=0.1

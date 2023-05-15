@@ -1,4 +1,4 @@
-#include "tvideoanalysis.h"
+﻿#include "tvideoanalysis.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -227,7 +227,7 @@ void TVideoAnalysis::stopRecognize(){
 }
 
 void TVideoAnalysis::addRecMission(){
-    if(recPos<=endPos && recFlag){
+    if(recPos<endPos && recFlag){
         this->video_reader->set(cv::CAP_PROP_POS_FRAMES,this->recPos);
         cv::Mat img;
         this->video_reader->read(img);
@@ -251,6 +251,7 @@ void TVideoAnalysis::addRecMission(){
     }
     else{
         rec_timer->stop();
+        emit finishedRec();
     }
 }
 

@@ -1,10 +1,12 @@
-# This Python file uses the following encoding: utf-8
+﻿# This Python file uses the following encoding: utf-8
 import numpy as np
 import sys,os
 import time
 import scipy.signal
 
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
 plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
 
@@ -45,7 +47,7 @@ def pmb0100_process(dl:list,hl:list,p:list,ft:list,fps:float):
         cols=len(hl)
         data = np.array(dl).reshape(-1,cols)         
         fig = plt.figure()
-        fig.canvas.set_window_title('绘图')
+        plt.get_current_fig_manager().set_window_title('绘图')
         ax=plt.subplot()
         for i in p:
             label = i[0]
@@ -92,7 +94,7 @@ def smooth(data,band,sampling=1e4):
 def stroboscopic_map(img:np.ndarray):
     nimg = img.copy()
     strob=plt.figure()
-    strob.canvas.set_window_title('频闪图')
+    plt.get_current_fig_manager().set_window_title('频闪图')
     ax=plt.subplot()
     ax.imshow(nimg)
 #    plt.ion() #mac需要加上这一条但win不能加

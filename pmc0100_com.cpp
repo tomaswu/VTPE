@@ -1,4 +1,4 @@
-#include "pmc0100_com.h"
+﻿#include "pmc0100_com.h"
 #include <QThread>
 #include <QTimer>
 #include <QSerialPort>
@@ -6,6 +6,7 @@
 #include <QList>
 #include <QString>
 #include <QStringList>
+#include <qdebug.h>
 
 PMC0100_COM::PMC0100_COM(QObject *parent)
     : QObject{parent}
@@ -43,8 +44,10 @@ bool PMC0100_COM::stop(){
 }
 
 void PMC0100_COM::read(){
-    com->waitForReadyRead(10);
+    com->waitForReadyRead(5);
     auto s = com->readAll();
+    com->waitForReadyRead(5);
+    if(s.size()==0)return;
     QString value;
     for (int i = 0;i<s.length();i++){
         value.append(s[i]);

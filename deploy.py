@@ -16,7 +16,7 @@ class EPath():
     qmldir=r'E:/work/software_development/CPP_programs/VTPE'
     pythonHome = r'C:\Users\tomas\miniconda3\envs\py311'
     pythonLib = r'C:\Users\tomas\miniconda3\envs\py311\Lib'
-    pythonLibrary = r'C:\Users\tomas\miniconda3\envs\py311\Library'
+    pythonLibrary = r'C:\Users\tomas\miniconda3\envs\py311\Library\bin'
     opencv_world =r'E:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\bin\opencv_world460.dll'
     opencv_ffmpeg = r'E:\Tomas_temp\opencv\opencv460\opencv\build\bin\opencv_videoio_ffmpeg460_64.dll'
     mvsdk = r'C:\Program Files\General MVTech\MV Viewer\Runtime\x64'
@@ -36,7 +36,10 @@ def copyPython(dst):
         print('复制python Lib')
         shutil.copytree(EPath.pythonLib,dst+'/Lib')
         print('复制python Library')
-        shutil.copytree(EPath.pythonLibrary,dst+'/Library')
+        for i in os.listdir(EPath.pythonLibrary):
+            if i.endswith('.dll'):
+                print(i)
+                shutil.copy(f'{EPath.pythonLibrary}/{i}',dst)
     except Exception as e:
         print('copy python error:\n',e)
 

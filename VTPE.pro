@@ -106,6 +106,7 @@ DISTFILES += \
     deviceList.qml \
     logo.rc \
     maskImage.qml \
+    pkg2.py \
     python_scripts/data_process.py \
     python_scripts/temail.py \
     qtquickcontrols2.conf \

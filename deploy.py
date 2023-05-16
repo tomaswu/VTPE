@@ -14,9 +14,6 @@ class EPath():
     boost_numpy=r'E:\boost_1_81_0\boost_1_81_0\bin.v2\libs\python\build\msvc-14.3\release\python-3.11\threading-multi\boost_numpy311-vc143-mt-x64-1_81.dll'
     python_script=r'E:\work\software_development\CPP_programs\VTPE\python_scripts'
     qmldir=r'E:/work/software_development/CPP_programs/VTPE'
-    pythonHome = r'C:\Users\tomas\miniconda3\envs\py311'
-    pythonLib = r'C:\Users\tomas\miniconda3\envs\py311\Lib'
-    pythonLibrary = r'C:\Users\tomas\miniconda3\envs\py311\Library\bin'
     opencv_world =r'E:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\bin\opencv_world460.dll'
     opencv_ffmpeg = r'E:\Tomas_temp\opencv\opencv460\opencv\build\bin\opencv_videoio_ffmpeg460_64.dll'
     mvsdk = r'C:\Program Files\General MVTech\MV Viewer\Runtime\x64'
@@ -24,22 +21,19 @@ class EPath():
     softwareManual = r'E:/work/software_development/CPP_programs/VTPE\softwareManual.pdf'
     ex_manual = r'E:/work/software_development/CPP_programs/VTPE\ZKY-PMB0100SS.pdf'
     cameraMatrix = r'E:\work\software_development\CPP_programs\VTPE\cameraMatrix'
+    #!=======================python settings===================================
+    pythonHome = r'C:\embedded_python'
 
 def copyPython(dst):
     try:
-        print('复制python.exe')
-        shutil.copy(os.path.join(EPath.pythonHome,'python.exe'),dst)
-        print('复制python311.dll')
-        shutil.copy(os.path.join(EPath.pythonHome,'python311.dll'),dst)
-        print('复制python DLLs')
-        shutil.copytree(EPath.pythonHome+'/DLLs',dst+'/DLLs')
-        print('复制python Lib')
-        shutil.copytree(EPath.pythonLib,dst+'/Lib')
-        print('复制python Library')
-        for i in os.listdir(EPath.pythonLibrary):
-            if i.endswith('.dll'):
-                print(i)
-                shutil.copy(f'{EPath.pythonLibrary}/{i}',dst)
+        print('复制python exe and dll')
+        for i in os.listdir(EPath.pythonHome):
+            if os.path.isfile(os.path.join(EPath.pythonHome,i)):
+                if i.endswith('dll') or i.endswith('exe'):
+                    shutil.copy(os.path.join(EPath.pythonHome,i),dst)
+            else:
+                print(f'复制python {i}')
+                shutil.copytree(os.path.join(EPath.pythonHome,i),dst+f'/{i}')     
     except Exception as e:
         print('copy python error:\n',e)
 

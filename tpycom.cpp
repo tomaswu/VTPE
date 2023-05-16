@@ -1,4 +1,4 @@
-#include "tpycom.h"
+﻿#include "tpycom.h"
 #include <iostream>
 #include <QtGlobal>
 #include <boost/python.hpp>
@@ -29,6 +29,7 @@ int TPyCom::boostTest(){
     if(!Py_IsInitialized()){
         Py_Initialize();
     }
+    try{
     bpy::object m = bpy::import("data_process");
     m.attr("pyHello")();
     bpy::list lrs;
@@ -37,6 +38,10 @@ int TPyCom::boostTest(){
     int s = bpy::extract<int>(lrs[1]);
     cout<<"list test: ,"<<s<<endl;
     cout<<"finished from c++"<<endl;
+    }catch(bpy::error_already_set const &){
+        PyErr_Print();
+    }
+
     return 0;
 }
 
@@ -109,28 +114,32 @@ void TPyCom::data_process(QList<QList<double>> data,QList<QString> header,QList<
     if(!Py_IsInitialized()){
         Py_Initialize();
     }
-    bpy::object m = bpy::import("data_process");
-    bpy::list dl,hl,p,ft,tmp;
-    ft.append(filter[0]);
-    ft.append(filter[1]);
-    for(auto &i : data){
-        tmp={};
-        for(auto &j : i){
-            tmp.append(j);
+    try{
+        bpy::object m = bpy::import("data_process");
+        bpy::list dl,hl,p,ft,tmp;
+        ft.append(filter[0]);
+        ft.append(filter[1]);
+        for(auto &i : data){
+            tmp={};
+            for(auto &j : i){
+                tmp.append(j);
+            }
+            dl.append(tmp);
         }
-        dl.append(tmp);
-    }
-    for (auto &i:header){
-        hl.append(i.toStdString());
-    }
-    for(auto &i:para){
-        tmp={};
-        for(auto &j : i){
-            tmp.append(j.toStdString());
+        for (auto &i:header){
+            hl.append(i.toStdString());
         }
-        p.append(tmp);
+        for(auto &i:para){
+            tmp={};
+            for(auto &j : i){
+                tmp.append(j.toStdString());
+            }
+            p.append(tmp);
+        }
+        m.attr("pmb0100_process")(dl,hl,p,ft,fps);
+    }catch(bpy::error_already_set const &){
+        PyErr_Print();
     }
-    m.attr("pmb0100_process")(dl,hl,p,ft,fps);
 }
 
 bool TPyCom::showFrequencyImage(cv::Mat mat){

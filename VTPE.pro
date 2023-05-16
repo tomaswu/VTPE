@@ -120,13 +120,13 @@ windows{
     INCLUDEPATH += \
         E:\Tomas_temp\opencv\opencv460\opencv\build\include \
         "C:\Program Files\General MVTech\MV Viewer\Development\Include" \
-        "C:\Users\tomas\miniconda3\envs\py311\include" \
+        "C:\embedded_python\include" \
         "E:\boost_1_81_0\boost_1_81_0" \
         "E:\work\projects\黑白相机驱动和SDK\SDK\include"
 
     LIBS += -LE:\Tomas_temp\opencv\opencv460\opencv\build\x64\vc15\lib \
             -L"C:\Program Files\General MVTech\MV Viewer\Development\Lib\x64" \
-            -L"C:\Users\tomas\miniconda3\envs\py311\libs" \
+            -L"C:\embedded_python\libs" \
             -L"E:\boost_1_81_0\boost_1_81_0\bin.v2\libs\python\build\msvc-14.3\release\python-3.11\threading-multi" \
             -L"E:\work\projects\黑白相机驱动和SDK\SDK\x64"
 
